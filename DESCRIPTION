@@ -1,0 +1,16 @@
+Package: MEM
+Title: Mulitsource Exchangeability Models
+Version: 0.0.1
+Authors@R: c(
+  person("Brian", "Hobbs",
+         email = "bhobbs@presagia.ai",
+         role = c("aut")),
+  person("Michael", "Kane",
+         email = "mkane@presagia.ai",
+         role = c("aut", "cre")))
+Description: Implemention of multisource exchangeability models for basket trial design and monitoring.
+License: LGPL-2
+Maintainer: Michael J. Kane <mkane@presagia.ai>
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
