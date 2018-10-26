@@ -163,10 +163,6 @@ MEM_marginalLoop <- function(xvec, nvec, avec, bvec, INITIAL) {
   list(mod.mat = mod.mat, init=M.init, maximizer=MOld)
 }
 
-
-## Penalized Estimation with Simulated annealing method ##
-library(GenSA)
-
 #' @export
 #' @importFrom GenSA GenSA
 MEM_marginalPE <- function(xvec, nvec, avec, bvec, INITIAL, Lambda){
@@ -534,90 +530,104 @@ MEM_FullInf <- function(xvec, nvec, avec, bvec, pr.Inclus, alp) {
        HPD=HPD)
 }
 
-# START HERE
-
 #' @export
-MEM.w <- function(Data,pars,marg.M){
-  #marg.M <- MEM_marginal(xvec=Data$X, nvec=Data$N, avec=rep(0.5,length(Data$N)), bvec=rep(0.5,length(Data$N)))
-  pr.Inclus <- pars$UB*marg.M$maximizer; diag(pr.Inclus) <- rep(1,nrow(pr.Inclus)); pr.Inclus[which(pr.Inclus==0)] <- pars$LB
+MEM.w <- function(Data, pars, marg.M) {
+  pr.Inclus <- pars$UB*marg.M$maximizer
+  diag(pr.Inclus) <- rep(1,nrow(pr.Inclus))
+  pr.Inclus[which(pr.Inclus==0)] <- pars$LB
   weights <- list()
-  for(i in 1:nrow(pr.Inclus)){ 
-    weights[[i]] <- MEM_modweight(mod.mat = marg.M$mod.mat[[1]], source.vec=pr.Inclus[i,][-i]) 
+  for(i in 1:nrow(pr.Inclus)) {
+    weights[[i]] <- MEM_modweight(mod.mat = marg.M$mod.mat[[1]], 
+      source.vec = pr.Inclus[i,][-i]) 
   }
   models <- cbind(rep(1,dim(marg.M$mod.mat[[1]])[1]),marg.M$mod.mat[[1]])
-  out <- list( models=models, weights=weights) #, alph=alph, beta=beta)
- return(out)
+  list(models = models, weights = weights) 
 }
 
 #' @export
-MEM.cdf <- function(Data,pars,p0,marg.M){
-  #marg.M <- MEM_marginal(xvec=Data$X, nvec=Data$N, avec=rep(0.5,length(Data$N)), bvec=rep(0.5,length(Data$N)))
-  pr.Inclus <- pars$UB*marg.M$maximizer; diag(pr.Inclus) <- rep(1,nrow(pr.Inclus)); pr.Inclus[which(pr.Inclus==0)] <- pars$LB
+MEM.cdf <- function(Data, pars, p0, marg.M) {
+  pr.Inclus <- pars$UB*marg.M$maximizer
+  diag(pr.Inclus) <- rep(1,nrow(pr.Inclus))
+  pr.Inclus[which(pr.Inclus==0)] <- pars$LB
   weights <- list() 
-  for(i in 1:nrow(pr.Inclus)){ 
-    weights[[i]] <- MEM_modweight(mod.mat = marg.M$mod.mat[[1]], source.vec=pr.Inclus[i,][-i]) 
+  for(i in 1:nrow(pr.Inclus)) {
+    weights[[i]] <- MEM_modweight(mod.mat = marg.M$mod.mat[[1]], 
+      source.vec = pr.Inclus[i,][-i]) 
   }
   models <- cbind(rep(1,dim(marg.M$mod.mat[[1]])[1]),marg.M$mod.mat[[1]])
   out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]])
   K <- length(Data$X)
-  for(j in 2:(K-1)){ Ii <- c(j,1:(j-1),(j+1):K)
-                     out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
+  for(j in 2:(K-1)) { 
+    Ii <- c(j,1:(j-1),(j+1):K)
+    out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
   }
   j <- j + 1
   Ii <- c(j,1:(j-1))
-  out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])) #; print(pr.Inclus)
-  return(out)
+  c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])) 
 }
 
 #' @export
-PostProb.mlab <- function(Data,pars,p0){
+PostProb.mlab <- function( Data, pars, p0) {
+
   pp.mem <- MEM.cdf(Data,pars,p0)
-  if(is.na(pars$ESS)){ out <- sum( pars$m.BasketWeights*pp.mem )
-  } else{ out <- rdirichlet(1, pars$m.BasketWeights*pars$ESS)*pp.mem }
-  return(out)
+
+  if(is.na(pars$ESS)) { 
+    out <- sum( pars$m.BasketWeights*pp.mem )
+  } else{ 
+    out <- rdirichlet(1, pars$m.BasketWeights*pars$ESS)*pp.mem 
+  }
+  out
 }
 
 #' @export
-genObs.mlab <- function(hyp,N,pars,p0){
+genObs.mlab <- function(hyp, N, pars, p0) {
   D <- list(X=rbinom(rep(1,length(N)),N,hyp), N=N)
-  return( PostProb.mlab(D,pars,p0) )
+  PostProb.mlab(D,pars,p0)
 }
 
 #' @export
-checkThres.mlab <- function(THRES,null,N,pars,p0){ N.rep <- 5000
-                                                   return( sum( replicate(N.rep, genObs.mlab(null,N,pars,p0) ) > THRES )/N.rep )
+checkThres.mlab <- function(THRES, null, N, pars, p0) { 
+  N.rep <- 5000
+  sum( replicate(N.rep, genObs.mlab(null,N,pars,p0) ) > THRES ) / N.rep 
 }
 
 #' @export
-CalibrateTypeIError.mlab <- function(null,Grid,N,pars,p0){
-  typeIerror <- sapply(X=Grid,FUN=checkThres.mlab,null,N,pars,p0)
-  return(list(Threshold=Grid, TypeIerror=typeIerror)) 
+CalibrateTypeIError.mlab <- function(null, Grid, N, pars, p0) {
+  typeIerror <- sapply(X=Grid, FUN=checkThres.mlab, null, N, pars, p0)
+  list(Threshold=Grid, TypeIerror=typeIerror)
 }
 
 #' @export
-Power.mlab <- function(ALT,thres,N,pars,p0){ N.rep <- 5000
-                                             return( list( PostProbThreshold=thres, power=sum( replicate(N.rep, genObs.mlab(ALT,N,pars,p0) ) > thres )/N.rep ) )
+Power.mlab <- function(ALT, thres, N, pars, p0) { 
+  N.rep <- 5000
+  list(PostProbThreshold=thres, 
+       power=sum(replicate(N.rep, genObs.mlab(ALT,N,pars,p0)) > thres)/N.rep ) 
 }
 
 #' @export
-genObs.bask <- function(THRES,hyp,N,pars,p0){
+genObs.bask <- function(THRES, hyp, N, pars, p0) {
   D <- list(X=rbinom(rep(1,length(N)),N,hyp), N=N)
-  return( as.numeric( MEM.cdf(D,pars,p0) > THRES ) )
+  as.numeric( MEM.cdf(D, pars, p0) > THRES ) 
 }
 
 #' @export
-checkThres.bask <- function(THRES,null,N,pars,p0){ N.rep <- 5000 ## Compute FWER ##
-                                                   return(  1 - ( sum( rowSums( t( replicate(N.rep, genObs.bask(THRES,null,N,pars,p0) ) ) ) == 0 ) / N.rep ) )
+checkThres.bask <- function(THRES, null, N, pars, p0) { 
+  N.rep <- 5000 ## Compute FWER ##
+  1 - (
+    sum(rowSums(t(replicate(N.rep, genObs.bask(THRES, null, N, pars, p0))))==0)/
+    N.rep ) 
 }
 
 #' @export
-CalibrateFWER.bask <- function(null,Grid,N,pars,p0){
-  FWER <- sapply(X=Grid,FUN=checkThres.bask,null,N,pars,p0)
-  return(list(Threshold=Grid, FWER=FWER)) 
+CalibrateFWER.bask <- function(null, Grid, N, pars, p0){
+  FWER <- sapply(X = Grid, FUN = checkThres.bask, null, N, pars, p0)
+  list(Threshold = Grid, FWER = FWER)
 }
 
 #' @export
-Power.bask <- function(ALT,thres,N,pars,p0){ N.rep <- 5000
-                                             return( list( PostProbThreshold=thres, 
-                                                           power=colSums( t( replicate(N.rep, genObs.bask(thres,ALT,N,pars,p0) ) ) )/N.rep ) )
+Power.bask <- function(ALT, thres, N, pars, p0) { 
+  N.rep <- 5000
+  list(PostProbThreshold=thres, 
+       power=colSums(t(replicate(N.rep, genObs.bask(thres,ALT,N,pars,p0)))) /
+             N.rep)
 }
