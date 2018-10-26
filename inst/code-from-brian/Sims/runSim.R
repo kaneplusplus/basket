@@ -1,10 +1,9 @@
-
-rm(list=ls())
-
+library(devtools)
 library(foreach)
 library(doMC)
 registerDoMC()
 
+document()
 ### Seq Vermu Sim ###
 source("../Utils/parSim-functions.R")
 
@@ -26,6 +25,7 @@ prob=c(0.45,0.45,0.45,0.45,0.45,0.45)
  #           .multicombine = TRUE)  %dopar% 
  #   runSim(ITER, N, prob, pr.Inclus, p0, alp)
     runSim(H, N, prob, pr.Inclus, p0, alp)
+  print(H)
   #stopCluster(cl)
  }
 
