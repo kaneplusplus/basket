@@ -12,6 +12,6 @@ Description: Implemention of multisource exchangeability models for basket trial
 License: LGPL-2
 Maintainer: Michael J. Kane <mkane@presagia.ai>
 Encoding: UTF-8
-Imports: foreach GenSA
+Imports: foreach, GenSA, rjags
 LazyData: true
 RoxygenNote: 6.1.0

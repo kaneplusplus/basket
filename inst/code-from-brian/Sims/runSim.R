@@ -19,13 +19,8 @@ alp=0.05; N=Data$N; p0=p0
 
 prob=c(0.45,0.45,0.45,0.45,0.45,0.45)
 
- for(H in 3619:5000){
- # no_cores <- detectCores() - 1;  cl <- makeCluster(no_cores); registerDoParallel(cl)
- #  foreach( ITER = ( (H-1)*no_cores ):((H-1)*no_cores + no_cores), .combine = list, 
- #           .multicombine = TRUE)  %dopar% 
- #   runSim(ITER, N, prob, pr.Inclus, p0, alp)
-    runSim(H, N, prob, pr.Inclus, p0, alp)
+for(H in 3619:5000){
+  runSim(H, N, prob, pr.Inclus, p0, alp)
   print(H)
-  #stopCluster(cl)
- }
+}
 
