@@ -22,10 +22,11 @@
 #' 
 #' # The trials: a column of the number of responses and a column of the
 #' # the size of each trial.
-#' trials <- tibble(responses = rbinom(trial_sizes, trial_sizes, resp_rate), 
-#'                  size = trial_sizes)
+#' trials <- data.frame(responses=rbinom(trial_sizes, trial_sizes, resp_rate), 
+#'                      size = trial_sizes)
 #' 
 #' mem_full_bayes(trials$responses, trials$size)
+#' @importFrom foreach foreach %dopar%
 #' @export
 mem_full_bayes <- function(
   responses, 
@@ -100,6 +101,7 @@ mem_full_bayes <- function(
   ## Posterior Exchangeability Prob ##
   PEP. <- matrix(NA, length(xvec), length(xvec))
   colnames(PEP.) <- rownames(PEP.) <- xvec; diag(PEP.) <- 1
+  i <- NA
   pep <- foreach(i = 1:(nrow(PEP.)-1), combine = list, 
                  .multicombine = TRUE) %dopar% {
     compPEP(i, length(xvec), Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR)
@@ -144,11 +146,23 @@ mem_full_bayes <- function(
     replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ), 
     alp)
 
+  # TODO: check with Brian to make sure this is correct.
+  median_est <- vapply(pweights, 
+    function(w) {
+      quantile(replicate(10000, samp.Post(xvec, nvec, models, w)), 0.5)
+    }, as.numeric(NA))
+
+  mean_est <- vapply(pweights, 
+    function(w) {
+      mean(replicate(10000, samp.Post(xvec, nvec, models, w)))
+    }, as.numeric(NA))
+
   ret <- list(mod.mat = mod.mat, maximizer = MAX, MAP = MAP, PEP = PEP, 
-             CDF = CDF, ESS = pESS, HPD = HPD, responses = responses,
+             CDF = CDF, ESS = pESS, HPD = HPD, mean_est = mean_est,
+             median_est = median_est, responses = responses,
              basket_size = basket_size, p0 = p0, shape1 = shape1,
              shape2 = shape2)
 
-  class(ret) <- "MEM"
+  class(ret) <- c("full_bayes", "mem")
   ret 
 }

@@ -1,0 +1,13 @@
+^CRAN-RELEASE$
+vignettes
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^README\.Rmd$
+^README-.*\.png$
+^\.travis\.yml$
+^CONDUCT\.md$
+^cran-comments\.md$
+^appveyor\.yml$
+^codecov\.yml$
+^vignettes$
