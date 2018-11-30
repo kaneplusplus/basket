@@ -13,5 +13,6 @@ License: LGPL-2
 Maintainer: Michael J. Kane <mkane@presagia.ai>
 Encoding: UTF-8
 Imports: foreach, GenSA, rjags
+Suggests: ggplot2, tibble
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

@@ -2,13 +2,13 @@
 MEM_FullBayes <- function(xvec, nvec, avec, bvec, pr.Inclus, alp){
 
 boa.hpd <- function(x, alpha){
-    n <- length(x)
-    m <- max(1, ceiling(alpha * n))
-    y <- sort(x)
-    a <- y[1:m]
-    b <- y[(n - m + 1):n]
-    i <- order(b - a)[1]    
-    structure(c(a[i], b[i]), names = c("Lower Bound", "Upper Bound"))
+Â Â Â  n <- length(x)
+Â Â Â  m <- max(1, ceiling(alpha * n))
+Â Â Â Â y <- sort(x)
+Â Â Â  a <- y[1:m]
+Â Â Â  b <- y[(n - m + 1):n]
+Â Â Â Â i <- order(b - a)[1]Â Â Â  
+Â Â Â Â structure(c(a[i], b[i]), names = c("Lower Bound", "Upper Bound"))
 }
 sigmoid <- function(psi){ out <- 1/(1+exp(-psi)); return(out) }
 logit <- function(a0){ out <- log(a0) - log(1-a0); return(out) }

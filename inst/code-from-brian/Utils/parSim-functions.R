@@ -1,3 +1,4 @@
+# arguments for bayes, empirical bayes, constrained empirical bayes.
 
 runSim <- function(ITER, N, prob, pr.Inclus, p0, alp){
 
@@ -9,10 +10,12 @@ runSim <- function(ITER, N, prob, pr.Inclus, p0, alp){
   nvec <- D$N
   avec <- bvec <- rep(0.5, length(D$X))
 
-  mod.mat <- list(); k <- length(xvec)-1; j <- 1
+  mod.mat <- list()
+  k <- length(xvec)-1
+  j <- 1
   while (k > 0) { 
-    mod.mat[[j]] <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))[
-      order(rowSums(as.matrix(expand.grid( rep(list(c(0,1)), k) )))),] 
+    mod.mat[[j]] <- as.matrix(expand.grid(rep(list(c(0,1)), k)))[
+      order(rowSums(as.matrix(expand.grid(rep(list(c(0,1)), k))))),] 
     k <- k - 1
     j <- j + 1 
   }
@@ -27,17 +30,17 @@ runSim <- function(ITER, N, prob, pr.Inclus, p0, alp){
   Mod.I <- as.matrix(expand.grid( temp ))
 
   ## identify maximizer of marginal density ##
-  log.Marg <- apply(Mod.I, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, 
+  log.Marg <- apply(Mod.I, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, 
                     avec, bvec)
-  max.i <- order(log.Marg,decreasing=TRUE)[1]  
+  max.i <- order(log.Marg,decreasing = TRUE)[1]  
   MAX <- MEM.mat(Mod.I[max.i,], mod.mat, length(xvec))
   colnames(MAX) <- rownames(MAX) <- xvec
 
   ## compute prior + posterior MEM probabilities ##
-  PRIOR <- apply(Mod.I, MARGIN=1, FUN=mem.Prior, mod.mat, pr.Inclus)
+  PRIOR <- apply(Mod.I, MARGIN = 1, FUN = mem.Prior, mod.mat, pr.Inclus)
   POST <- (exp(log.Marg) * PRIOR) / sum(exp(log.Marg)*PRIOR)
-  map.i <- order(POST,decreasing=TRUE)[1]
-  MAP <- MEM.mat(Mod.I[map.i,], mod.mat, length(xvec))
+  map.i <- order(POST, decreasing = TRUE)[1]
+  MAP <- MEM.mat(Mod.I[map.i, ], mod.mat, length(xvec))
   colnames(MAP) <- rownames(MAP) <- xvec
 
   ## Posterior Exchangeability Prob ##
