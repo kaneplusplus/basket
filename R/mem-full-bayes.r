@@ -4,7 +4,8 @@
 #' @description Fit the MEM model using full Bayesian inference.
 #' @param responses the number of responses in each basket.
 #' @param basket_size the size of each basket.
-#' @param p0 the null response rate for the poster probability calculation.
+#' @param p0 the null response rate for the poster probability calculation
+#' (default 0.25).
 #' @param shape1 the first shape parameter(s) for the prior of each basket
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
