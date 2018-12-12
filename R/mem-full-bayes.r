@@ -3,7 +3,8 @@
 #' 
 #' @description Fit the MEM model using full Bayesian inference.
 #' @param responses the number of responses in each basket.
-#' @param basket_size the size of each basket.
+#' @param size the size of each basket.
+#' @param name the name of each basket.
 #' @param p0 the null response rate for the poster probability calculation
 #' (default 0.25).
 #' @param shape1 the first shape parameter(s) for the prior of each basket
@@ -31,7 +32,8 @@
 #' @export
 mem_full_bayes <- function(
   responses, 
-  basket_size, 
+  size, 
+  name,
   p0 = 0.25, # Null response rate for Posterior Probability Calc.
   shape1 = 0.5, 
   shape2 = 0.5, 
@@ -40,8 +42,8 @@ mem_full_bayes <- function(
                              ncol = length(responses)),
   alpha = 0.05) {
 
-  if (length(responses) != length(basket_size)) {
-    stop(paste("The length of the responses and basket_size parameters",
+  if (length(responses) != length(size)) {
+    stop(paste("The length of the responses and size parameters",
                "must be equal."))
   }
   if (length(shape1) == 1) {
@@ -58,7 +60,7 @@ mem_full_bayes <- function(
   alp <- alpha
 
   xvec <- responses
-  nvec <- basket_size
+  nvec <- size
   mod.mat <- list()
   k <- length(xvec)-1
   j <- 1
@@ -158,12 +160,23 @@ mem_full_bayes <- function(
       mean(replicate(10000, samp.Post(xvec, nvec, models, w)))
     }, as.numeric(NA))
 
+  if (missing(name)) {
+    name <- NULL
+  } else {
+    if (!is.character(name) ||
+        length(name) != length(size)) {
+
+      stop(paste("The basket name argument must be a character vector with",
+                 "one name per basket."))
+    }
+  }
+
   ret <- list(mod.mat = mod.mat, maximizer = MAX, MAP = MAP, PEP = PEP, 
              CDF = CDF, ESS = pESS, HPD = HPD, mean_est = mean_est,
              median_est = median_est, responses = responses,
-             basket_size = basket_size, p0 = p0, shape1 = shape1,
-             shape2 = shape2)
+             size = size, name = name, p0 = p0, 
+             shape1 = shape1, shape2 = shape2)
 
-  class(ret) <- c("full_bayes", "mem")
+  class(ret) <- c("full_bayes", "exchangeability_model")
   ret 
 }

@@ -1,4 +1,5 @@
 
+
 boa.hpd <- function(x, alpha) {
   n <- length(x)
   m <- max(1, ceiling(alpha * n))
@@ -240,14 +241,23 @@ post.HPD <- function(Data, pars, marg.M, alp) {
 
   K <- length(Data$X)
 
-  for(j in 2:(K-1)) { 
-    Ii <- c(j,1:(j-1),(j+1):K)
-    out <- rbind(out, boa.hpd( 
-      replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models, 
-                U$weights[[j]]) ), 
-      alp))
-  }
-  j <- j + 1
+  out <- rbind(out,
+    foreach(j = 2:(K-1), .combine = rbind) %do% {
+      Ii <- c(j,1:(j-1),(j+1):K)
+      boa.hpd(replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models,
+                        U$weights[[j]])),
+              alp)
+    })
+
+#  for(j in 2:(K-1)) { 
+#    Ii <- c(j,1:(j-1),(j+1):K)
+#    out <- rbind(out, boa.hpd( 
+#      replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models, 
+#                U$weights[[j]]) ), 
+#      alp))
+#  }
+#  j <- j + 1
+  j <- K
   Ii <- c(j,1:(j-1))
 
   out <- rbind(out, boa.hpd( 
@@ -262,11 +272,16 @@ post.ESS <- function(Data, pars, marg.M) {
   U <- MEM.w(Data,pars,marg.M)
   out <- U$weights[[1]]%*%ESS( Data$X, Data$N, U$models )
   K <- length(Data$X)
-  for(j in 2:(K-1)){ 
-    Ii <- c(j,1:(j-1),(j+1):K)
-    out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
-  }
-  j <- j + 1
+  out <- c(out,
+    foreach(j = 2:(K-1), .combine = c) %do% {
+      Ii <- c(j, 1:(j-1), (j+1):K)
+      U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models)
+    })
+#  for(j in 2:(K-1)){ 
+#    Ii <- c(j,1:(j-1),(j+1):K)
+#    out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
+#  }
+  j <- K
   Ii <- c(j,1:(j-1))
   out <- out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
   names(out) <- Data$X
@@ -453,6 +468,7 @@ MEM.w <- function(Data, pars, marg.M) {
   list(models = models, weights = weights) 
 }
 
+#' @importFrom foreach foreach %do%
 MEM.cdf <- function(Data, pars, p0, marg.M) {
   pr.Inclus <- pars$UB*marg.M$maximizer
   diag(pr.Inclus) <- rep(1,nrow(pr.Inclus))
@@ -465,11 +481,17 @@ MEM.cdf <- function(Data, pars, p0, marg.M) {
   models <- cbind(rep(1,dim(marg.M$mod.mat[[1]])[1]),marg.M$mod.mat[[1]])
   out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]])
   K <- length(Data$X)
-  for(j in 2:(K-1)) { 
-    Ii <- c(j,1:(j-1),(j+1):K)
-    out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
-  }
-  j <- j + 1
+  out <- c(out,
+    foreach(j = 2:(K-1), .combine = c) %do% {
+      Ii <- c(j,1:(j-1),(j+1):K)
+      eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])      
+    })
+#  for(j in 2:(K-1)) { 
+#    Ii <- c(j,1:(j-1),(j+1):K)
+#    out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
+#  }
+#  j <- j + 1
+  j <- K
   Ii <- c(j,1:(j-1))
   c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])) 
 }

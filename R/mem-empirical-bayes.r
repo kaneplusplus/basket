@@ -3,7 +3,8 @@
 #' 
 #' @description Fit the MEM model using empirical Bayesian inference.
 #' @param responses the number of responses in each basket.
-#' @param basket_size the size of each basket.
+#' @param size the size of each basket.
+#' @param name the name of each basket (default: NULL - no basket names).
 #' @param p0 the null response rate for the poster probability calculation
 #' (default 0.25).
 #' @param shape1 the first shape parameter(s) for the prior of each basket
@@ -35,7 +36,8 @@
 #' @export
 mem_empirical_bayes <- function(
   responses, 
-  basket_size, 
+  size, 
+  name = NULL,
   p0 = 0.25, # Null response rate for Posterior Probability Calc.
   shape1 = 0.5, 
   shape2 = 0.5, 
@@ -48,8 +50,8 @@ mem_empirical_bayes <- function(
 
   pars <- list(UB = upper_bound, LB = lower_bound)
 
-  if (length(responses) != length(basket_size)) {
-    stop(paste("The length of the responses and basket_size parameters",
+  if (length(responses) != length(size)) {
+    stop(paste("The length of the responses and size parameters",
                "must be equal."))
   }
   if (length(shape1) == 1) {
@@ -65,7 +67,7 @@ mem_empirical_bayes <- function(
   INITIAL <- prior_inclusion
 
   xvec <- responses
-  nvec <- basket_size
+  nvec <- size
 
   mod.mat <- list()
   k <- length(xvec)-1
@@ -99,16 +101,16 @@ mem_empirical_bayes <- function(
   logDenOld <- logMarg.DensSA(MOld, mod.mat, xvec, nvec, avec, bvec)
   for(iter in 1:10000) {
     changed <- FALSE
-    for( i in 1:(d-1)) {
+    for(i in 1:(d-1)) {
       for(k in (i+1):d) {
         loc <- c(k,i)
         MNew <- MOld
         MNew[loc[1],loc[2]] <- MNew[loc[2],loc[1]] <- 1 - MOld[loc[1],loc[2]]
         logDenNew <- logMarg.DensSA(MNew, mod.mat, xvec, nvec, avec, bvec)
         if (logDenNew > logDenOld) {
-          MOld<-MNew
-          changed<-TRUE
-          logDenOld<-logDenNew
+          MOld <- MNew
+          changed <- TRUE
+          logDenOld <- logDenNew
         }
       }
     }
@@ -123,19 +125,50 @@ mem_empirical_bayes <- function(
   ret$CDF <- MEM.cdf(list(X=xvec, N=nvec), pars, p0, ret)
   ret$ESS <- post.ESS(list(X=xvec, N=nvec), pars, ret)
   ret$HPD <- t(post.HPD(list(X=xvec, N=nvec), pars, ret, alpha))
-  U <- MEM.w(list(X=xvec, N=nvec), pars, ret)
-  # TODO: Again, make sure with Brian that this is correct.
-  ret$mean_est <- vapply(U$weights, 
-    function(w) {
-      mean(replicate(10000, samp.Post(xvec, nvec, U$models, w)))
-    }, as.numeric(NA))
-  ret$median_est <- vapply(U$weights,
-    function(w) {
-      quantile(replicate(10000, samp.Post(xvec, nvec, U$models, w)), 
-               0.5)
-    }, as.numeric(NA))
+  ret$U <- MEM.w(list(X=xvec, N=nvec), pars, ret)
+  ret$responses <- responses
+  ret$size <- size
+  ret$shape1 <- shape1
+  ret$shape2 <- shape2
+  ret$pars <- pars
+  ret$name <- name
 
-  class(ret) <- c("emprical_bayes", "mem")
+  if (!is.character(name) || length(name) != length(size)) {
+    stop(paste("The basket name argument must be a character vector with",
+               "one name per basket."))
+  }
+
+  class(ret) <- c("empirical_bayes", "exchangeability_model")
+  ret$samples <- sample_posterior(ret)
+  ret$mean_est <- colMeans(ret$samples)
+  ret$median_est <- apply(ret$samples, 2, median)
   ret
 }
 
+#' @importFrom foreach foreach %do%
+#' @export
+sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
+  ret <- replicate(num_samples, samp.Post(model$responses, model$size,
+                   model$U$models, model$U$weights[[1]]))
+  K <- length(model$responses)
+  ret <- rbind(ret, 
+    foreach(j = 2:(K-1), .combine = rbind) %do% {
+      Ii <- c(j,1:(j-1),(j+1):K)
+      replicate(num_samples, 
+                samp.Post(model$responses[Ii], model$size[Ii],
+                          model$U$models, model$U$weights[[j]]))
+    })
+  j <- K
+  Ii <- c(j,1:(j-1))
+  ret <- rbind(ret,
+               replicate(10000, 
+                         samp.Post(model$responses[Ii], model$size[Ii], 
+                                   model$U$models, model$U$weights[[j]]) ))
+#  ret <- foreach(w = model$U$weights, .combine = cbind) %do% {
+#    replicate(num_samples, samp.Post(model$responses, model$size, 
+#      model$U$models, w))
+#  }
+  ret <- t(ret)
+  dimnames(ret) <- list(NULL, model$name)
+  ret
+}

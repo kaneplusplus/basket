@@ -1,0 +1,45 @@
+---
+title: "MEM Working Example"
+author: "Michael Kane"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load the library and look at the data
+
+```{r}
+library(basket)
+
+# Load the vemurafinib data for analysis.
+data(vemu_wide)
+vemu_wide
+```
+
+# Fit the model
+```{r}
+# Fit the MEM model using Empirical Bayes.
+m <- mem_empirical_bayes(responses = vemu_wide$responders, 
+                         size = vemu_wide$evaluable,
+                         name = vemu_wide$baskets)
+```
+
+# Plot the posteriors
+```{r}
+# Plot the response rate of each basket.
+plot(m)
+```
+
+# Questions
+
+1. What is CDF? It doesn't look like a cumulative density function.
+2. What is HPD?
+3. Which information should be shown when we print an exchangeability model? Maybe the following:
+    - Ratio of basket responders to basket size
+    - ESS
+    - number responses per basket
+    - size of each basket
+    - mean estimate
+    - median estimate

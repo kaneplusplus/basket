@@ -1,5 +1,5 @@
-Package: MEM
-Title: Mulitsource Exchangeability Models
+Package: basket
+Title: Basket Trial Analysis 
 Version: 0.0.1
 Authors@R: c(
   person("Brian", "Hobbs",

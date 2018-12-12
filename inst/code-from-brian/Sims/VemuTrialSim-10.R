@@ -37,7 +37,8 @@ p0 <- 0.15								## Null response rate for Posterior Probability Calculation
 ## Berry Model Analysis ##
  library(rjags)
   data <- list(J=6, N=Data$N, Y=Data$X); inits <- list(mu=rep(0,6), M=0, inv.sig2=1) #; bugsData(data,"data.txt")
-  m <- jags.model("../UtilsBerry-ig_model.txt", data, inits, n.chains=3, quiet=TRUE); update(m, 30000, progress.bar="none"); S <- coda.samples(m, "pr", n.iter=10000, progress.bar="none"); dput(data,"data.txt")
+  m <- jags.model("../Utils/Berry-ig_model.txt", data, inits, n.chains=3, quiet=TRUE); update(m, 30000, progress.bar="none"); 
+S <- coda.samples(m, "pr", n.iter=10000, progress.bar="none"); dput(data,"data.txt")
   PPROB <- c( sum( c(S[[1]][,1],S[[2]][,1],S[[3]][,1]) > p0 )/length( c(S[[1]][,1],S[[2]][,1],S[[3]][,1]) ),
               sum( c(S[[1]][,2],S[[2]][,2],S[[3]][,2]) > p0 )/length( c(S[[1]][,2],S[[2]][,2],S[[3]][,2]) ),
               sum( c(S[[1]][,3],S[[2]][,3],S[[3]][,3]) > p0 )/length( c(S[[1]][,3],S[[2]][,3],S[[3]][,3]) ),
