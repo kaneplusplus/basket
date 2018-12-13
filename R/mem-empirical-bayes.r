@@ -68,7 +68,6 @@ mem_empirical_bayes <- function(
     call <- match.call()
   }
 
-  browser()
   ret <- list(marg.M = marg.M, maximizer = marg.M$maximizer, CDF = CDF,
               ESS = ESS, HPD = HPD, responses = responses, size = size,
               name = name, p0 = p0, shape1 = shape2, call = call,
