@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load the library and look at the data
 
 ```{r}
-library(basket)
+devtools::document()
 
 # Load the vemurafinib data for analysis.
 data(vemu_wide)
@@ -24,6 +24,7 @@ vemu_wide
 m <- mem_empirical_bayes(responses = vemu_wide$responders, 
                          size = vemu_wide$evaluable,
                          name = vemu_wide$baskets)
+m
 ```
 
 # Plot the posteriors

@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
   person("Brian", "Hobbs",
          email = "bhobbs@presagia.ai",
@@ -12,6 +12,6 @@ Description: Implemention of multisource exchangeability models for basket trial
 License: LGPL-2
 Maintainer: Michael J. Kane <mkane@presagia.ai>
 Encoding: UTF-8
-Imports: foreach, GenSA, rjags, ggplot2, stats
+Imports: foreach, GenSA, rjags, ggplot2, stats, GGally
 LazyData: true
 RoxygenNote: 6.1.1

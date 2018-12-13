@@ -15,6 +15,7 @@
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
 #' @param alpha the trial significance.
+#' @param call the call of the function (default NULL).
 #' @examples
 #' # 5 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 5) 
@@ -40,7 +41,8 @@ mem_full_bayes <- function(
   prior_inclusion = diag(length(responses))/2 + 
                       matrix(0.5, nrow = length(responses), 
                              ncol = length(responses)),
-  alpha = 0.05) {
+  alpha = 0.05,
+  call = NULL) {
 
   if (length(responses) != length(size)) {
     stop(paste("The length of the responses and size parameters",
@@ -150,15 +152,15 @@ mem_full_bayes <- function(
     alp)
 
   # TODO: check with Brian to make sure this is correct.
-  median_est <- vapply(pweights, 
-    function(w) {
-      quantile(replicate(10000, samp.Post(xvec, nvec, models, w)), 0.5)
-    }, as.numeric(NA))
+#  median_est <- vapply(pweights, 
+#    function(w) {
+#      quantile(replicate(10000, samp.Post(xvec, nvec, models, w)), 0.5)
+#    }, as.numeric(NA))
 
-  mean_est <- vapply(pweights, 
-    function(w) {
-      mean(replicate(10000, samp.Post(xvec, nvec, models, w)))
-    }, as.numeric(NA))
+#  mean_est <- vapply(pweights, 
+#    function(w) {
+#      mean(replicate(10000, samp.Post(xvec, nvec, models, w)))
+#    }, as.numeric(NA))
 
   if (missing(name)) {
     name <- NULL
@@ -171,12 +173,39 @@ mem_full_bayes <- function(
     }
   }
 
+  if (is.null(call)) {
+    call <- match.call()
+  }
   ret <- list(mod.mat = mod.mat, maximizer = MAX, MAP = MAP, PEP = PEP, 
-             CDF = CDF, ESS = pESS, HPD = HPD, mean_est = mean_est,
-             median_est = median_est, responses = responses,
-             size = size, name = name, p0 = p0, 
-             shape1 = shape1, shape2 = shape2)
+             CDF = CDF, ESS = pESS, HPD = HPD, responses = responses,
+             size = size, name = name, p0 = p0, pweights = pweights,
+             shape1 = shape1, shape2 = shape2, models = models, call = call)
 
   class(ret) <- c("full_bayes", "exchangeability_model")
+  ret$samples <- sample_posterior(ret)
+  ret$mean_est <- colMeans(ret$samples)
+  ret$median_est <- apply(ret$samples, 2, median)
   ret 
+}
+
+sample_posterior.full_bayes <- function(model, num_samples = 10000) {
+  ret <- replicate(num_samples, samp.Post(model$responses, model$size,
+                       model$models, model$pweights[[1]]))
+  K <- length(model$responses)
+  ret <- rbind(ret, 
+    foreach(j = 2:(K-1), .combine = rbind) %do% {
+      Ii <- c(j,1:(j-1),(j+1):K)
+      replicate(num_samples, 
+                samp.Post(model$responses[Ii], model$size[Ii], model$models, 
+                          model$pweights[[j]]))
+    })
+  j <- K
+  Ii <- c(j,1:(j-1))
+  ret <- rbind(ret, 
+    replicate(num_samples, 
+              samp.Post(model$responses[Ii], model$size[Ii], model$models, 
+                        model$pweights[[j]])))
+  ret <- t(ret)
+  dimnames(ret) <- list(NULL, model$name)
+  ret
 }

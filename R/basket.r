@@ -6,6 +6,7 @@ sample_posterior <- function(model, num_samples = 10000) {
 
 #' @export
 basket <- function(formula, data, p0, method = "mem_empirical_bayes", ...) {
+  stop("Not implemneted.")
 }
 
 #' @export
@@ -22,26 +23,40 @@ basket_name.default <- function(model) {
 #' @export
 basket_name.exchangeability_model <- function(model) {
   ret <- NULL
-  if ("basket_name" %in% names(model)) {
-    ret <- model$basket_names
+  if ("name" %in% names(model)) {
+    ret <- model$name
   }
   ret
 }
 
 #' @export
 mean.exchangeability_model <- function(model) {
-  ret$mean_est
+  model$mean_est
 }
 
 #' @export
 median.exchangeability_model <- function(x, na.rm = FALSE, ...) {
-  ret$median_est
+  x$median_est
 }
 
 #' @export
 quantile.exchangeability_model <- function(x, ...) {
-  dots <- list(...)
-  num_samples <- ifelse(is.null(dots$num_samples), 10000, dots$num_samples)
-  apply(sample_posterior, 2, quantile, ...)
+  apply(x$samples, 2, quantile, ...)
 }
 
+#' @export
+print.exchangeability_model <- function(x, 
+  digits = max(3L, getOption("digits") - 3L), ...) {
+
+  if (!is.null(x$call)) {
+    cat("\nCall:\n")
+    print(x$call)
+  }
+
+  cat("\nMedian estimate of basket response rates:\n")
+  med <- x$median_est
+  names(med) <- x$name
+  print(zapsmall(med, digits + 1L), digits = digits)
+  cat("\n")
+  invisible(x)
+}

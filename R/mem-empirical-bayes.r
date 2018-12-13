@@ -19,6 +19,7 @@
 #' inclusion probability (default 1).
 #' @param lower_bound for constrained empirical Bayes, the lower bound on the
 #' inclusion probability (default 0).
+#' @param call the call of the function (default NULL).
 #' @examples
 #' # 5 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 5) 
@@ -41,12 +42,14 @@ mem_empirical_bayes <- function(
   p0 = 0.25, # Null response rate for Posterior Probability Calc.
   shape1 = 0.5, 
   shape2 = 0.5, 
-  prior_inclusion = diag(length(responses))/2 + 
-                      matrix(0.5, nrow = length(responses), 
-                             ncol = length(responses)),
+  prior_inclusion = diag(1, length(responses)),
+#diag(length(responses))/2 + 
+#                    matrix(0.5, nrow = length(responses), 
+#                           ncol = length(responses)),
   alpha = 0.05, 
   upper_bound = 1, 
-  lower_bound = 0) {
+  lower_bound = 0, 
+  call = NULL) {
 
   pars <- list(UB = upper_bound, LB = lower_bound)
 
@@ -121,7 +124,10 @@ mem_empirical_bayes <- function(
 
   colnames(M.init) <- rownames(M.init) <- xvec
   colnames(MOld) <- rownames(MOld) <- xvec
-  ret <- list(mod.mat = mod.mat, init=M.init, maximizer=MOld)
+  if (is.null(call)) {
+    call <- match.call()
+  } 
+  ret <- list(call = call, mod.mat = mod.mat, init=M.init, maximizer=MOld)
   ret$CDF <- MEM.cdf(list(X=xvec, N=nvec), pars, p0, ret)
   ret$ESS <- post.ESS(list(X=xvec, N=nvec), pars, ret)
   ret$HPD <- t(post.HPD(list(X=xvec, N=nvec), pars, ret, alpha))
@@ -161,7 +167,7 @@ sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
   j <- K
   Ii <- c(j,1:(j-1))
   ret <- rbind(ret,
-               replicate(10000, 
+               replicate(num_samples, 
                          samp.Post(model$responses[Ii], model$size[Ii], 
                                    model$U$models, model$U$weights[[j]]) ))
 #  ret <- foreach(w = model$U$weights, .combine = cbind) %do% {

@@ -5,10 +5,9 @@
 \title{MEM Empirical Bayes}
 \usage{
 mem_empirical_bayes(responses, size, name = NULL, p0 = 0.25,
-  shape1 = 0.5, shape2 = 0.5,
-  prior_inclusion = diag(length(responses))/2 + matrix(0.5, nrow =
-  length(responses), ncol = length(responses)), alpha = 0.05,
-  upper_bound = 1, lower_bound = 0)
+  shape1 = 0.5, shape2 = 0.5, prior_inclusion = diag(1,
+  length(responses)), alpha = 0.05, upper_bound = 1, lower_bound = 0,
+  call = NULL)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -37,6 +36,8 @@ inclusion probability (default 1).}
 
 \item{lower_bound}{for constrained empirical Bayes, the lower bound on the
 inclusion probability (default 0).}
+
+\item{call}{the call of the function (default NULL).}
 }
 \description{
 Fit the MEM model using empirical Bayesian inference.
