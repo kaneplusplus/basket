@@ -11,9 +11,6 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param prior_inclusion the matrix giving the prior inclusion probability
-#' for each pair of baskets. The default is on on the main diagonal and 0.5
-#' elsewhere.
 #' @param alpha the trial significance.
 #' @param upper_bound for constrained empirical Bayes, the upper bound on the
 #' inclusion probability (default 1).
@@ -42,10 +39,6 @@ mem_empirical_bayes <- function(
   p0 = 0.25, # Null response rate for Posterior Probability Calc.
   shape1 = 0.5, 
   shape2 = 0.5, 
-  prior_inclusion = diag(1, length(responses)),
-#diag(length(responses))/2 + 
-#                    matrix(0.5, nrow = length(responses), 
-#                           ncol = length(responses)),
   alpha = 0.05, 
   upper_bound = 1, 
   lower_bound = 0, 
@@ -58,91 +51,28 @@ mem_empirical_bayes <- function(
                "must be equal."))
   }
   if (length(shape1) == 1) {
-    avec <- rep(shape1, length(responses))  
-  } else {
-    avec <- shape1
-  }
+    shape1 <- rep(shape1, length(responses))  
+  } 
   if (length(shape2) == 1) {
-    bvec <- rep(shape2, length(responses))  
-  } else {
-    bvec <- shape2
-  }
-  INITIAL <- prior_inclusion
+    shape2 <- rep(shape2, length(responses))  
+  } 
+  
+  Data <- list(X = responses, N = size, Basket = name)
 
-  xvec <- responses
-  nvec <- size
+  marg.M <- MEM_marginal(Data$X, Data$N, shape1, shape2)
+  CDF <- MEM.cdf(Data, pars, p0, marg.M)
+  ESS <- post.ESS(Data, pars, marg.M)
+  HPD <- t(post.HPD(Data, pars, marg.M, alpha))
 
-  mod.mat <- list()
-  k <- length(xvec)-1
-  j <- 1
-
-  while(k > 0) {
-    mod.mat[[j]] <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))[
-        order(rowSums(as.matrix(expand.grid( rep(list(c(0,1)), k) )))),]
-
-    k <- k - 1
-    j <- j + 1
-  }
-
-  if( is.na(INITIAL[1]) ) {
-    M.init <- diag(1,length(xvec))
-  } else {
-    M.init <- INITIAL
-  }
-
-  MOld <- M.init
-  d <- length(xvec)
-
-  for(i in 1:(d-1)) {
-    for(k in (i+1):d) {
-      if (MOld[i,k]!=MOld[k,i]) {
-        MOld[i,k]<-MOld[k,i]<-rbinom(1,1,0.5)
-      }
-    }
-  }
-
-  logDenOld <- logMarg.DensSA(MOld, mod.mat, xvec, nvec, avec, bvec)
-  for(iter in 1:10000) {
-    changed <- FALSE
-    for(i in 1:(d-1)) {
-      for(k in (i+1):d) {
-        loc <- c(k,i)
-        MNew <- MOld
-        MNew[loc[1],loc[2]] <- MNew[loc[2],loc[1]] <- 1 - MOld[loc[1],loc[2]]
-        logDenNew <- logMarg.DensSA(MNew, mod.mat, xvec, nvec, avec, bvec)
-        if (logDenNew > logDenOld) {
-          MOld <- MNew
-          changed <- TRUE
-          logDenOld <- logDenNew
-        }
-      }
-    }
-    if (!changed) {
-      break
-    }
-  }
-
-  colnames(M.init) <- rownames(M.init) <- xvec
-  colnames(MOld) <- rownames(MOld) <- xvec
   if (is.null(call)) {
     call <- match.call()
-  } 
-  ret <- list(call = call, mod.mat = mod.mat, init=M.init, maximizer=MOld)
-  ret$CDF <- MEM.cdf(list(X=xvec, N=nvec), pars, p0, ret)
-  ret$ESS <- post.ESS(list(X=xvec, N=nvec), pars, ret)
-  ret$HPD <- t(post.HPD(list(X=xvec, N=nvec), pars, ret, alpha))
-  ret$U <- MEM.w(list(X=xvec, N=nvec), pars, ret)
-  ret$responses <- responses
-  ret$size <- size
-  ret$shape1 <- shape1
-  ret$shape2 <- shape2
-  ret$pars <- pars
-  ret$name <- name
-
-  if (!is.character(name) || length(name) != length(size)) {
-    stop(paste("The basket name argument must be a character vector with",
-               "one name per basket."))
   }
+
+  browser()
+  ret <- list(marg.M = marg.M, maximizer = marg.M$maximizer, CDF = CDF,
+              ESS = ESS, HPD = HPD, responses = responses, size = size,
+              name = name, p0 = p0, shape1 = shape2, call = call,
+              U = MEM.w(Data, pars, marg.M))
 
   class(ret) <- c("empirical_bayes", "exchangeability_model")
   ret$samples <- sample_posterior(ret)

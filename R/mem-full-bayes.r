@@ -151,17 +151,6 @@ mem_full_bayes <- function(
     replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ), 
     alp)
 
-  # TODO: check with Brian to make sure this is correct.
-#  median_est <- vapply(pweights, 
-#    function(w) {
-#      quantile(replicate(10000, samp.Post(xvec, nvec, models, w)), 0.5)
-#    }, as.numeric(NA))
-
-#  mean_est <- vapply(pweights, 
-#    function(w) {
-#      mean(replicate(10000, samp.Post(xvec, nvec, models, w)))
-#    }, as.numeric(NA))
-
   if (missing(name)) {
     name <- NULL
   } else {

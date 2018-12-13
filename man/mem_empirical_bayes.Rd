@@ -5,9 +5,8 @@
 \title{MEM Empirical Bayes}
 \usage{
 mem_empirical_bayes(responses, size, name = NULL, p0 = 0.25,
-  shape1 = 0.5, shape2 = 0.5, prior_inclusion = diag(1,
-  length(responses)), alpha = 0.05, upper_bound = 1, lower_bound = 0,
-  call = NULL)
+  shape1 = 0.5, shape2 = 0.5, alpha = 0.05, upper_bound = 1,
+  lower_bound = 0, call = NULL)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -24,10 +23,6 @@ mem_empirical_bayes(responses, size, name = NULL, p0 = 0.25,
 
 \item{shape2}{the second shape parameter(s) for the prior of each basket
 (default 0.5).}
-
-\item{prior_inclusion}{the matrix giving the prior inclusion probability
-for each pair of baskets. The default is on on the main diagonal and 0.5
-elsewhere.}
 
 \item{alpha}{the trial significance.}
 
