@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: c(
   person("Brian", "Hobbs",
          email = "bhobbs@presagia.ai",
@@ -15,3 +15,7 @@ Encoding: UTF-8
 Imports: foreach, GenSA, rjags, ggplot2, stats, GGally
 LazyData: true
 RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

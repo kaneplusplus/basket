@@ -1,5 +1,6 @@
+^Meta$
+^doc$
 ^CRAN-RELEASE$
-vignettes
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
@@ -10,4 +11,3 @@ vignettes
 ^cran-comments\.md$
 ^appveyor\.yml$
 ^codecov\.yml$
-^vignettes$

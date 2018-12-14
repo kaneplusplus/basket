@@ -29,6 +29,15 @@ basket_name.exchangeability_model <- function(model) {
   ret
 }
 
+#' @export 
+cluster_mean <- function(x, method = "maximizer") {
+  UseMethod("cluster_mean", x)
+}
+
+#' @export
+cluster_mean.exchangeability_model <- function(x, method = "maximizer") {
+}
+
 #' @export
 mean.exchangeability_model <- function(model) {
   model$mean_est
