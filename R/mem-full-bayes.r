@@ -44,7 +44,7 @@ mem_full_bayes <- function(
   alpha = 0.05,
   call = NULL) {
 
-  if (is.null(getDoParName()) {
+  if (is.null(getDoParName())) {
     registerDoSEQ()
   }
 
