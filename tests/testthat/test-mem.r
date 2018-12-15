@@ -1,0 +1,42 @@
+context("fit MEM models")
+
+# Load the reference outputs.
+data(eb_reference)
+data(eb_reference_ub)
+data(fb_reference)
+data(vemu_wide)
+
+# Full Bayes
+fb <- mem_full_bayes(responses = vemu_wide$responders, 
+                     size = vemu_wide$evaluable,
+                     name = vemu_wide$baskets)
+
+expect_equal(fb$maximizer, fb_reference$maximizer)
+expect_equal(fb$PEP, fb_reference$PEP)
+expect_equal(fb$HPD, fb_reference$HPD, tolerance = 1e-2)
+expect_equal(fb$CDF, fb_reference$CDF)
+expect_equal(fb$ESS, fb_reference$ESS)
+
+# Empirical Bayes
+eb <- mem_empirical_bayes(responses = vemu_wide$responders,
+                          size = vemu_wide$evaluable,
+                          name = vemu_wide$baskets)
+
+expect_equal(eb$maximizer, eb_reference$maximizer)
+expect_equal(eb$PEP, eb_reference$PEP)
+expect_equal(eb$HPD, eb_reference$hpd, tolerance = 1e-2)
+expect_equal(eb$CDF, eb_reference$cdf)
+expect_equal(eb$ESS, eb_reference$ess)
+                       
+# Constrained Empirical Bayes
+ebc <- mem_empirical_bayes(responses = vemu_wide$responders,
+                           size = vemu_wide$evaluable,
+                           name = vemu_wide$baskets,
+                           upper_bound = 0.2)
+
+expect_equal(ebc$maximizer, eb_reference_ub$maximizer)
+expect_equal(ebc$PEP, eb_reference_ub$PEP)
+expect_equal(ebc$HPD, eb_reference_ub$hpd, tolerance = 1e-2)
+expect_equal(ebc$CDF, eb_reference_ub$cdf)
+expect_equal(ebc$ESS, eb_reference_ub$ess)
+                       
