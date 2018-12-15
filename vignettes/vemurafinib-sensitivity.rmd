@@ -23,11 +23,6 @@ library(basket)
 library(tibble)
 library(dplyr)
 
-# Set to sequential execution to get rid of warning.
-if (require(foreach)) {
-  foreach::registerDoSEQ()
-}
-
 # Take a look at the Vemurafinib data.
 data(vemu_wide)
 vemu_wide %>% glimpse

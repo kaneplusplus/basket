@@ -39,8 +39,8 @@ cluster_mean.exchangeability_model <- function(x, method = "maximizer") {
 }
 
 #' @export
-mean.exchangeability_model <- function(model) {
-  model$mean_est
+mean.exchangeability_model <- function(x, ...) {
+  x$mean_est
 }
 
 #' @export

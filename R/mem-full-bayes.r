@@ -30,6 +30,7 @@
 #' 
 #' mem_full_bayes(trials$responses, trials$size)
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
+#' @importFrom stats median
 #' @export
 mem_full_bayes <- function(
   responses, 

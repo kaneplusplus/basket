@@ -30,7 +30,7 @@
 #'                      size = trial_sizes)
 #' 
 #' mem_empirical_bayes(trials$responses, trials$size)
-#' @importFrom stats quantile rbinom
+#' @importFrom stats quantile rbinom median
 #' @export
 mem_empirical_bayes <- function(
   responses, 

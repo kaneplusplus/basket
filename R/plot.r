@@ -18,6 +18,7 @@ plot_density.default <- function(x, ...) {
 #' @export
 plot_density.exchangeability_model <- function(x, ...) {
   dots <- list(...)
+  Basket <- Density <- NULL
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
 
   if ("basket_levels" %in% names(dots)) {
@@ -86,6 +87,7 @@ plot_exchangeability.default <- function(x, ...) {
 }
 
 #' @importFrom GGally ggcorr
+#' @importFrom stats runif
 #' @export
 plot_exchangeability.exchangeability_model <- function(x, ...) {
   mat <- x$maximizer
