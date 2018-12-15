@@ -29,7 +29,7 @@
 #'                      size = trial_sizes)
 #' 
 #' mem_full_bayes(trials$responses, trials$size)
-#' @importFrom foreach foreach %dopar%
+#' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' @export
 mem_full_bayes <- function(
   responses, 
@@ -43,6 +43,10 @@ mem_full_bayes <- function(
                              ncol = length(responses)),
   alpha = 0.05,
   call = NULL) {
+
+  if (is.null(getDoParName()) {
+    registerDoSEQ()
+  }
 
   if (length(responses) != length(size)) {
     stop(paste("The length of the responses and size parameters",
