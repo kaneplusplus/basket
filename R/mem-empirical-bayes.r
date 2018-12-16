@@ -11,7 +11,7 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param alpha the trial significance.
+#' @param hpd_alpha the highest posterior density trial significance.
 #' @param upper_bound for constrained empirical Bayes, the upper bound on the
 #' inclusion probability (default 1).
 #' @param lower_bound for constrained empirical Bayes, the lower bound on the
@@ -31,6 +31,7 @@
 #' 
 #' mem_empirical_bayes(trials$responses, trials$size)
 #' @importFrom stats quantile rbinom median
+#' @importFrom foreach getDoParName registerDoSEQ
 #' @export
 mem_empirical_bayes <- function(
   responses, 
@@ -39,12 +40,16 @@ mem_empirical_bayes <- function(
   p0 = 0.25, # Null response rate for Posterior Probability Calc.
   shape1 = 0.5, 
   shape2 = 0.5, 
-  alpha = 0.05, 
+  hpd_alpha = 0.05, 
   upper_bound = 1, 
   lower_bound = 0, 
   call = NULL) {
 
   pars <- list(UB = upper_bound, LB = lower_bound)
+
+  if (is.null(getDoParName())) {
+    registerDoSEQ()
+  }
 
   if (length(responses) != length(size)) {
     stop(paste("The length of the responses and size parameters",
@@ -62,7 +67,7 @@ mem_empirical_bayes <- function(
   marg.M <- MEM_marginal(Data$X, Data$N, shape1, shape2)
   CDF <- MEM.cdf(Data, pars, p0, marg.M)
   ESS <- post.ESS(Data, pars, marg.M)
-  HPD <- t(post.HPD(Data, pars, marg.M, alpha))
+  HPD <- t(post.HPD(Data, pars, marg.M, hpd_alpha))
 
   if (is.null(call)) {
     call <- match.call()

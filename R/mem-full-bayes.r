@@ -14,7 +14,7 @@
 #' @param prior_inclusion the matrix giving the prior inclusion probability
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
-#' @param alpha the trial significance.
+#' @param hpd_alpha the highest posterior density trial significance.
 #' @param call the call of the function (default NULL).
 #' @examples
 #' # 5 baskets, each with enrollement size 5
@@ -42,7 +42,7 @@ mem_full_bayes <- function(
   prior_inclusion = diag(length(responses))/2 + 
                       matrix(0.5, nrow = length(responses), 
                              ncol = length(responses)),
-  alpha = 0.05,
+  hpd_alpha = 0.05,
   call = NULL) {
 
   if (is.null(getDoParName())) {
@@ -64,7 +64,7 @@ mem_full_bayes <- function(
     bvec <- shape2
   }
   pr.Inclus <- prior_inclusion
-  alp <- alpha
+  alp <- hpd_alpha
 
   xvec <- responses
   nvec <- size
@@ -72,7 +72,6 @@ mem_full_bayes <- function(
   k <- length(xvec)-1
   j <- 1
 
-  # TODO: turn this into a foreach loop
   while (k > 0) { 
     m <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))
 

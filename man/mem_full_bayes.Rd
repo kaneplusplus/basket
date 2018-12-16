@@ -7,7 +7,7 @@
 mem_full_bayes(responses, size, name, p0 = 0.25, shape1 = 0.5,
   shape2 = 0.5, prior_inclusion = diag(length(responses))/2 +
   matrix(0.5, nrow = length(responses), ncol = length(responses)),
-  alpha = 0.05, call = NULL)
+  hpd_alpha = 0.05, call = NULL)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -29,7 +29,7 @@ mem_full_bayes(responses, size, name, p0 = 0.25, shape1 = 0.5,
 for each pair of baskets. The default is on on the main diagonal and 0.5
 elsewhere.}
 
-\item{alpha}{the trial significance.}
+\item{hpd_alpha}{the highest posterior density trial significance.}
 
 \item{call}{the call of the function (default NULL).}
 }

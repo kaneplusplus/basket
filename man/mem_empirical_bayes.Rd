@@ -5,7 +5,7 @@
 \title{MEM Empirical Bayes}
 \usage{
 mem_empirical_bayes(responses, size, name = NULL, p0 = 0.25,
-  shape1 = 0.5, shape2 = 0.5, alpha = 0.05, upper_bound = 1,
+  shape1 = 0.5, shape2 = 0.5, hpd_alpha = 0.05, upper_bound = 1,
   lower_bound = 0, call = NULL)
 }
 \arguments{
@@ -24,7 +24,7 @@ mem_empirical_bayes(responses, size, name = NULL, p0 = 0.25,
 \item{shape2}{the second shape parameter(s) for the prior of each basket
 (default 0.5).}
 
-\item{alpha}{the trial significance.}
+\item{hpd_alpha}{the highest posterior density trial significance.}
 
 \item{upper_bound}{for constrained empirical Bayes, the upper bound on the
 inclusion probability (default 1).}

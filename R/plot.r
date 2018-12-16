@@ -64,15 +64,62 @@ plot_posterior_exchangeability.default <- function(x, ...) {
              "with an object of type", class(x)))
 }
 
-#' @importFrom GGally ggcorr
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr mutate %>%
+#' @importFrom tidyr gather
+#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient2 theme_minimal
+#' theme element_text coord_fixed scale_x_discrete scale_y_discrete 
+#' geom_text labs guides element_blank guide_colorbar
+exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
+                          expand = c(0.3, 0.3), text_size = 4,
+                          legend_position = c(0.3, 0.9)) {
+
+  if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
+    stop("The matrix supplied must be symmetric in the values and names.")
+  }
+
+  mg <- as_tibble(mat) %>% 
+    mutate(V1 = rownames(mat)) %>% 
+    gather(key = V2, value = value, -V1) %>%
+    na.omit
+
+  label_pos <- tibble(x = seq_len(nrow(mat)) - 1, y = seq_len(nrow(mat)), 
+                      label = colnames(mat))
+  ggplot(mg, aes(V2, V1, fill = value)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient2(low = low, high = high, mid = mid,
+                         midpoint = 0.5, limit = c(0, 1), space = "Lab",
+                         name = "Exchangeability") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 0, vjust = 0,
+                                     size = 10, hjust = 0, color="#666666"))+
+    theme(axis.text.y = element_text(angle = 0, vjust = 0,
+                                    size = 10, hjust = 0, color="#666666"))+
+    coord_fixed() +
+    scale_x_discrete(labels = NULL, expand = expand) +
+    scale_y_discrete(labels = NULL) +
+    geom_text(aes(V2, V1, label = value), data = mg, color = "white", 
+              size = text_size) +
+    geom_text(aes(x = x, y = y, label = label), data = label_pos, 
+              inherit.aes = FALSE, size = text_size) +
+    labs(x = "", y = "") +
+    theme(panel.grid.major = element_blank(), panel.border = element_blank(),
+          panel.background = element_blank(), axis.ticks = element_blank(),
+          legend.position = legend_position, legend.direction = "horizontal") +
+    guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+           title.position = "top", title.hjust = 0.5))
+}
+
 #' @export
 plot_posterior_exchangeability.full_bayes <- function(x, ...) {
-  mat <- x$PEP
-  mat[is.na(mat)] <- 0
-  diag(mat) <- diag(mat) / 2
-  mat <- mat + t(mat)
-  dimnames(mat) <- list(x$name, x$name)
-  ggcorr(data = NULL, cor_matrix = mat, midpoint = 0.5, limits = c(0, 1), ...)
+  mat <- round(x$PEP, 3)
+  if (!is.null(basket_name(x))) {
+    dimnames(mat) <- list(basket_name(x), basket_name(x))
+  } else {
+    dn <- paste("Basket", seq_len(nrow(mat)))
+    dimnames(mat) <- list(dn, dn)
+  }
+  exchangeogram(mat, ...)
 }
 
 #' @export
@@ -86,19 +133,17 @@ plot_exchangeability.default <- function(x, ...) {
              "with an object of type", class(x)))
 }
 
-#' @importFrom GGally ggcorr
-#' @importFrom stats runif
 #' @export
 plot_exchangeability.exchangeability_model <- function(x, ...) {
-  mat <- x$maximizer
-  dimnames(mat) <- list(x$name, x$name)
-  if (sum(mat == 1) > 0) {
-    mat[mat == 1] <- runif(sum(mat == 1), 0.99, 1)
+  mat <- round(x$maximizer, 3)
+  mat[lower.tri(mat)] <- NA
+  if (!is.null(basket_name(x))) {
+    dimnames(mat) <- list(x$name, x$name)
+  } else {
+    dn <- paste("Basket", seq_len(nrow(mat)))
+    dimnames(mat) <- list(dn, dn)
   }
-  if (sum(mat == 0) > 0) {
-    mat[mat == 0] <- runif(sum(mat == 0), 0, 0.01)
-  }
-  ggcorr(data = NULL, cor_matrix = mat, midpoint = 0.5, limits = c(0, 1), ...)
+  exchangeogram(mat, ...)
 }
 
 
