@@ -1,5 +1,13 @@
 
 
+#' @title Plot the Densities of Baskets in a Trial
+#'
+#' @description TODO: WRITE THIS
+#' @details TODO WRITE THIS TALK ABOUT ... OPTIONS 
+#' @param x the exchangeability model.
+#' @param ... other options. See Details for more information.
+#' @examples
+#' # TODO: WRITE THIS
 #' @importFrom tidyr gather
 #' @importFrom tibble as_tibble
 #' @export
@@ -32,14 +40,6 @@ plot_density.exchangeability_model <- function(x, ...) {
     basket_colors <- dots$basket_colors
   } else {
     basket_colors <- rep("black", length(x$responses))
-#    if (length(levels(d$Basket)) == 1) {
-#      basket_colors <- rainbow(3)[1]
-#    }
-#    else if (length(levels(d$Basket)) == 2) {
-#      basket_colors <- rainbow(3)[-2]
-#    } else {
-#      basket_colors <- rainbow(length(levels(d$Basket)))
-#    }
   }
   ggplot(d, aes(x = Density, fill = Basket)) + 
     geom_density(alpha = 0.7) +
@@ -53,6 +53,14 @@ plot_density.exchangeability_model <- function(x, ...) {
     
 }
 
+#' @title Plot the Posterior Exchangeability of a Basket Trial
+#' 
+#' @description TODO: WRITE THIS
+#' @param x the exchangeability model.
+#' @param ... other options. See Details for more information.
+#' @details TODO: WRITE THIS
+#' @examples
+#' # WRITE THIS
 #' @export
 plot_posterior_exchangeability <- function(x, ...) {
   UseMethod("plot_posterior_exchangeability")
@@ -64,7 +72,8 @@ plot_posterior_exchangeability.default <- function(x, ...) {
              "with an object of type", class(x)))
 }
 
-#' @importFrom tibble as_tibble
+#' @importFrom stats na.omit
+#' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr mutate %>%
 #' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient2 theme_minimal
@@ -77,6 +86,8 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop("The matrix supplied must be symmetric in the values and names.")
   }
+
+  V2 <- value <- V1 <- x <- y <- label <- NULL
 
   mg <- as_tibble(mat) %>% 
     mutate(V1 = rownames(mat)) %>% 
@@ -122,6 +133,14 @@ plot_posterior_exchangeability.full_bayes <- function(x, ...) {
   exchangeogram(mat, ...)
 }
 
+#' @title Plot the Map Exchangeability of a Basket Trial
+#' 
+#' @description TODO: WRITE THIS
+#' @param x the exchangeability model.
+#' @param ... other options. See Details for more information.
+#' @details TODO: WRITE THIS
+#' @examples
+#' # WRITE THIS
 #' @export
 plot_exchangeability <- function(x, ...) {
   UseMethod("plot_exchangeability")

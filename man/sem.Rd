@@ -8,6 +8,32 @@ sem(responses, size, name, p0 = 0.25, mu = 0, M = 0, inv_sig = 1,
   num_chains = 3, quiet = TRUE, num_iterations = 3000,
   progress_bar = interactive())
 }
+\arguments{
+\item{responses}{the number of responses in each basket.}
+
+\item{size}{the size of each basket.}
+
+\item{name}{the name of each basket (default: NULL - no basket names).}
+
+\item{p0}{the null response rate for the poster probability calculation
+(default 0.25).}
+
+\item{mu}{WHAT IS THIS?}
+
+\item{M}{WHAT IS THIS?}
+
+\item{inv_sig}{WHAT IS THIS?}
+
+\item{num_chains}{the number of MCMC chains to run.}
+
+\item{quiet}{should the function be run with extra output messages? 
+Default: FALSE.}
+
+\item{num_iterations}{the number MCMC steps to take per chain.}
+
+\item{progress_bar}{shoud the progress bar be shown during execution?
+Default: interactive()}
+}
 \description{
 Fit the single source model.
 }

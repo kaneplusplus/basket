@@ -1,16 +1,36 @@
 library(basket)
 library(tibble)
 library(dplyr)
+library(profvis)
+library(microbenchmark)
 
 # Load the vemurafinib data for analysis.
 data(vemu_wide)
 vemu_wide
 
-# Fit the MEM model using Empirical Bayes.
-eb <- mem_empirical_bayes(responses = vemu_wide$responders, 
-                          size = vemu_wide$evaluable,
-                          name = vemu_wide$baskets,
-                          p0 = 0.15)
+profvis({
+  # Fit the MEM model using Empirical Bayes.
+  eb <- mem_empirical_bayes(responses = vemu_wide$responders, 
+                            size = vemu_wide$evaluable,
+                            name = vemu_wide$baskets,
+                            p0 = 0.15)
+})
+
+registerDoSEQ()
+microbenchmark({
+  eb <- mem_empirical_bayes(responses = vemu_wide$responders, 
+                            size = vemu_wide$evaluable,
+                            name = vemu_wide$baskets,
+                            p0 = 0.15)
+}, times = 10)
+
+registerDoMC()
+microbenchmark({
+  eb <- mem_empirical_bayes(responses = vemu_wide$responders, 
+                            size = vemu_wide$evaluable,
+                            name = vemu_wide$baskets,
+                            p0 = 0.15)
+}, times = 10)
 eb
 
 # Plot the posteriors
@@ -19,11 +39,19 @@ plot_density(eb)
 plot_exchangeability(eb, size = 3, label = TRUE)
 
 # Fit the MEM model using full Bayes.
-fb <- mem_full_bayes(responses = vemu_wide$responders, 
-                     size = vemu_wide$evaluable,
-                     name = vemu_wide$baskets,
-                     p0 = 0.15)
+profvis({
+  fb <- mem_full_bayes(responses = vemu_wide$responders, 
+                       size = vemu_wide$evaluable,
+                       name = vemu_wide$baskets,
+                       p0 = 0.15)
+})
 
+microbenchmark({
+  fb <- mem_full_bayes(responses = vemu_wide$responders, 
+                       size = vemu_wide$evaluable,
+                       name = vemu_wide$baskets,
+                       p0 = 0.15)
+}, times = 10)
 
 # Plot the posteriors
 plot_density(fb)

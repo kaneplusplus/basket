@@ -72,28 +72,28 @@ mem_full_bayes <- function(
   k <- length(xvec)-1
   j <- 1
 
-  while (k > 0) { 
+  mod.mat <- foreach(k = rev(seq_len(length(xvec) - 1))) %do% {
     m <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))
-
-    mod.mat[[j]] <- m[order(rowSums(m)),]
-#( as.matrix(expand.grid( rep(list(c(0,1)), k) )) )[order(rowSums(as.matrix(expand.grid( rep(list(c(0,1)), k) )))),]
-    k <- k - 1
-    j <- j + 1 
+    m[order(rowSums(m)),]
   }
 
   H <- length(mod.mat)
-  temp <- list()
-  
-  for (h in 1:(H-1)) {
-    temp[[h]] <- 1:dim(mod.mat[[h]])[1] 
+  temp <- foreach(h = seq_len(H-1)) %do% {
+    seq_len(dim(mod.mat[[h]])[1])
   }
   temp[[H]] <- 1:2
-  Mod.I <- as.matrix(expand.grid( temp ))
+
+  Mod.I <- as.matrix(expand.grid(temp))
 
   ## identify maximizer of marginal density ##
-  log.Marg <- apply(Mod.I, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, 
-                    nvec, avec, bvec)
+  log.Marg <- foreach(mod_i = isplitRows(Mod.I, chunks = num_workers()),
+                      .combine = c) %dopar% {
+    apply(mod_i, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, avec, bvec)
+  }
 
+#  log.Marg <- apply(Mod.I, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, 
+#                    nvec, avec, bvec)
+#
   max.i <- order(log.Marg, decreasing=TRUE)[1]
 
   MAX <- MEM.mat(Mod.I[max.i,], mod.mat, length(xvec))
@@ -120,6 +120,7 @@ mem_full_bayes <- function(
   PEP <- t(PEP.)
 
   ## Marginal CDF and ESS ##
+  # Here's where all of the compute goes.
   pweights <- foreach(j = 1:length(xvec), .combine = list, 
                       .multicombine = TRUE) %dopar% {
     post.Weights(j, length(xvec), Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR)

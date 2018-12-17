@@ -10,6 +10,10 @@ prob <- rep(0.15, nrow(vemu_wide))
 
 p0 <- 0.25
 
+# Only test the first 3 baskets to save time.
+baskets <- 1:3
+vemu_wide <- vemu_wide[baskets,]
+
 # EB unconstrained.
 marg_m <- MEM_marginal(vemu_wide$responders, vemu_wide$evaluable,
                        rep(0.5, nrow(vemu_wide)),

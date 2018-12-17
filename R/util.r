@@ -1,4 +1,8 @@
 
+#' @importFrom foreach getDoParWorkers
+num_workers <- function(factor = 1) {
+  getDoParWorkers() * factor
+}
 
 boa.hpd <- function(x, alpha) {
   n <- length(x)
@@ -133,33 +137,34 @@ MEM_marginalPE <- function(xvec, nvec, avec, bvec, INITIAL, Lambda){
   list(mod.mat = mod.mat, init=M.init, maximizer=M.out)
 }
 
+#' @importFrom itertools isplitRows
 MEM_marginal <- function(xvec, nvec, avec, bvec) {
   ###Function to calculate the MEM marginal densities for binomial data with beta(alpha,beta) prior
   #xvec: vector with counts of those with event (primary source first, supplemental afterwards)
   #nvec: vector of total number of subjects
   #avec: vector of alpha parameters for beta priors for each source
   #bvec: vector of beta parameters for beta priors for each source
-  
-  mod.mat <- list()
-  k <- length(xvec) - 1
-  j <- 1
-  while(k > 0) { 
-    mod.mat[[j]] <- (as.matrix(expand.grid( rep(list(c(0,1)), k) )))[
-      order(rowSums(as.matrix(expand.grid( rep(list(c(0,1)), k) )))),] 
-    k <- k - 1
-    j <- j + 1 
+ 
+  mod.mat <- foreach(k = rev(seq_len(length(xvec) - 1))) %do% {
+    m <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))
+    m[order(rowSums(m)),]
   }
+ 
   H <- length(mod.mat)
-  temp <- list()
-  for(h in 1:(H-1)) { 
-    temp[[h]] <- 1:dim(mod.mat[[h]])[1] 
+  temp <- foreach(h = seq_len(H-1)) %do% {
+    seq_len(dim(mod.mat[[h]])[1])
   }
+  temp[[H]] <- 1:2
+
   temp[[H]] <- 1:2
   Mod.I <- as.matrix(expand.grid( temp ))
 
   # identify maximizer of marginal density ##
-  log.Marg <- apply(Mod.I, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, 
-                    avec, bvec)
+
+  log.Marg <- foreach(mod_i = isplitRows(Mod.I, chunks = num_workers()), 
+                      .combine = c) %dopar% {
+    apply(mod_i, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, avec, bvec)
+  }
   o <- order(log.Marg,decreasing=TRUE)[1]
 
   MAX <- matrix(NA, length(xvec), length(xvec) )
@@ -242,11 +247,14 @@ post.HPD <- function(Data, pars, marg.M, alp) {
   K <- length(Data$X)
 
   out <- rbind(out,
-    foreach(j = 2:(K-1), .combine = rbind) %do% {
-      Ii <- c(j,1:(j-1),(j+1):K)
-      boa.hpd(replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models,
-                        U$weights[[j]])),
-              alp)
+    foreach(js = isplitVector(2:(K-1), chunks = num_workers()),
+            .combine = rbind) %dopar% {
+      foreach(j = js, .combine = rbind) %do% {
+        Ii <- c(j,1:(j-1),(j+1):K)
+        boa.hpd(replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models,
+                          U$weights[[j]])),
+                alp)
+      }
     })
 
 #  for(j in 2:(K-1)) { 
@@ -268,14 +276,19 @@ post.HPD <- function(Data, pars, marg.M, alp) {
   out
 }
 
+#' @importFrom itertools isplitVector
+#' @importFrom foreach foreach %dopar%
 post.ESS <- function(Data, pars, marg.M) {
   U <- MEM.w(Data,pars,marg.M)
   out <- U$weights[[1]]%*%ESS( Data$X, Data$N, U$models )
   K <- length(Data$X)
   out <- c(out,
-    foreach(j = 2:(K-1), .combine = c) %do% {
-      Ii <- c(j, 1:(j-1), (j+1):K)
-      U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models)
+    foreach(js = isplitVector(2:(K-1), chunks = num_workers()),
+            .combine = c) %dopar% {
+      foreach(j = js, .combine = c) %do% {
+        Ii <- c(j, 1:(j-1), (j+1):K)
+        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models)
+      }
     })
 #  for(j in 2:(K-1)){ 
 #    Ii <- c(j,1:(j-1),(j+1):K)
@@ -468,7 +481,8 @@ MEM.w <- function(Data, pars, marg.M) {
   list(models = models, weights = weights) 
 }
 
-#' @importFrom foreach foreach %do%
+#' @importFrom foreach foreach %dopar%
+#' @importFrom itertools isplitVector
 MEM.cdf <- function(Data, pars, p0, marg.M) {
   pr.Inclus <- pars$UB*marg.M$maximizer
   diag(pr.Inclus) <- rep(1,nrow(pr.Inclus))
@@ -482,9 +496,12 @@ MEM.cdf <- function(Data, pars, p0, marg.M) {
   out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]])
   K <- length(Data$X)
   out <- c(out,
-    foreach(j = 2:(K-1), .combine = c) %do% {
-      Ii <- c(j,1:(j-1),(j+1):K)
-      eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])      
+    foreach(js = isplitVector(2:(K-1), chunks = num_workers()),
+            .combine = c) %dopar% {
+      foreach(j = js, .combine = c) %do% {
+        Ii <- c(j,1:(j-1),(j+1):K)
+        eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])      
+      }
     })
 #  for(j in 2:(K-1)) { 
 #    Ii <- c(j,1:(j-1),(j+1):K)

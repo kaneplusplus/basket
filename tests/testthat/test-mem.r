@@ -6,6 +6,10 @@ data(eb_reference_ub)
 data(fb_reference)
 data(vemu_wide)
 
+baskets <- 1:3
+
+vemu_wide <- vemu_wide[baskets,]
+
 # Full Bayes
 fb <- mem_full_bayes(responses = vemu_wide$responders, 
                      size = vemu_wide$evaluable,

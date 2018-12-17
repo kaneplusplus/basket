@@ -2,6 +2,20 @@
 #' @title Single-Source Model
 #'
 #' @description Fit the single source model.
+#' @param responses the number of responses in each basket.
+#' @param size the size of each basket.
+#' @param name the name of each basket (default: NULL - no basket names).
+#' @param p0 the null response rate for the poster probability calculation
+#' (default 0.25).
+#' @param mu WHAT IS THIS?
+#' @param M WHAT IS THIS?
+#' @param inv_sig WHAT IS THIS?
+#' @param num_chains the number of MCMC chains to run.
+#' @param quiet should the function be run with extra output messages? 
+#' Default: FALSE.
+#' @param num_iterations the number MCMC steps to take per chain.
+#' @param progress_bar shoud the progress bar be shown during execution?
+#' Default: interactive()
 #' @references Berry SM, Broglio KR, Groshen S, Berry DA. Bayesian 
 #' hierarchical modeling of patient subpopulations: efficient designs of 
 #' phase II oncology clinical trials. Clinical Trials. 2013 Oct;10(5):720-34.
