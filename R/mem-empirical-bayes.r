@@ -85,14 +85,14 @@ mem_empirical_bayes <- function(
   ret
 }
 
-#' @importFrom foreach foreach %do%
+#' @importFrom foreach foreach %dopar%
 #' @export
 sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
   ret <- replicate(num_samples, samp.Post(model$responses, model$size,
                    model$U$models, model$U$weights[[1]]))
   K <- length(model$responses)
   ret <- rbind(ret, 
-    foreach(j = 2:(K-1), .combine = rbind) %do% {
+    foreach(j = 2:(K-1), .combine = rbind) %dopar% {
       Ii <- c(j,1:(j-1),(j+1):K)
       replicate(num_samples, 
                 samp.Post(model$responses[Ii], model$size[Ii],

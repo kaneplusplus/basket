@@ -25,4 +25,5 @@ TODO FINISH THIS
 }
 \examples{
 # WRITE THIS
+# fit <- basket(responders ~ evaluable | basket, data = vemu_wide)
 }

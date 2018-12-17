@@ -81,7 +81,8 @@ plot_posterior_exchangeability.default <- function(x, ...) {
 #' geom_text labs guides element_blank guide_colorbar
 exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
                           expand = c(0.3, 0.3), text_size = 4,
-                          legend_position = c(0.3, 0.9)) {
+                          legend_position = c(0.25, 0.8),
+                          basket_name_hoffset = 0) {
 
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop("The matrix supplied must be symmetric in the values and names.")
@@ -89,18 +90,22 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 
   V2 <- value <- V1 <- x <- y <- label <- NULL
 
+  baskets <- unique(colnames(mat))
   mg <- as_tibble(mat) %>% 
     mutate(V1 = rownames(mat)) %>% 
     gather(key = V2, value = value, -V1) %>%
-    na.omit
+    na.omit %>%
+    mutate(V1 = factor(V1, levels = baskets),
+           V2 = factor(V2, levels = baskets))
+  
 
-  label_pos <- tibble(x = seq_len(nrow(mat)) - 1, y = seq_len(nrow(mat)), 
-                      label = colnames(mat))
+  label_pos <- tibble(x = seq_len(nrow(mat)) - 1 + basket_name_hoffset, 
+                      y = seq_len(nrow(mat)), label = colnames(mat))
   ggplot(mg, aes(V2, V1, fill = value)) +
     geom_tile(color = "white") +
     scale_fill_gradient2(low = low, high = high, mid = mid,
                          midpoint = 0.5, limit = c(0, 1), space = "Lab",
-                         name = "Exchangeability") +
+                         name = "Probability") +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 0, vjust = 0,
                                      size = 10, hjust = 0, color="#666666"))+
@@ -130,7 +135,10 @@ plot_posterior_exchangeability.full_bayes <- function(x, ...) {
     dn <- paste("Basket", seq_len(nrow(mat)))
     dimnames(mat) <- list(dn, dn)
   }
-  exchangeogram(mat, ...)
+  exchangeogram(mat, ...) + 
+    ggtitle("Posterior Exchangeability Probability") +
+    theme(plot.title = element_text(family = "Trebuchet MS", color="#666666", 
+                                    face="bold", size=20, hjust=0.35))
 }
 
 #' @title Plot the Map Exchangeability of a Basket Trial
@@ -152,6 +160,7 @@ plot_exchangeability.default <- function(x, ...) {
              "with an object of type", class(x)))
 }
 
+#' @importFrom ggplot2 ggtitle element_text theme
 #' @export
 plot_exchangeability.exchangeability_model <- function(x, ...) {
   mat <- round(x$maximizer, 3)
@@ -162,7 +171,10 @@ plot_exchangeability.exchangeability_model <- function(x, ...) {
     dn <- paste("Basket", seq_len(nrow(mat)))
     dimnames(mat) <- list(dn, dn)
   }
-  exchangeogram(mat, ...)
+  exchangeogram(mat, ...) + 
+    ggtitle("Maximum A Posteriori MEM") +
+    theme(plot.title = element_text(family = "Trebuchet MS", color="#666666", 
+                                    face="bold", size=25, hjust=0.5))
 }
 
 

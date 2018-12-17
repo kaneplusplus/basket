@@ -24,6 +24,7 @@ sample_posterior <- function(model, num_samples = 10000) {
 #' \code{method} argument.
 #' @examples
 #' # WRITE THIS
+#' # fit <- basket(responders ~ evaluable | basket, data = vemu_wide)
 #' @export
 basket <- function(formula, data, p0, method = mem_empirical_bayes, ...) {
   stop("Not implemneted.")
