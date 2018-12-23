@@ -212,8 +212,9 @@ calc.ESS.from.HPDwid <- function(fit, alpha){ ## fit is list with median vec and
 
  mem_full_bayes_mcmc <- function(responses, size, name, null = 0.15, shape1 = 0.5, shape2 = 0.5, 
         Prior = diag(length(responses))/2 + matrix(0.5, nrow = length(responses), ncol = length(responses)),
-        HPD.alpha = 0.05, alternative = "greater", niter.MCMC = 10000, Initial = NA, call = NULL){
+        HPD.alpha = 0.05, alternative = "greater", niter.MCMC = 10000, Initial = NA, seed=1000, call = NULL){
 
+    set.seed(seed)
     if (is.null(getDoParName())) {
         registerDoSEQ()
     }

@@ -23,7 +23,8 @@ source("mem-updates.R")
 fit.MCMC.1 <- mem_full_bayes_mcmc(responses=Data$X, size=Data$N, name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
                                 null = 0.15, Initial = NA)
 
-init <- fit$maximizer
+#init <- fit$maximizer
+init <- dget("MCMCtestInitial.txt")
 fit.MCMC.2 <- mem_full_bayes_mcmc(responses=Data$X, size=Data$N, name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
                                 null = 0.15, Initial = init)
 
