@@ -56,6 +56,7 @@ logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
   sum(log(marg.vec))
 }
 
+
 logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
 
   marg.vec <- rep(NA, dim(M)[1])
@@ -64,8 +65,8 @@ logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
   prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) 
 
   for(i in 1:dim(M)[1]) { 
-    p.vec <- prod( prod.vec^(1-M[i,]) )
-    marg.vec[i] <- p.vec * 
+    p.vec <- prod(prod.vec^(1-M[i,]))
+    marg.vec[i] <-  
       ( beta(avec[i] + M[i,] %*% xvec, bvec[i] + M[i,] %*% (nvec-xvec)) / 
         beta(avec[i], bvec[i]) ) * p.vec
   } 
@@ -188,8 +189,8 @@ MEM_modweight <- function(mod.mat, source.vec) {
   # probabilities applied to each row of the symmetric source inclusion prior 
   # probabilities
   # mod.mat: matrix which specifies which supplemental sources are included 
-  #  for analysis of each subtype
-  #source.mat: rows of symmetric matrix of source inclusion probabilties for MEM
+  # for analysis of each subtype
+  # source.mat: rows of symmetric matrix of source inclusion probabilties for MEM
   
   s.in <- source.vec #source inclusion probability
   s.ex <- 1-source.vec #source exclusion probability
@@ -568,4 +569,161 @@ Power.bask <- function(ALT, thres, N, pars, p0) {
   list(PostProbThreshold=thres, 
        power=colSums(t(replicate(N.rep, genObs.bask(thres,ALT,N,pars,p0)))) /
              N.rep)
+}
+
+
+
+####################################################################
+#### Alternative Computation of ESS using HPD interval matching ####
+####################################################################
+#fit <- mem_full_bayes(responses = Data$X, size = Data$N, name = Data$Basket, p0 = 0.25, shape1 = 0.5, shape2 = 0.5, alpha = 0.05, call = NULL)
+
+euc.dist <- function(x1, x2, w=c(1,1)){ 
+  if( sum(is.na(x1))>1 ){ out <- Inf 
+  } else{ out <- sqrt(sum( w*((x1 - x2) ^ 2) ) ) }
+  return(out)
+}
+
+dist.beta.HPD <- function(ess, fit, alpha, jj){ return( euc.dist(fit$HPD[,jj], qbeta(c(alpha/2,1-alpha/2), fit$mean_est[jj]*ess, ess*(1-fit$mean_est[jj]))) ) }
+dist.beta.HPDwid <- function(ess, fit, alpha, jj){ return( abs( (fit$HPD[2,jj]-fit$HPD[1,jj])-(diff( qbeta(c(alpha/2,1-alpha/2), fit$median_est[jj]*ess, ess*(1-fit$median_est[jj])))) ) ) }
+
+ESS.from.HPD.i <- function(jj, fit, alpha){ library(GenSA)
+  opt <- GenSA::GenSA(par=1, fn=dist.beta.HPD, lower=0, upper=10000000, #control=list(maxit=pars$DTW.maxit), 
+                      fit=fit, alpha=alpha, jj=jj); return(opt$par) }
+
+ESS.from.HPDwid.i <- function(jj, fit, alpha){ library(GenSA)
+  opt <- GenSA::GenSA(par=1, fn=dist.beta.HPDwid, lower=0, upper=10000000, #control=list(maxit=pars$DTW.maxit), 
+                      fit=fit, alpha=alpha, jj=jj); return(opt$par) }
+
+calc.ESS.from.HPD <- function(fit, alpha){ ## fit is list with median vec and HPD vec ##
+  return( sapply(1:length(fit$mean_est), FUN=ESS.from.HPD.i, fit=fit, alpha=alpha) ) }
+
+calc.ESS.from.HPDwid <- function(fit, alpha){ ## fit is list with median vec and HPD vec ##
+  return( sapply(1:length(fit$median_est), FUN=ESS.from.HPDwid.i, fit=fit, alpha=alpha) ) }
+
+#calc.ESS.from.HPD(fit, alpha=0.05)
+
+#calc.ESS.from.HPDwid(fit, alpha=0.05)
+####################################################################
+####################################################################
+####################################################################
+
+
+####################################################################
+########## MCMC for Bayes with Metropolis-Hastings #################
+####################################################################
+
+flip.MEM <- function(v, MOld, M){
+  out <- MOld
+  if( MOld[ which(M==v)[1] ]==1 ){ out[ which(M==v) ] <- 0
+  } else{ out[ which(M==v) ] <- 1 }
+  return(out)
+}
+
+
+mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
+  #M <- MEM.mat(I, mod.mat, nrow(pr.Inclus));
+  mem <- M[upper.tri(M)]
+  source.vec <- pr.Inclus[upper.tri(pr.Inclus)]
+  s.in <- source.vec #source inclusion probability
+  s.ex <- 1 - source.vec #source exclusion probability
+  return(prod(s.in ^ (mem) * s.ex ^ (1 - mem)))
+}
+
+update.MH <-
+  function(MOld,
+           M,
+           xvec,
+           nvec,
+           avec,
+           bvec,
+           mod.mat,
+           Prior.EP) {
+    K <- max(M, na.rm = TRUE) + 1
+    v <-
+      sample(1:(K - 1), (1:(K - 1))[which(rmultinom(1, 1, (((
+        K - 1
+      ):1) ^ 3) / sum(((
+        K - 1
+      ):1) ^ 3)) == 1)])
+    
+    MProp <- flip.MEM(v[1], MOld, M)
+    if (length(v) > 1) {
+      for (ii in 2:length(v)) {
+        MProp <- flip.MEM(v[ii], MProp, M)
+      }
+    }
+    
+    rho <-
+      exp(
+        logMarg.DensSA(MProp, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP)) -
+          (
+            logMarg.DensSA(MOld, mod.mat, xvec, nvec, avec, bvec) +  log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
+          )
+      )
+    #cat(rho, rho1, xvec,nvec, avec, bvec)
+    if (rho >= 1) {
+      out <-
+        MProp
+    } else{
+      if (rbinom(1, 1, rho) == 1) {
+        out <- MProp
+      } else{
+        out <- MOld
+      }
+    }
+    
+    return(out)
+  }
+
+I.models <- function(hh, models, Samp) {
+  K <- length(models[1, ])
+  if (hh == 1) {
+    Ii <- 1:K
+  } else if (hh == K) {
+    Ii <- c(K, 1:(K - 1))
+  } else{
+    Ii <- c(hh, 1:(hh - 1), (hh + 1):K)
+  }
+  return(which(apply(
+    models,
+    MARGIN = 1,
+    FUN = function(x, t) {
+      sum(x == t)
+    },
+    t = Samp[hh, Ii]
+  ) == K))
+}
+
+models.Count <- function(Samp, models) {
+  out <- matrix(0, nrow(models), ncol(models))
+  u <-
+    sapply(1:length(models[1, ]),
+           FUN = I.models,
+           models = models,
+           Samp = Samp)
+  for (i in 1:length(u)) {
+    out[u[i], i] <- 1
+  }
+  return(out)
+}
+
+
+mem.PostProb <- function(model, method="samples", fit){  ## Incorporate direction ##
+  if(method=="mixture"){
+    out <- eval.Post(model$p0[1], model$responses, model$size, model$models, model$pweights[[1]], model$shape1[1], model$shape2[1], alternative=model$alternative)
+    K <- length(model$responses)
+    for (j in 2:(K - 1)) {
+      Ii <- c(j, 1:(j - 1), (j + 1):K)
+      out <- c(out, eval.Post(model$p0[j], model$responses[Ii], model$size[Ii], model$models, model$pweights[[j]], model$shape1[j], model$shape2[j], alternative=model$alternative))
+    }
+    j <- j + 1
+    Ii <- c(j, 1:(j - 1))
+    out <- c(out, eval.Post(model$p0[j], model$responses[Ii], model$size[Ii], model$models, model$pweights[[j]], model$shape1[j], model$shape2[j], alternative=model$alternative))
+  } else{
+    if( model$alternative=="greater" ){ out <- sapply(1:ncol(fit$samples), FUN=function(j,x,t){ return(sum(x[,j]>t[j])/length(x[,j])) }, x=fit$samples, t=model$p0) 
+    } else{ out <- sapply(1:ncol(fit$samples), FUN=function(j,x,t){ return(sum(x[,j]<t[j])/length(x[,j])) }, x=fit$samples, t=model$p0) }
+  }
+  names(out) <- model$name
+  return(out)
 }
