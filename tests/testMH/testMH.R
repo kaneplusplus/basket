@@ -1,8 +1,8 @@
 
 
 library(basket)
-#library(foreach)
-#foreach::registerDoSEQ()
+library(foreach)
+foreach::registerDoSEQ()
 
 
 trial_sizes <- rep(5, 5)

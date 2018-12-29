@@ -578,28 +578,96 @@ Power.bask <- function(ALT, thres, N, pars, p0) {
 ####################################################################
 #fit <- mem_full_bayes(responses = Data$X, size = Data$N, name = Data$Basket, p0 = 0.25, shape1 = 0.5, shape2 = 0.5, alpha = 0.05, call = NULL)
 
-euc.dist <- function(x1, x2, w=c(1,1)){ 
-  if( sum(is.na(x1))>1 ){ out <- Inf 
-  } else{ out <- sqrt(sum( w*((x1 - x2) ^ 2) ) ) }
+
+euc.dist <- function(x1, x2, w = c(1, 1)) {
+  if (sum(is.na(x1)) > 1) {
+    out <- Inf
+  } else{
+    out <- sqrt(sum(w * ((x1 - x2) ^ 2)))
+  }
   return(out)
 }
 
-dist.beta.HPD <- function(ess, fit, alpha, jj){ return( euc.dist(fit$HPD[,jj], qbeta(c(alpha/2,1-alpha/2), fit$mean_est[jj]*ess, ess*(1-fit$mean_est[jj]))) ) }
-dist.beta.HPDwid <- function(ess, fit, alpha, jj){ return( abs( (fit$HPD[2,jj]-fit$HPD[1,jj])-(diff( qbeta(c(alpha/2,1-alpha/2), fit$median_est[jj]*ess, ess*(1-fit$median_est[jj])))) ) ) }
 
-ESS.from.HPD.i <- function(jj, fit, alpha){ library(GenSA)
-  opt <- GenSA::GenSA(par=1, fn=dist.beta.HPD, lower=0, upper=10000000, #control=list(maxit=pars$DTW.maxit), 
-                      fit=fit, alpha=alpha, jj=jj); return(opt$par) }
+dist.beta.HPD <- function(ess, fit, alpha, jj) {
+  al <- fit$mean_est[jj] * ess
+  al <- max(1e-2, al)
+  be <- ess - al
+  be <- max(1e-2, be)
+  return(euc.dist(fit$HPD[, jj], qbeta(
+    c(alpha / 2, 1 - alpha / 2),
+    al, be
+  
+  )))
+}
 
-ESS.from.HPDwid.i <- function(jj, fit, alpha){ library(GenSA)
-  opt <- GenSA::GenSA(par=1, fn=dist.beta.HPDwid, lower=0, upper=10000000, #control=list(maxit=pars$DTW.maxit), 
-                      fit=fit, alpha=alpha, jj=jj); return(opt$par) }
 
-calc.ESS.from.HPD <- function(fit, alpha){ ## fit is list with median vec and HPD vec ##
-  return( sapply(1:length(fit$mean_est), FUN=ESS.from.HPD.i, fit=fit, alpha=alpha) ) }
+dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
+  al <- fit$mean_est[jj] * ess
+  al <- max(1e-2, al)
+  be <- ess - al
+  be <- max(1e-2, be)
+  return(abs((fit$HPD[2, jj] - fit$HPD[1, jj]) - (diff(
+    qbeta(
+      c(alpha / 2, 1 - alpha / 2),
+      al, be
+    )
+  ))))
+}
 
-calc.ESS.from.HPDwid <- function(fit, alpha){ ## fit is list with median vec and HPD vec ##
-  return( sapply(1:length(fit$median_est), FUN=ESS.from.HPDwid.i, fit=fit, alpha=alpha) ) }
+ESS.from.HPD.i <- function(jj, fit, alpha) {
+  library(GenSA)
+  opt <-
+    GenSA::GenSA(
+      par = 1,
+      fn = dist.beta.HPD,
+      lower = 0,
+      upper = 10000000,
+      #control=list(maxit=pars$DTW.maxit),
+      fit = fit,
+      alpha = alpha,
+      jj = jj
+    )
+  return(opt$par)
+}
+
+ESS.from.HPDwid.i <- function(jj, fit, alpha) {
+  library(GenSA)
+  opt <-
+    GenSA::GenSA(
+      par = 1,
+      fn = dist.beta.HPDwid,
+      lower = 0,
+      upper = 10000000,
+      #control=list(maxit=pars$DTW.maxit),
+      fit = fit,
+      alpha = alpha,
+      jj = jj
+    )
+  return(opt$par)
+}
+
+
+calc.ESS.from.HPD <- function(fit, alpha) {
+  ## fit is list with median vec and HPD vec ##
+  return(sapply(
+    1:length(fit$mean_est),
+    FUN = ESS.from.HPD.i,
+    fit = fit,
+    alpha = alpha
+  ))
+}
+
+
+calc.ESS.from.HPDwid <- function(fit, alpha) {
+  ## fit is list with median vec and HPD vec ##
+  return(sapply(
+    1:length(fit$median_est),
+    FUN = ESS.from.HPDwid.i,
+    fit = fit,
+    alpha = alpha
+  ))
+}
 
 #calc.ESS.from.HPD(fit, alpha=0.05)
 
