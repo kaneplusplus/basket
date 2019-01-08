@@ -39,22 +39,20 @@ rdirichlet <- function (n, alpha) {
   x/as.vector(sm)
 }
 
-logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
 
+logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
   M <- MEM.mat(I, mod.mat, length(xvec))
   marg.vec <- rep(NA, dim(M)[1])
-
-  #calculate the product portion of integrated marginal likelihood
-  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) 
-
-  for(i in 1:dim(M)[1]) { 
-    p.vec <- prod( prod.vec^(1-M[i,]) )
-    marg.vec[i] <- p.vec * 
-      ( beta(avec[i] + M[i,] %*% xvec, bvec[i] + M[i,] %*% (nvec-xvec)) / 
-        beta(avec[i],bvec[i]) ) 
-  } 
-  sum(log(marg.vec))
+  prod.vec <-
+    beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) #calculate the product portion of integrated marginal likelihood
+  for (i in 1:dim(M)[1]) {
+    p.vec <- prod(prod.vec ^ (1 - M[i, ]))
+    marg.vec[i] <-
+      (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) / beta(avec[i], bvec[i])) * p.vec
+  } #return( list(mod = M, marg = prod(marg.vec)) )
+  return(sum(log(marg.vec)))
 }
+
 
 
 logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
@@ -73,28 +71,30 @@ logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
   sum(log(marg.vec))
 }
 
-logMarg.DensPE <- function(m, mod.size, xvec, nvec, avec, bvec, Lambda) {
 
-  M <- diag(1, mod.size)
-  u <- upper.tri(M)
-  M[u] <- m
-  M. <- t(M)
-  l <- lower.tri(M.)
-  M[l] <- M.[l]
-  marg.vec <- rep(NA, dim(M)[1])
 
-  #calculate the product portion of integrated marginal likelihood
-  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) 
-
-  for(i in 1:dim(M)[1]) { 
-    p.vec <- prod(prod.vec^(1-M[i,]))
-    marg.vec[i] <- p.vec * 
-      ( beta(avec[i] + M[i,] %*% xvec, bvec[i] + M[i,] %*% (nvec-xvec)) / 
-        beta(avec[i],bvec[i]) ) * p.vec
-  } 
-  u <- upper.tri(M)
-  -sum(log(marg.vec)) - Lambda*sum(M[u])
+logMarg.DensPE <-function(m, mod.size, xvec, nvec, avec, bvec, Lambda) {
+    #M <- MEM.mat(I, mod.mat, length(xvec))
+    M <- diag(1, mod.size)
+    u <-
+      upper.tri(M)
+    M[u] <- m
+    M. <- t(M)
+    l <- lower.tri(M.)
+    M[l] <- M.[l]
+    marg.vec <- rep(NA, dim(M)[1])
+    prod.vec <-
+      beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) #calculate the product portion of integrated marginal likelihood
+    for (i in 1:dim(M)[1]) {
+      p.vec <- prod(prod.vec ^ (1 - M[i, ]))
+      marg.vec[i] <-
+        (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) / beta(avec[i], bvec[i])) * p.vec
+    } #return( list(mod = M, marg = prod(marg.vec)) )
+    u <- upper.tri(M)
+    out <- sum(log(marg.vec)) - Lambda * sum(M[u])
+    return(-out)
 }
+
 
 #' @importFrom GenSA GenSA
 MEM_marginalPE <- function(xvec, nvec, avec, bvec, INITIAL, Lambda){
@@ -220,12 +220,7 @@ eval.Post <- function(p0, X, N, Omega, w){
   return( sum( (1-pbeta(p0, alph, beta))*w ) )
 }
 
-gen.Post <- function(X, N, Omega){
-  a <- b <- 0.5 
-  alph <- a + Omega %*% X
-  beta <- b + (Omega %*% N - Omega %*% X)
-  rbeta(1, alph, beta)
-}
+
 
 ESS <- function(X,N,Omega) {
   a <- b <- 0.5 
@@ -234,10 +229,7 @@ ESS <- function(X,N,Omega) {
   alph + beta 
 }
 
-#' @importFrom stats rmultinom
-samp.Post <- function(X, N, Omega, w) { 
-  gen.Post(X, N, Omega[ which(rmultinom(1,1,w) == 1), ]) 
-}
+
 
 post.HPD <- function(Data, pars, marg.M, alp) {
   U <- MEM.w(Data,pars,marg.M)
@@ -603,7 +595,7 @@ dist.beta.HPD <- function(ess, fit, alpha, jj) {
 
 
 dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
-  al <- fit$mean_est[jj] * ess
+  al <- fit$median_est[jj] * ess
   al <- max(1e-2, al)
   be <- ess - al
   be <- max(1e-2, be)
@@ -614,6 +606,7 @@ dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
     )
   ))))
 }
+
 
 ESS.from.HPD.i <- function(jj, fit, alpha) {
   library(GenSA)
@@ -689,7 +682,7 @@ flip.MEM <- function(v, MOld, M){
 }
 
 
-mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
+mem.Prior.Mat <- function(M,mod.mat, pr.Inclus) {
   #M <- MEM.mat(I, mod.mat, nrow(pr.Inclus));
   mem <- M[upper.tri(M)]
   source.vec <- pr.Inclus[upper.tri(pr.Inclus)]
@@ -777,21 +770,157 @@ models.Count <- function(Samp, models) {
 }
 
 
-mem.PostProb <- function(model, method="samples", fit){  ## Incorporate direction ##
-  if(method=="mixture"){
-    out <- eval.Post(model$p0[1], model$responses, model$size, model$models, model$pweights[[1]], model$shape1[1], model$shape2[1], alternative=model$alternative)
+
+mem.PostProb <- function(model, method = "samples", fit) {
+  ## Incorporate direction ##
+  if (method == "mixture") {
+    out <-
+      eval.Post(
+        model$p0[1],
+        model$responses,
+        model$size,
+        model$models,
+        model$pweights[[1]],
+        model$shape1[1],
+        model$shape2[1],
+        alternative = model$alternative
+      )
     K <- length(model$responses)
     for (j in 2:(K - 1)) {
       Ii <- c(j, 1:(j - 1), (j + 1):K)
-      out <- c(out, eval.Post(model$p0[j], model$responses[Ii], model$size[Ii], model$models, model$pweights[[j]], model$shape1[j], model$shape2[j], alternative=model$alternative))
+      out <-
+        c(
+          out,
+          eval.Post(
+            model$p0[j],
+            model$responses[Ii],
+            model$size[Ii],
+            model$models,
+            model$pweights[[j]],
+            model$shape1[j],
+            model$shape2[j],
+            alternative = model$alternative
+          )
+        )
     }
     j <- j + 1
     Ii <- c(j, 1:(j - 1))
-    out <- c(out, eval.Post(model$p0[j], model$responses[Ii], model$size[Ii], model$models, model$pweights[[j]], model$shape1[j], model$shape2[j], alternative=model$alternative))
+    out <-
+      c(
+        out,
+        eval.Post(
+          model$p0[j],
+          model$responses[Ii],
+          model$size[Ii],
+          model$models,
+          model$pweights[[j]],
+          model$shape1[j],
+          model$shape2[j],
+          alternative = model$alternative
+        )
+      )
   } else{
-    if( model$alternative=="greater" ){ out <- sapply(1:ncol(fit$samples), FUN=function(j,x,t){ return(sum(x[,j]>t[j])/length(x[,j])) }, x=fit$samples, t=model$p0) 
-    } else{ out <- sapply(1:ncol(fit$samples), FUN=function(j,x,t){ return(sum(x[,j]<t[j])/length(x[,j])) }, x=fit$samples, t=model$p0) }
+    if (model$alternative == "greater") {
+      out <-
+        sapply(
+          1:ncol(fit$samples),
+          FUN = function(j, x, t) {
+            return(sum(x[, j] > t[j]) / length(x[, j]))
+          },
+          x = fit$samples,
+          t = model$p0
+        )
+    } else{
+      out <-
+        sapply(
+          1:ncol(fit$samples),
+          FUN = function(j, x, t) {
+            return(sum(x[, j] < t[j]) / length(x[, j]))
+          },
+          x = fit$samples,
+          t = model$p0
+        )
+    }
   }
   names(out) <- model$name
   return(out)
+}
+
+
+
+
+
+#############################################################
+### Added Shape and Direction to Posterior Prob #############
+#############################################################
+eval.Post <- function(p0, X, N, Omega, w, a, b, alternative = "greater") 
+{
+  alph <- a + Omega %*% X
+  beta <- b + (Omega %*% N - Omega %*% X)
+  if (alternative == "greater") {
+    out <- sum((1 - pbeta(p0, alph, beta)) * w)
+  } else{
+    out <- sum((pbeta(p0, alph, beta)) * w)
+  }
+  return(out)
+}
+
+#############################################################
+### Fixed shape paramter specification in gen.Post() ########
+#############################################################
+gen.Post <- function(X, N, Omega, a, b) {
+  alph <- a + Omega %*% X
+  beta <- b + (Omega %*% N - Omega %*% X)
+  return(rbeta(1, alph, beta))
+}
+
+samp.Post <- function(X, N, Omega, w, a, b) {
+  return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
+}
+
+sample_posterior.full_bayes <- function(model, num_samples = 10000) {
+  ret <- replicate(
+    num_samples,
+    samp.Post(
+      model$responses,
+      model$size,
+      model$models,
+      model$pweights[[1]],
+      model$shape1[1],
+      model$shape2[1]
+    )
+  )
+  K <- length(model$responses)
+  ret <- rbind(ret,
+               foreach(j = 2:(K - 1), .combine = rbind) %do% {
+                 Ii <- c(j, 1:(j - 1), (j + 1):K)
+                 replicate(
+                   num_samples,
+                   samp.Post(
+                     model$responses[Ii],
+                     model$size[Ii],
+                     model$models,
+                     model$pweights[[j]],
+                     model$shape1[j],
+                     model$shape2[j]
+                   )
+                 )
+               })
+  j <- K
+  Ii <- c(j, 1:(j - 1))
+  ret <- rbind(ret,
+               replicate(
+                 num_samples,
+                 samp.Post(
+                   model$responses[Ii],
+                   model$size[Ii],
+                   model$models,
+                   model$pweights[[j]],
+                   model$shape1[j],
+                   model$shape2[j]
+                 )
+               ))
+  ret <- t(ret)
+  dimnames(ret) <- list(NULL, model$name)
+  ret
 }
