@@ -878,6 +878,57 @@ samp.Post <- function(X, N, Omega, w, a, b) {
   return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
 }
 
+samplePostOneBasket <- function(index, model, num_samples = 10000)
+{
+  if (index == 1)
+  {
+    result <- replicate(
+      num_samples,
+      samp.Post(
+        model$responses,
+        model$size,
+        model$models,
+        model$pweights[[1]],
+        model$shape1[1],
+        model$shape2[1]
+      )
+    )
+    return(result)
+  }
+  numBasket <- length(model$responses)
+  if (index == numBasket)
+  {
+    Ii <- c(numBasket, 1:(numBasket - 1))
+    result <- 
+               replicate(
+                 num_samples,
+                 samp.Post(
+                   model$responses[Ii],
+                   model$size[Ii],
+                   model$models,
+                   model$pweights[[numBasket]],
+                   model$shape1[numBasket],
+                   model$shape2[numBasket]
+                 )
+               )
+    return(result)
+  }
+  Ii <- c(index, 1:(index - 1), (index + 1):numBasket )
+  result <- 
+    replicate(
+      num_samples,
+      samp.Post(
+        model$responses[Ii],
+        model$size[Ii],
+        model$models,
+        model$pweights[[index]],
+        model$shape1[index],
+        model$shape2[index]
+      )
+    )
+  return(result)
+}
+
 sample_posterior.full_bayes <- function(model, num_samples = 10000) {
   ret <- replicate(
     num_samples,
@@ -924,3 +975,6 @@ sample_posterior.full_bayes <- function(model, num_samples = 10000) {
   dimnames(ret) <- list(NULL, model$name)
   ret
 }
+
+
+
