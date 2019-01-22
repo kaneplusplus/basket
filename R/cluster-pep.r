@@ -23,16 +23,26 @@
 #' @param call the call of the function.
 #' @examples
 #' # 5 baskets, each with enrollement size 5
-#' trial_sizes <- rep(5, 5)
-#'
+#' trial_sizes <- rep(15, 6)
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
-#'
-#' # The trials: a column of the number of responses and a column of the
-#' # the size of each trial.
-#' trials <- data.frame(responses=rbinom(trial_sizes, trial_sizes, resp_rate),
-#'                      size = trial_sizes)
-#' mem_full_bayes_mcmc(trials$responses, trials$size)                      
+# The trials: a column of the number of responses, a column of the
+# the size of each trial.
+#' trials <- data.frame(responses = c(1,4, 5,0, 1, 6),
+#'                      size = trial_sizes
+#' )
+#' MHResult2 <- mem_full_bayes_mcmc(trials$responses, trials$size,
+#'                                  name=c(" D1 "," D2 "," D3 "," D4 "," D5 "," D6 ")) 
+#' 
+#' result <- cluster_PEP(responses = trials$responses, size = trials$size,
+#'                       name=c(" D1 "," D2 "," D3 "," D4 "," D5 "," D6 "),
+#'                       models=MHResult2$models, pweights=MHResult2$pweights, p0 = 0.15,
+#'                       PEP=MHResult2$PEP)
+#' print(trials)
+#' print(result$clusters)
+#' print(result$HPD)
+#' print(result$mean_est)
+
 #' @importFrom stats median
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
@@ -123,7 +133,7 @@ cluster_PEP <- function(responses,
     clusterElement[[k]] <- cBasket
     print(paste0("#### Cluster Assignment: ", k))
     print(rank)
-    print(fit.MCMC.1$name[rank])
+    print(name[rank])
     cName <- c(cName, paste0("Cluster ", k))
     numSamp <- num_samples / length(rank) + 1
     samples <- foreach(j = rank, .combine = cbind) %do%
