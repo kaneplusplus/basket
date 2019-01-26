@@ -169,8 +169,7 @@ mem_full_bayes_mcmc <-function(responses,
       mweights <-
         mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
       Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
-      if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) < length(mem.Samp[[KK -
-                                                                       1]])) {
+      if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) < length(mem.Samp[[KK - 1]])) {
         n.chg <- n.chg + 1
       }
       i.Map <-

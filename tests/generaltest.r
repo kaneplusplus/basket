@@ -1,5 +1,27 @@
+library(testthat)
+library(basket)
+library(igraph)
+library(foreach)
 
 
+data(vemu_wide)
+
+baskets <- 1:3
+
+vemu_wide <- vemu_wide[baskets,]
+
+# Full Bayes
+fb <- mem_full_bayes(responses = vemu_wide$responders, 
+                     size = vemu_wide$evaluable,
+                     name = vemu_wide$baskets, p0=0.25)
+
+print(fb$PEP)
+print(fb$HPD)
+print(fb$CDF)
+
+print(fb$mean_est)
+print(fb$median_est)
+print(fb$ESS)
 
 #rm(list=ls())
 ## Vectors of Observed number of Responses (X) and Patients (N)
@@ -13,6 +35,7 @@ MHResult1 <- mem_full_bayes_mcmc(responses=Data$X, size=Data$N,
 print(MHResult1$PEP)
 print(MHResult1$HPD)
 print(MHResult1$CDF)
+print(MHResult1$MAP)
 
 print(MHResult1$ESS)
 print(MHResult1$ESS2)

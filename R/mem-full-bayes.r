@@ -56,16 +56,15 @@ mem_full_bayes <- function(
     stop(paste("The length of the responses and size parameters",
                "must be equal."))
   }
+  
   if (length(shape1) == 1) {
-    avec <- rep(shape1, length(responses))  
-  } else {
-    avec <- shape1
+    shape1 <- rep(shape1, length(responses))
   }
   if (length(shape2) == 1) {
-    bvec <- rep(shape2, length(responses))  
-  } else {
-    bvec <- shape2
+    shape2 <- rep(shape2, length(responses))
   }
+  
+  
   pr.Inclus <- prior_inclusion
   alp <- hpd_alpha
 
@@ -91,7 +90,7 @@ mem_full_bayes <- function(
   ## identify maximizer of marginal density ##
   log.Marg <- foreach(mod_i = isplitRows(Mod.I, chunks = num_workers()),
                       .combine = c) %dopar% {
-    apply(mod_i, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, avec, bvec)
+    apply(mod_i, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec, shape1, shape2)
   }
 
 #  log.Marg <- apply(Mod.I, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, 
@@ -100,7 +99,7 @@ mem_full_bayes <- function(
   max.i <- order(log.Marg, decreasing=TRUE)[1]
 
   MAX <- MEM.mat(Mod.I[max.i,], mod.mat, length(xvec))
-  colnames(MAX) <- rownames(MAX) <- xvec
+  colnames(MAX) <- rownames(MAX) <- name
 
   ## compute prior + posterior MEM probabilities ##
   PRIOR <- apply(Mod.I, MARGIN = 1, FUN = mem.Prior, mod.mat, pr.Inclus)
@@ -108,11 +107,12 @@ mem_full_bayes <- function(
   map.i <- order(POST, decreasing = TRUE)[1]
 
   MAP <- MEM.mat(Mod.I[map.i,], mod.mat, length(xvec))
-  colnames(MAP) <- rownames(MAP) <- xvec
+  colnames(MAP) <- rownames(MAP) <- name
 
   ## Posterior Exchangeability Prob ##
   PEP. <- matrix(NA, length(xvec), length(xvec))
-  colnames(PEP.) <- rownames(PEP.) <- xvec; diag(PEP.) <- 1
+  colnames(PEP.) <- rownames(PEP.) <- name
+  diag(PEP.) <- 1
   i <- NA
   pep <- foreach(i = 1:(nrow(PEP.)-1), combine = list, 
                  .multicombine = TRUE) %dopar% {
@@ -122,6 +122,7 @@ mem_full_bayes <- function(
   PEP.[l] <- unlist(pep)
   PEP <- t(PEP.)
 
+  
   ## Marginal CDF and ESS ##
   # Here's where all of the compute goes.
   pweights <- foreach(j = 1:length(xvec), .combine = list, 
@@ -130,33 +131,33 @@ mem_full_bayes <- function(
   }
 
   pESS <- CDF <- rep(NA, length(xvec))
-  names(pESS) <- names(CDF) <- xvec
+  names(pESS) <- names(CDF) <- name
   HPD <- matrix(NA,2,length(xvec))
   rownames(HPD)=c("lower","upper")
-  colnames(HPD) <- xvec
+  colnames(HPD) <- name
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
 
-  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]], shape1, shape2, alternative)
-  pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models, shape1, shape2)
+  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]], shape1[1], shape2[1], alternative)
+  pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
   HPD[,1] <- boa.hpd(
-    replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]], shape1, shape2)), 
+    replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]], shape1[1], shape2[1])), 
     alp)
 
   K <- length(xvec)
   for(j in 2:(K-1)) { 
     Ii <- c(j,1:(j-1),(j+1):K)
-    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2, alternative)
-    pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models, shape1, shape2)
+    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
+    pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
     HPD[,j] <- boa.hpd(
-      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2)), 
+      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])), 
       alp)
   }
   j <- j + 1
   Ii <- c(j,1:(j-1))
-  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]],shape1, shape2, alternative)
-  pESS[j] <- pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1, shape2)
+  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]],shape1[j], shape2[j], alternative)
+  pESS[j] <- pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
   HPD[,j] <- boa.hpd( 
-    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2)), 
+    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])), 
     alp)
 
   if (missing(name)) {
