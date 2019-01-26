@@ -44,6 +44,8 @@ mem_full_bayes <- function(
                       matrix(0.5, nrow = length(responses), 
                              ncol = length(responses)),
   hpd_alpha = 0.05,
+  alternative = "greater",
+  seed = 1000,
   call = NULL) {
 
   if (is.null(getDoParName())) {
@@ -134,27 +136,27 @@ mem_full_bayes <- function(
   colnames(HPD) <- xvec
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
 
-  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]])
-  pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models)
+  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]], shape1, shape2, alternative)
+  pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models, shape1, shape2)
   HPD[,1] <- boa.hpd(
-    replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]]) ), 
+    replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]], shape1, shape2)), 
     alp)
 
   K <- length(xvec)
   for(j in 2:(K-1)) { 
     Ii <- c(j,1:(j-1),(j+1):K)
-    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]])
-    pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models)
+    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2, alternative)
+    pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models, shape1, shape2)
     HPD[,j] <- boa.hpd(
-      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ), 
+      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2)), 
       alp)
   }
   j <- j + 1
   Ii <- c(j,1:(j-1))
-  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]])
-  pESS[j] <- pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models)
+  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]],shape1, shape2, alternative)
+  pESS[j] <- pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1, shape2)
   HPD[,j] <- boa.hpd( 
-    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ), 
+    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1, shape2)), 
     alp)
 
   if (missing(name)) {

@@ -1,7 +1,5 @@
-library(testthat)
-library(basket)
-#library(igraph)
-library(foreach)
+
+
 
 #rm(list=ls())
 ## Vectors of Observed number of Responses (X) and Patients (N)
@@ -14,6 +12,8 @@ MHResult1 <- mem_full_bayes_mcmc(responses=Data$X, size=Data$N,
 
 print(MHResult1$PEP)
 print(MHResult1$HPD)
+print(MHResult1$CDF)
+
 print(MHResult1$ESS)
 print(MHResult1$ESS2)
 

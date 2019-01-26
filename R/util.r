@@ -213,17 +213,17 @@ MEM_modweight <- function(mod.mat, source.vec) {
   q.vec
 }
 
-eval.Post <- function(p0, X, N, Omega, w){
-  a=b=0.5 
-  alph <- a + Omega %*% X
-  beta <- b + (Omega %*% N - Omega %*% X)
-  return( sum( (1-pbeta(p0, alph, beta))*w ) )
-}
+#eval.Post <- function(p0, X, N, Omega, w){
+#  a=b=0.5 
+#  alph <- a + Omega %*% X
+#  beta <- b + (Omega %*% N - Omega %*% X)
+#  return( sum( (1-pbeta(p0, alph, beta))*w ) )
+#}
 
 
 
-ESS <- function(X,N,Omega) {
-  a <- b <- 0.5 
+ESS <- function(X,N,Omega,a,b) {
+  #a <- b <- 0.5 
   alph <- a + Omega %*% X
   beta <- b + (Omega %*% N - Omega %*% X)
   alph + beta 
@@ -271,16 +271,16 @@ post.HPD <- function(Data, pars, marg.M, alp) {
 
 #' @importFrom itertools isplitVector
 #' @importFrom foreach foreach %dopar%
-post.ESS <- function(Data, pars, marg.M) {
+post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
   U <- MEM.w(Data,pars,marg.M)
-  out <- U$weights[[1]]%*%ESS( Data$X, Data$N, U$models )
+  out <- U$weights[[1]]%*%ESS( Data$X, Data$N, U$models, shape1, shape2 )
   K <- length(Data$X)
   out <- c(out,
     foreach(js = isplitVector(2:(K-1), chunks = num_workers()),
             .combine = c) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j-1), (j+1):K)
-        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models)
+        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, shape1, shape2)
       }
     })
 #  for(j in 2:(K-1)){ 
@@ -289,7 +289,7 @@ post.ESS <- function(Data, pars, marg.M) {
 #  }
   j <- K
   Ii <- c(j,1:(j-1))
-  out <- out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
+  out <- out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models), shape1, shape2)
   names(out) <- Data$X
   out
 }
