@@ -1,5 +1,5 @@
 
-#' @title MEM Full Bayes
+#' @title MEM Full Bayes Exact
 #' 
 #' @description Fit the MEM model using full Bayesian inference.
 #' @param responses the number of responses in each basket.
@@ -33,7 +33,7 @@
 #' %do%
 #' @importFrom stats median
 #' @export
-mem_full_exact <- function(
+mem_full_bayes_exact <- function(
   responses, 
   size, 
   name,
@@ -141,7 +141,7 @@ mem_full_exact <- function(
   colnames(HPD) <- name
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
 
-  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]], shape1[1], shape2[1], alternative)
+  CDF[1] <- eval.Post(p0[1], xvec, nvec, models, pweights[[1]], shape1[1], shape2[1], alternative)
   pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
   HPD[,1] <- boa.hpd(
     replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]], shape1[1], shape2[1])), 
@@ -150,7 +150,7 @@ mem_full_exact <- function(
   K <- length(xvec)
   for(j in 2:(K-1)) { 
     Ii <- c(j,1:(j-1),(j+1):K)
-    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
+    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
     pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
     HPD[,j] <- boa.hpd(
       replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])), 
@@ -158,7 +158,7 @@ mem_full_exact <- function(
   }
   j <- j + 1
   Ii <- c(j,1:(j-1))
-  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]],shape1[j], shape2[j], alternative)
+  CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],shape1[j], shape2[j], alternative)
   pESS[j] <- pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
   HPD[,j] <- boa.hpd( 
     replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])), 

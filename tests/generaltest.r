@@ -11,9 +11,9 @@ baskets <- 1:3
 vemu_wide <- vemu_wide[baskets,]
 
 # Full Bayes
-fb <- mem_full_bayes(responses = vemu_wide$responders, 
+fb <- mem_full_bayes_exact(responses = vemu_wide$responders, 
                      size = vemu_wide$evaluable,
-                     name = vemu_wide$baskets, p0=0.25)
+                     name = vemu_wide$baskets, p0=rep(0.25, length(basket)))
 
 print(fb$PEP)
 print(fb$HPD)
