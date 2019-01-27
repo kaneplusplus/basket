@@ -47,6 +47,8 @@ result <- cluster_PEP(responses=Data$X, size=Data$N,
 
 print(result$clusters)
 print(result$HPD)
+print(result$CDF)
+
 print(result$mean_est)
 print(result$median_est)
 print(result$ESS)
