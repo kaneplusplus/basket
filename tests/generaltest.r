@@ -39,6 +39,9 @@ print(MHResult1$MAP)
 
 print(MHResult1$ESS)
 print(MHResult1$ESS2)
+print(MHResult1$mean_est)
+print(MHResult1$median_est)
+
 
 result <- cluster_PEP(responses=Data$X, size=Data$N, 
             name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),

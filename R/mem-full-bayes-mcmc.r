@@ -231,6 +231,7 @@ mem_full_bayes_mcmc <- function(responses,
       size = size,
       name = name,
       p0 = p0,
+      alpha = HPD.alpha,
       alternative = alternative,
       shape1 = shape1,
       shape2 = shape2,
@@ -263,8 +264,11 @@ mem_full_bayes_mcmc <- function(responses,
   ret$ESS2 <-
     calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS2) <- MODEL$name
-  ret$PostProb <-
-    mem.PostProb(MODEL, method = "samples", fit = ret)
+  #ret$PostProb <-
+  #  mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("full_bayes", "exchangeability_model")
-  return(ret)
+  
+  clusterRet <- clusterComp(ret)
+  result <- list(call=call, basketwise = ret, clusterwise = clusterRet)
+  return(result)
 }

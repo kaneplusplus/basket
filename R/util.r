@@ -976,5 +976,93 @@ sample_posterior.full_bayes <- function(model, num_samples = 10000) {
   ret
 }
 
+clusterComp <- function(basketRet) {
+  PEP <- basketRet$PEP
+  name <- basketRet$name
+  p0 <- basketRet$p0
+  allSamp <- basketRet$samples
+  graph <-
+    igraph::graph_from_adjacency_matrix(PEP,
+                                        mode = "undirected",
+                                        weighted = TRUE,
+                                        diag = FALSE)
+  result <- factor(cluster_louvain(graph, weights = E(graph)$weight)$membership)
+  numClusters <- length(levels(result))
 
+  sampleC <- list()
+  cName <- c()
+  clusterElement <- list()
+  for (k in 1:numClusters) {
+    rank <- which(result == levels(result)[k])
+    
+    cBasket <- name[rank]
+    clusterElement[[k]] <- cBasket
+    print(paste0("#### Cluster Assignment: ", k))
+    print(rank)
+    print(name[rank])
+    cName <- c(cName, paste0("Cluster ", k))
+
+    sampV <- as.vector(allSamp[, rank])
+    sampleC[[k]] <- sampV
+  }
+  names(sampleC) <- cName
+  
+  ret <- basketRet
+  ret$name <- cName
+  ret$cluster <- clusterElement
+  #browser()
+  #ret$models <- models
+  #ret$pweights <- pweights
+  ret$samples <- sampleC
+  
+  if (ret$alternative == "greater") {
+    out <-unlist(
+      lapply(
+        1:numClusters,
+        FUN = function(j, x, t) {
+          return(sum(x[[j]] > t) / length(x[[j]]))
+        },
+        x = sampleC,
+        t = ret$p0[1]
+      ))
+  } else{
+    out <-unlist(
+      lapply(
+        1:numClusters,
+        FUN = function(j, x, t) {
+          return(sum(x[[j]] > t) / length(x[[j]]))
+        },
+        x = sampleC,
+        t = ret$p0[1]
+      ))
+  }
+
+  names(out) <- cName
+  ret$CDF <- out
+  
+  
+  
+  #ret$accept.rate <- (n.chg) / niter.MCMC
+  ret$mean_est <- unlist(lapply(ret$samples, mean))
+  ret$median_est <- unlist(lapply(ret$samples, median))
+  #ret$PEP <- PEP
+  ret$HPD <-matrix(unlist(
+    lapply(
+      ret$samples,
+      #MARGIN = 2,
+      FUN = boa.hpd,
+      alpha = ret$alpha
+    )), nrow = 2, byrow = FALSE)
+  colnames(ret$HPD) <- cName
+  row.names(ret$HPD) <-c("Lower Bound", "Upper Bound")
+  ret$ESS <-
+    calc.ESS.from.HPD(fit = ret, alpha = ret$alpha)
+  names(ret$ESS) <- cName
+  ret$ESS2 <-
+    calc.ESS.from.HPDwid(fit = ret, alpha = ret$alpha)
+  names(ret$ESS2) <- cName
+  #ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
+  class(ret) <- c("full_bayes", "exchangeability_model")
+  return(ret)
+}
 
