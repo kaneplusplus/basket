@@ -1015,32 +1015,34 @@ clusterComp <- function(basketRet) {
   #ret$pweights <- pweights
   ret$samples <- sampleC
   
-  if (ret$alternative == "greater") {
-    out <-unlist(
-      lapply(
+  p0Test <-unique(ret$p0)
+  allCDF<-matrix(0 , 0, 2)
+  for (kk in 1:length(p0Test))
+  {
+    if (ret$alternative == "greater") {
+      res <- unlist(lapply(
         1:numClusters,
         FUN = function(j, x, t) {
           return(sum(x[[j]] > t) / length(x[[j]]))
         },
         x = sampleC,
-        t = ret$p0[1]
+        t = p0Test[kk]
       ))
-  } else{
-    out <-unlist(
-      lapply(
+    } else{
+      res <- unlist(lapply(
         1:numClusters,
         FUN = function(j, x, t) {
           return(sum(x[[j]] > t) / length(x[[j]]))
         },
         x = sampleC,
-        t = ret$p0[1]
+        t = p0Test[kk]
       ))
+    }
+    allCDF <- rbind(allCDF, res)
   }
-
-  names(out) <- cName
-  ret$CDF <- out
-  
-  
+  colnames(allCDF) <- cName
+  rownames(allCDF) <- p0Test
+  ret$CDF <- allCDF
   
   #ret$accept.rate <- (n.chg) / niter.MCMC
   ret$mean_est <- unlist(lapply(ret$samples, mean))

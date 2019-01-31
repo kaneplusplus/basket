@@ -29,18 +29,52 @@ Data <- dget("../inst/code-from-brian/MHAlgorithm/Vemu-data.txt")
 
 MHResult1 <- mem_full_bayes_mcmc(responses=Data$X, size=Data$N, 
                                  name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
-                                 p0 = 0.15, Initial = NA)
+                                 p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15), Initial = NA)
 
 
-print(MHResult1$PEP)
-print(MHResult1$HPD)
-print(MHResult1$CDF)
-print(MHResult1$MAP)
 
-print(MHResult1$ESS)
-print(MHResult1$ESS2)
-print(MHResult1$mean_est)
-print(MHResult1$median_est)
+print(MHResult1$call)
+
+print(MHResult1$basketwise$PEP)
+print(MHResult1$basketwise$MAP)
+print(MHResult1$basketwise$CDF)
+print(MHResult1$basketwise$HPD)
+print(MHResult1$basketwise$ESS)
+print(MHResult1$basketwise$ESS2)
+print(MHResult1$basketwise$mean_est)
+print(MHResult1$basketwise$median_est)
+
+
+print(MHResult1$clusterwise$cluster)
+print(MHResult1$clusterwise$CDF)
+print(MHResult1$clusterwise$HPD)
+print(MHResult1$clusterwise$ESS)
+print(MHResult1$clusterwise$ESS2)
+print(MHResult1$clusterwise$mean_est)
+print(MHResult1$clusterwise$median_est)
+
+
+OCTable.full_bayes <- function(res)
+{
+  #res <- MHResult1$clusterwise
+  if (class(res$CDF) == "matrix")
+  {
+    cdfS <- c()
+    for (i in 1:dim(res$CDF)[2])
+    {
+      ss <- paste("CDF ", rownames(res$CDF)[i])
+      cdfS <- c(cdfS, ss)
+    }
+  } else {
+    cdfS <- "CDF"
+  }
+  oct <- rbind(res$CDF, res$HPD, res$ESS, res$mean_est, res$median_est)
+  rownames(oct) <- c(cdfS, "HPD LB", "HPD HB", "ESS",  "Mean", "Median")
+  return(oct)
+}
+
+OCTable.full_bayes(MHResult1$basketwise)
+OCTable.full_bayes(MHResult1$clusterwise)
 
 
 result <- cluster_PEP(responses=Data$X, size=Data$N, 
