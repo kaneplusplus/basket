@@ -1016,7 +1016,7 @@ clusterComp <- function(basketRet) {
   ret$samples <- sampleC
   
   p0Test <-unique(ret$p0)
-  allCDF<-matrix(0 , 0, 2)
+  allCDF<-matrix(0, 0, numClusters)
   for (kk in 1:length(p0Test))
   {
     if (ret$alternative == "greater") {

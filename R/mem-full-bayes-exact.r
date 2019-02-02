@@ -180,14 +180,16 @@ mem_full_bayes_exact <- function(
   }
   ret <- list(mod.mat = mod.mat, maximizer = MAX, MAP = MAP, PEP = PEP, 
              CDF = CDF, ESS = pESS, HPD = HPD, responses = responses,
-             size = size, name = name, p0 = p0, pweights = pweights,
+             size = size, name = name, p0 = p0, alternative=alternative, pweights = pweights,
              shape1 = shape1, shape2 = shape2, models = models, call = call)
 
   class(ret) <- c("full_bayes", "exchangeability_model")
   ret$samples <- sample_posterior(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
-  ret 
+  clusterRet <- clusterComp(ret)
+  result <- list(call=call, basketwise = ret, clusterwise = clusterRet)
+  return(result)  
 }
 
 sample_posterior.full_bayes <- function(model, num_samples = 10000) {
