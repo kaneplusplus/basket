@@ -54,13 +54,19 @@ print(MHResult1$clusterwise$mean_est)
 print(MHResult1$clusterwise$median_est)
 
 
+OCTable <- function(res)
+{
+  UseMethod("OCTable")
+}
+  
+
 OCTable.full_bayes <- function(res)
 {
   #res <- MHResult1$clusterwise
   if (class(res$CDF) == "matrix")
   {
     cdfS <- c()
-    for (i in 1:dim(res$CDF)[2])
+    for (i in 1:dim(res$CDF)[1])
     {
       ss <- paste("CDF ", rownames(res$CDF)[i])
       cdfS <- c(cdfS, ss)
@@ -73,9 +79,66 @@ OCTable.full_bayes <- function(res)
   return(oct)
 }
 
-OCTable.full_bayes(MHResult1$basketwise)
-OCTable.full_bayes(MHResult1$clusterwise)
+OCTable(MHResult1$basketwise)
+OCTable(MHResult1$clusterwise)
 
+
+updateResult<-function(res, p0, alternative="greater")
+{
+  if (length(p0) == 1) {
+    p0 <- rep(p0, length(res$basketwise$responses))
+  }
+  ret <- res
+  #basket
+  ret$basketwise$p0 <- p0
+  ret$basketwise$alternative <- alternative
+  MODEL <- ret$basketwise
+  ret$basketwise$CDF <- mem.PostProb(MODEL, fit = ret$basketwise)
+  
+  #cluster
+  retB <- ret$basketwise
+  sampleC <- ret$clusterwise$samples
+  numClusters <- length(ret$clusterwise$name)
+  p0Test <-unique(retB$p0)
+  allCDF<-matrix(0, 0, 2)
+  for (kk in 1:length(p0Test))
+  {
+    if (retB$alternative == "greater") {
+      res1 <- unlist(lapply(
+        1:numClusters,
+        FUN = function(j, x, t) {
+          return(sum(x[[j]] > t) / length(x[[j]]))
+        },
+        x = sampleC,
+        t = p0Test[kk]
+      ))
+    } else{
+      res1 <- unlist(lapply(
+        1:numClusters,
+        FUN = function(j, x, t) {
+          return(sum(x[[j]] > t) / length(x[[j]]))
+        },
+        x = sampleC,
+        t = p0Test[kk]
+      ))
+    }
+    allCDF <- rbind(allCDF, res1)
+  }
+  colnames(allCDF) <- ret$clusterwise$name
+  rownames(allCDF) <- p0Test
+  ret$clusterwise$CDF <- allCDF
+  
+  return(ret)
+}
+
+MHResult1New <- updateResult(MHResult1, 0.1)
+
+OCTable(MHResult1$basketwise)
+OCTable(MHResult1New$basketwise)
+
+OCTable(MHResult1$clusterwise)
+OCTable(MHResult1New$clusterwise)
+dim(MHResult1New$clusterwise$CDF)
 
 result <- cluster_PEP(responses=Data$X, size=Data$N, 
             name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
