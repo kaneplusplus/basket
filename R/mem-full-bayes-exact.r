@@ -32,6 +32,7 @@
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median
+#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
 mem_full_bayes_exact <- function(responses,
                                  size,

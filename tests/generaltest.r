@@ -1,6 +1,6 @@
 #library(testthat)
 library(basket)
-#library(igraph)
+library(igraph)
 #library(foreach)
 
 
@@ -86,7 +86,6 @@ print(MHResult1$clusterwise$median_est)
 
 OCTable(MHResult1$basketwise)
 OCTable(MHResult1$clusterwise)
-
 
 MHResult1New <- updateResult(MHResult1, 0.25)
 

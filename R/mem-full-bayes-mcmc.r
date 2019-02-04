@@ -35,6 +35,7 @@
 #'                      size = trial_sizes)
 #' mem_full_bayes_mcmc(trials$responses, trials$size)
 #' @importFrom stats median
+#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
 #'
 
