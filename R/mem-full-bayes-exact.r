@@ -139,7 +139,8 @@ mem_full_bayes_exact <- function(responses,
   l <- lower.tri(PEP.)
   PEP.[l] <- unlist(pep)
   PEP <- t(PEP.)
-  
+  colnames(pr.Inclus) <- rownames(pr.Inclus) <- name
+    
   ## Marginal CDF and ESS ##
   # Here's where all of the compute goes.
   pweights <- foreach(
@@ -234,6 +235,7 @@ mem_full_bayes_exact <- function(responses,
     list(
       mod.mat = mod.mat,
       maximizer = MAX,
+      PRIOR = pr.Inclus,
       MAP = MAP,
       PEP = PEP,
       CDF = CDF,

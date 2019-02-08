@@ -47,9 +47,10 @@ OCTable(exactResNew$basketwise)
 OCTable(exactRes$clusterwise)
 OCTable(exactResNew$clusterwise)
 
-#plot_density(exactRes$basketwise)
-#plot_posterior_exchangeability(exactRes$basketwise)
-
+plot_density(exactRes$basketwise)
+plot_posterior_exchangeability(exactRes$basketwise)
+plot_all_exchangeability(exactRes$basketwise, c("PRIOR", "MAP", "PEP"))
+plot_all_exchangeability(exactRes$basketwise, c("MAP", "PEP"))
 
 #rm(list=ls())
 ## Vectors of Observed number of Responses (X) and Patients (N)

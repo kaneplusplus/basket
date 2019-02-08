@@ -10,6 +10,7 @@
 #' # TODO: WRITE THIS
 #' @importFrom tidyr gather
 #' @importFrom tibble as_tibble
+#' @importFrom gridExtra grid.arrange
 #' @export
 plot_density <- function(x, ...) {
   UseMethod("plot_density")
@@ -88,6 +89,16 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
     stop("The matrix supplied must be symmetric in the values and names.")
   }
 
+  for(i in 1:dim(mat)[1])
+    for(j in 1:dim(mat)[2])
+    {
+      if (i <= j)
+      {
+        next
+      }
+      mat[i, j] <- NA
+    }
+      
   V2 <- value <- V1 <- x <- y <- label <- NULL
 
   baskets <- unique(colnames(mat))
@@ -124,6 +135,91 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
           legend.position = legend_position, legend.direction = "horizontal") +
     guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
            title.position = "top", title.hjust = 0.5))
+}
+
+
+#' @export
+plot_all_exchangeability <- function(x, plotList, ...) {
+  #library("gridExtra")
+
+  numC <-0
+  allPlot <- list()
+  if (any(plotList == "PRIOR"))
+  {
+    mat <- round(x$PRIOR, 3)
+    if (!is.null(basket_name(x))) {
+      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    } else {
+      dn <- paste("Basket", seq_len(nrow(mat)))
+      dimnames(mat) <- list(dn, dn)
+    }
+    plot1 <- (exchangeogram(mat, ...) +
+      ggtitle("Prior") +
+      theme(
+        plot.title = element_text(
+          family = "Trebuchet MS",
+          color = "#666666",
+          face = "bold",
+          size = 20,
+          hjust = 0.35
+        )
+      ))
+    allPlot <- c(allPlot, list(plot1))
+    numC <- numC + 1
+  }
+  
+  
+  if (any(plotList == "MAP"))
+  {
+    mat <- round(x$MAP, 3)
+    if (!is.null(basket_name(x))) {
+      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    } else {
+      dn <- paste("Basket", seq_len(nrow(mat)))
+      dimnames(mat) <- list(dn, dn)
+    }
+    plot2 <- (exchangeogram(mat, ...) +
+      ggtitle("Likelihood") +
+      theme(
+        plot.title = element_text(
+          family = "Trebuchet MS",
+          color = "#666666",
+          face = "bold",
+          size = 20,
+          hjust = 0.35
+        )
+      ))
+    allPlot <- c(allPlot, list(plot2))
+    numC <- numC + 1
+  }
+  
+  if (any(plotList == "PEP"))
+  {
+    mat <- round(x$PEP, 3)
+    if (!is.null(basket_name(x))) {
+      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    } else {
+      dn <- paste("Basket", seq_len(nrow(mat)))
+      dimnames(mat) <- list(dn, dn)
+    }
+    plot3 <- exchangeogram(mat, ...) +
+      ggtitle("Posterior Prob.") +
+      theme(
+        plot.title = element_text(
+          family = "Trebuchet MS",
+          color = "#666666",
+          face = "bold",
+          size = 20,
+          hjust = 0.35
+        )
+      )
+    allPlot <- c(allPlot, list(plot3))
+    numC <- numC + 1
+  }
+
+  PLOTS <- allPlot
+  #grid.arrange(plot2, ncol = 3, nrow = 1)  
+  do.call(grid.arrange, c(PLOTS, ncol = numC))
 }
 
 #' @export
