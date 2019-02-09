@@ -46,7 +46,7 @@
 #' @importFrom stats median
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
-#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain
+#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
 #' 
 

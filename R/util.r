@@ -1042,7 +1042,7 @@ clusterComp <- function(basketRet) {
   }
   colnames(allCDF) <- cName
   rownames(allCDF) <- p0Test
-  ret$CDF <- allCDF
+  ret$post.prob <- allCDF
   
   #ret$accept.rate <- (n.chg) / niter.MCMC
   ret$mean_est <- unlist(lapply(ret$samples, mean))
@@ -1060,9 +1060,9 @@ clusterComp <- function(basketRet) {
   ret$ESS <-
     calc.ESS.from.HPD(fit = ret, alpha = ret$alpha)
   names(ret$ESS) <- cName
-  ret$ESS2 <-
-    calc.ESS.from.HPDwid(fit = ret, alpha = ret$alpha)
-  names(ret$ESS2) <- cName
+  #ret$ESS2 <-
+  #  calc.ESS.from.HPDwid(fit = ret, alpha = ret$alpha)
+  #names(ret$ESS2) <- cName
   #ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("full_bayes", "exchangeability_model")
   return(ret)
