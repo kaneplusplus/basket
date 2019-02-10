@@ -25,14 +25,16 @@
 #' @examples
 #' # 5 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 5)
-#'
+#' 
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
-#'
+#' 
 #' # The trials: a column of the number of responses and a column of the
 #' # the size of each trial.
-#' trials <- data.frame(responses=rbinom(trial_sizes, trial_sizes, resp_rate),
-#'                      size = trial_sizes)
+#' trials <- data.frame(
+#'   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
+#'   size = trial_sizes
+#' )
 #' mem_full_bayes_mcmc(trials$responses, trials$size)
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
@@ -73,7 +75,7 @@ mem_full_bayes_mcmc <- function(responses,
   if (length(shape2) == 1) {
     shape2 <- rep(shape2, length(responses))
   }
-  
+
   isP0Vector <- TRUE
   if (length(p0) == 1) {
     isP0Vector <- FALSE
@@ -89,28 +91,27 @@ mem_full_bayes_mcmc <- function(responses,
         c(0, 1)
       ), k))))[order(rowSums(as.matrix(expand.grid(rep(
         list(c(0, 1)), k
-      ))))),]
+      ))))), ]
     k <- k - 1
     j <- j + 1
   }
-  
+
   ### Set initial MEM for MCMC ###
   if (is.na(Initial)[1]) {
     M.init <- diag(1, length(responses))
-  } else{
+  } else {
     M.init <- Initial
   }
-  
+
   MOld <- M.init
-  
+
   ### Check symmetry of Initial MEM ###
   d <- length(responses)
   update.Init <- FALSE
   for (i in 1:(d - 1))
     for (k in (i + 1):d)
     {
-      if (MOld[i, k] != MOld[k, i])
-      {
+      if (MOld[i, k] != MOld[k, i]) {
         MOld[i, k] <- MOld[k, i] <- rbinom(1, 1, 0.5)
         update.Init <- TRUE
       }
@@ -118,7 +119,7 @@ mem_full_bayes_mcmc <- function(responses,
   if (update.Init) {
     M.init <- MOld
   }
-  
+
   ### Create Map for Proposal Distribution ###
   M <- diag(NA, nrow(MOld))
   K <- 1
@@ -128,7 +129,7 @@ mem_full_bayes_mcmc <- function(responses,
       K <- K + 1
     }
   }
-  
+
   ### Implement Metropolis-Hastings Alg ###
   n.chg <- 0
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
@@ -159,17 +160,17 @@ mem_full_bayes_mcmc <- function(responses,
     )))
   if (length(i.Map) > 0) {
     MAP.count[i.Map] <- MAP.count[i.Map] + 1
-  } else{
+  } else {
     MAP.list[[length(MAP.list) + 1]] <-
       mem.Samp[[2]]
     MAP.count <- c(MAP.count, 1)
   }
   for (KK in 3:niter.MCMC) {
-    #print(KK)
+    # print(KK)
     mem.Samp[[KK]] <-
       update.MH(mem.Samp[[KK - 1]], M, responses, size, shape1, shape2, mod.mat, Prior)
-    
-    #print(mem.Samp[[KK]])
+
+    # print(mem.Samp[[KK]])
     mweights <-
       mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
     Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
@@ -186,20 +187,20 @@ mem_full_bayes_mcmc <- function(responses,
       )))
     if (length(i.Map) > 0) {
       MAP.count[i.Map] <- MAP.count[i.Map] + 1
-    } else{
+    } else {
       MAP.list[[length(MAP.list) + 1]] <-
         mem.Samp[[KK]]
       MAP.count <- c(MAP.count, 1)
     }
   }
-  
+
   ### Compute Posterior Model Weights ###
   pweights <-
     list()
   for (KK in 1:ncol(mweights)) {
     pweights[[KK]] <- mweights[, KK] / niter.MCMC
   }
-  
+
   ### List for post-processing ###
   MODEL <-
     list(
@@ -214,7 +215,7 @@ mem_full_bayes_mcmc <- function(responses,
       alpha = HPD.alpha,
       alternative = alternative
     )
-  
+
   ### Compute and output results ###
   PEP <-
     Samp.Sum / niter.MCMC
@@ -222,11 +223,11 @@ mem_full_bayes_mcmc <- function(responses,
   MAP <-
     MAP.list[[order(MAP.count, decreasing = TRUE)[1]]]
   rownames(MAP) <- colnames(MAP) <- MODEL$name
-  
+
   if (is.null(call)) {
     call <- match.call()
   }
-  
+
   ret <-
     list(
       responses = responses,
@@ -263,14 +264,14 @@ mem_full_bayes_mcmc <- function(responses,
   ret$ESS <-
     calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
-  #ret$ESS2 <-
+  # ret$ESS2 <-
   #  calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
-  #names(ret$ESS2) <- MODEL$name
-  #ret$PostProb <-
+  # names(ret$ESS2) <- MODEL$name
+  # ret$PostProb <-
   #  mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("full_bayes", "exchangeability_model")
-  
+
   clusterRet <- clusterComp(ret)
-  result <- list(call=call, basketwise = ret, clusterwise = clusterRet)
+  result <- list(call = call, basketwise = ret, clusterwise = clusterRet)
   return(result)
 }

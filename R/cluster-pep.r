@@ -1,12 +1,12 @@
 
 
-#' @title Cluster results based on PEP 
+#' @title Cluster results based on PEP
 #'
 #' @description Conductthe the basket clustering based on the PEP information and provide the information on the cluster level. .
 #' @param responses the number of responses in each basket.
 #' @param size the size of each basket.
 #' @param name the name of each basket.
-#' @param models the models calculated from the MEM computation.  
+#' @param models the models calculated from the MEM computation.
 #' @param pweights the weights calculated from the MEM computation.
 #' @param PEP the PEP matrix calculated from the MEM computation.
 #' @param p0 the null response rate for the poster probability calculation
@@ -17,7 +17,7 @@
 #' (default 0.5).
 
 #' @param hpd_alpha the highest posterior density trial significance.
-#' @param alternative the alternative case defination (default greater) 
+#' @param alternative the alternative case defination (default greater)
 #' @param seed the random number seed.
 #' @param num_samples the number of sample iterations for each cluster.
 #' @param call the call of the function.
@@ -26,29 +26,32 @@
 #' trial_sizes <- rep(15, 6)
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
-# The trials: a column of the number of responses, a column of the
-# the size of each trial.
-#' trials <- data.frame(responses = c(1,4, 5,0, 1, 6),
-#'                      size = trial_sizes
+#' # The trials: a column of the number of responses, a column of the
+#' # the size of each trial.
+#' trials <- data.frame(
+#'   responses = c(1, 4, 5, 0, 1, 6),
+#'   size = trial_sizes
 #' )
 #' MHResult2 <- mem_full_bayes_mcmc(trials$responses, trials$size,
-#'                                  name=c(" D1 "," D2 "," D3 "," D4 "," D5 "," D6 ")) 
+#'   name = c(" D1 ", " D2 ", " D3 ", " D4 ", " D5 ", " D6 ")
+#' )
 #' 
-#' result <- cluster_PEP(responses = trials$responses, size = trials$size,
-#'                       name=c(" D1 "," D2 "," D3 "," D4 "," D5 "," D6 "),
-#'                       models=MHResult2$models, pweights=MHResult2$pweights, p0 = 0.15,
-#'                       PEP=MHResult2$PEP)
+#' result <- cluster_PEP(
+#'   responses = trials$responses, size = trials$size,
+#'   name = c(" D1 ", " D2 ", " D3 ", " D4 ", " D5 ", " D6 "),
+#'   models = MHResult2$models, pweights = MHResult2$pweights, p0 = 0.15,
+#'   PEP = MHResult2$PEP
+#' )
 #' print(trials)
 #' print(result$clusters)
 #' print(result$HPD)
 #' print(result$mean_est)
-
 #' @importFrom stats median
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
-#' 
+#'
 
 
 ####################################################################
@@ -61,7 +64,7 @@ cluster_PEP <- function(responses,
                         name,
                         models,
                         pweights,
-                        PEP,                        
+                        PEP,
                         p0 = 0.15,
                         shape1 = 0.5,
                         shape2 = 0.5,
@@ -89,7 +92,7 @@ cluster_PEP <- function(responses,
   if (length(p0) == 1) {
     p0 <- rep(p0, length(responses))
   }
-  
+
   MODEL <-
     list(
       responses = responses,
@@ -103,32 +106,33 @@ cluster_PEP <- function(responses,
       alpha = HPD.alpha,
       alternative = alternative
     )
-  
-  #browser()  
+
+  # browser()
   if (is.null(call)) {
     call <- match.call()
   }
-  
+
   graph <-
     igraph::graph_from_adjacency_matrix(PEP,
-                                        mode = "undirected",
-                                        weighted = TRUE,
-                                        diag = FALSE)
+      mode = "undirected",
+      weighted = TRUE,
+      diag = FALSE
+    )
   result <- factor(cluster_louvain(graph, weights = E(graph)$weight)$membership)
-  #samples <- sample_posterior.full_bayes(MODEL)
-  #sample2 <- foreach(j = 1:6, .combine = cbind) %do% 
-  #{
+  # samples <- sample_posterior.full_bayes(MODEL)
+  # sample2 <- foreach(j = 1:6, .combine = cbind) %do%
+  # {
   #  samplePostOneBasket(j, MODEL)
-  #}
-  
-  
+  # }
+
+
   numClusters <- length(levels(result))
   sampleC <- matrix(0, num_samples, numClusters)
   cName <- c()
   clusterElement <- list()
   for (k in 1:numClusters) {
     rank <- which(result == levels(result)[k])
-    
+
     cBasket <- name[rank]
     clusterElement[[k]] <- cBasket
     print(paste0("#### Cluster Assignment: ", k))
@@ -136,15 +140,14 @@ cluster_PEP <- function(responses,
     print(name[rank])
     cName <- c(cName, paste0("Cluster ", k))
     numSamp <- num_samples / length(rank) + 1
-    samples <- foreach(j = rank, .combine = cbind) %do%
-    {
+    samples <- foreach(j = rank, .combine = cbind) %do% {
       samplePostOneBasket(j, MODEL, num_samples = numSamp)
     }
     sampV <- as.vector(samples)
     sampleC[, k] <- sampV[sample(1:num_samples)]
   }
   colnames(sampleC) <- cName
-  
+
   ret <-
     list(
       responses = responses,
@@ -156,13 +159,13 @@ cluster_PEP <- function(responses,
       shape1 = shape1,
       shape2 = shape2,
       clusters = clusterElement,
-      #Prior = Prior,
+      # Prior = Prior,
       call = call
     )
   ret$models <- models
   ret$pweights <- pweights
   ret$samples <- sampleC
-  #ret$accept.rate <- (n.chg) / niter.MCMC
+  # ret$accept.rate <- (n.chg) / niter.MCMC
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   ret$PEP <- PEP
@@ -179,15 +182,7 @@ cluster_PEP <- function(responses,
   ret$ESS2 <-
     calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS2) <- cName
-  #ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
+  # ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("full_bayes", "exchangeability_model")
   return(ret)
 }
-
-
-
-
-
-
-
-

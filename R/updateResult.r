@@ -15,19 +15,17 @@
 #' @export
 #'
 
-update_result<-function(res, p0=0.15, alternative="greater")
-{
+update_result <- function(res, p0 = 0.15, alternative = "greater") {
   if (length(p0) == 1) {
     p0 <- rep(p0, length(res$basketwise$responses))
   }
   ret <- res
-  #basket
+  # basket
   ret$basketwise$p0 <- p0
   ret$basketwise$alternative <- alternative
-  
-  
-  if (grepl("exact", res$call[1]))
-  {
+
+
+  if (grepl("exact", res$call[1])) {
     xvec <- res$basketwise$responses
     nvec <- res$basketwise$size
     name <- res$basketwise$name
@@ -38,22 +36,21 @@ update_result<-function(res, p0=0.15, alternative="greater")
     shape2 <- res$basketwise$shape2
     names(CDF) <- name
     CDF[1] <- eval.Post(p0[1], xvec, nvec, models, pweights[[1]], shape1[1], shape2[1], alternative)
-    
+
     K <- length(xvec)
-    for(j in 2:(K-1)) { 
-      Ii <- c(j,1:(j-1),(j+1):K)
+    for (j in 2:(K - 1)) {
+      Ii <- c(j, 1:(j - 1), (j + 1):K)
       CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
     }
     j <- j + 1
-    Ii <- c(j,1:(j-1))
-    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],shape1[j], shape2[j], alternative)
+    Ii <- c(j, 1:(j - 1))
+    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
     ret$basketwise$post.prob <- CDF
-    
-  }else{
+  } else {
     MODEL <- ret$basketwise
     ret$basketwise$post.prob <- mem.PostProb(MODEL, fit = ret$basketwise)
-  }  
-  #cluster
+  }
+  # cluster
   retB <- ret$basketwise
   sampleC <- ret$clusterwise$samples
   numClusters <- length(ret$clusterwise$name)
@@ -70,7 +67,7 @@ update_result<-function(res, p0=0.15, alternative="greater")
         x = sampleC,
         t = p0Test[kk]
       ))
-    } else{
+    } else {
       res1 <- unlist(lapply(
         1:numClusters,
         FUN = function(j, x, t) {
@@ -85,6 +82,6 @@ update_result<-function(res, p0=0.15, alternative="greater")
   colnames(allCDF) <- ret$clusterwise$name
   rownames(allCDF) <- p0Test
   ret$clusterwise$post.prob <- allCDF
-  
+
   return(ret)
 }
