@@ -15,7 +15,7 @@
 #' @export
 #'
 
-updateResult<-function(res, p0=0.15, alternative="greater")
+update_result<-function(res, p0=0.15, alternative="greater")
 {
   if (length(p0) == 1) {
     p0 <- rep(p0, length(res$basketwise$responses))
@@ -47,11 +47,11 @@ updateResult<-function(res, p0=0.15, alternative="greater")
     j <- j + 1
     Ii <- c(j,1:(j-1))
     CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],shape1[j], shape2[j], alternative)
-    ret$basketwise$CDF <- CDF
+    ret$basketwise$post.prob <- CDF
     
   }else{
     MODEL <- ret$basketwise
-    ret$basketwise$CDF <- mem.PostProb(MODEL, fit = ret$basketwise)
+    ret$basketwise$post.prob <- mem.PostProb(MODEL, fit = ret$basketwise)
   }  
   #cluster
   retB <- ret$basketwise
@@ -84,7 +84,7 @@ updateResult<-function(res, p0=0.15, alternative="greater")
   }
   colnames(allCDF) <- ret$clusterwise$name
   rownames(allCDF) <- p0Test
-  ret$clusterwise$CDF <- allCDF
+  ret$clusterwise$post.prob <- allCDF
   
   return(ret)
 }

@@ -2,7 +2,11 @@
 library(basket)
 library(igraph)
 #library(foreach)
+library(ggplot2)
+library(extrafont)
 
+font_import()
+loadfonts(device = "win")
 
 data(vemu_wide)
 
@@ -59,7 +63,7 @@ plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"))
 baskets <- 1:6
 vemu_wide2 <- vemu_wide[baskets,]
 
-MHResult3 <- mem_full_bayes_mcmc(responses = vemu_wide2$responders, 
+MHResult1 <- mem_full_bayes_mcmc(responses = vemu_wide2$responders, 
                                  size = vemu_wide2$evaluable,
                                  name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
                                  p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15), Initial = NA)
@@ -93,3 +97,32 @@ oc_table(MHResult1New$basketwise)
 
 oc_table(MHResult1$clusterwise)
 oc_table(MHResult1New$clusterwise)
+
+
+baskets <- 1:6
+vemu_wide2 <- vemu_wide[baskets,]
+
+MHResult3 <- mem_full_bayes_mcmc(responses = c(vemu_wide2$responders,
+                                               vemu_wide2$responders
+                                              ), 
+                                 size = c( vemu_wide2$evaluable,
+                                           vemu_wide2$evaluable
+                                           ),
+                                 name=1:12,
+                                 p0 = 0.15, niter.MCMC = 4000, Initial = NA)
+
+print(MHResult3$basketwise$PEP)
+print(MHResult3$basketwise$MAP)
+print(MHResult3$basketwise$post.prob)
+print(MHResult3$basketwise$HPD)
+print(MHResult3$basketwise$ESS)
+print(MHResult3$basketwise$mean_est)
+print(MHResult3$basketwise$median_est)
+
+
+print(MHResult3$clusterwise$cluster)
+print(MHResult3$clusterwise$post.prob)
+print(MHResult3$clusterwise$HPD)
+print(MHResult3$clusterwise$ESS)
+print(MHResult3$clusterwise$mean_est)
+print(MHResult3$clusterwise$median_est)

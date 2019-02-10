@@ -165,6 +165,7 @@ mem_full_bayes_mcmc <- function(responses,
     MAP.count <- c(MAP.count, 1)
   }
   for (KK in 3:niter.MCMC) {
+    #print(KK)
     mem.Samp[[KK]] <-
       update.MH(mem.Samp[[KK - 1]], M, responses, size, shape1, shape2, mod.mat, Prior)
     
@@ -258,13 +259,13 @@ mem_full_bayes_mcmc <- function(responses,
       FUN = boa.hpd,
       alpha = MODEL$alpha
     )
-  ret$CDF <- mem.PostProb(MODEL, fit = ret)
+  ret$post.prob <- mem.PostProb(MODEL, fit = ret)
   ret$ESS <-
     calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
-  ret$ESS2 <-
-    calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
-  names(ret$ESS2) <- MODEL$name
+  #ret$ESS2 <-
+  #  calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
+  #names(ret$ESS2) <- MODEL$name
   #ret$PostProb <-
   #  mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("full_bayes", "exchangeability_model")

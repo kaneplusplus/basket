@@ -151,14 +151,14 @@ mem_full_bayes_exact <- function(responses,
     post.Weights(j, length(xvec), Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR)
   }
   
-  pESS <- CDF <- rep(NA, length(xvec))
-  names(pESS) <- names(CDF) <- name
+  pESS <- post.prob <- rep(NA, length(xvec))
+  names(pESS) <- names(post.prob) <- name
   HPD <- matrix(NA, 2, length(xvec))
   rownames(HPD) = c("lower", "upper")
   colnames(HPD) <- name
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
   
-  CDF[1] <-
+  post.prob[1] <-
     eval.Post(p0[1],
               xvec,
               nvec,
@@ -178,7 +178,7 @@ mem_full_bayes_exact <- function(responses,
   K <- length(xvec)
   for (j in 2:(K - 1)) {
     Ii <- c(j, 1:(j - 1), (j + 1):K)
-    CDF[j] <-
+    post.prob[j] <-
       eval.Post(p0[j],
                 xvec[Ii],
                 nvec[Ii],
@@ -197,7 +197,7 @@ mem_full_bayes_exact <- function(responses,
   }
   j <- j + 1
   Ii <- c(j, 1:(j - 1))
-  CDF[j] <-
+  post.prob[j] <-
     eval.Post(p0[j],
               xvec[Ii],
               nvec[Ii],
@@ -238,7 +238,7 @@ mem_full_bayes_exact <- function(responses,
       PRIOR = pr.Inclus,
       MAP = MAP,
       PEP = PEP,
-      CDF = CDF,
+      post.prob = post.prob,
       ESS = pESS,
       HPD = HPD,
       responses = responses,
