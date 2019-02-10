@@ -1,9 +1,10 @@
 ---
 title: "Using the basket Package"
-author: "Nan Chen and Michael J. Kane"
+author: "Nan Chen, Brian Hobbs, and Michael J. Kane"
 date: "`r Sys.Date()`"
 output:
     rmarkdown::html_vignette:
+      
       fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Using the basket Package}
@@ -18,33 +19,139 @@ knitr::opts_chunk$set(
 )
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+The "basket" package is an R package that can be applied to conduct basket trial designs basked on the MEM method. One can use the package to perform the exact or MCMC computation of the operating characteristics of different scenarios. The posterior probabilities, HPD boundaries, effective sample sizes (ESS), mean and median estimations can be calculated With this package using the MEM method. After the basket trial is completed, one can use the package conduct the MEM analysis with the observed outcomes. Density of eack basket and the exchangeability can be plotted using the package. The package includes the following main functions: 
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+- mem_full_bayes_exact
+- mem_full_bayes_mcmc
+- oc_table
+- update_result
+- plot_density
+- plot_posterior_exchangeability
+- plot_all_exchangeability
 
-## Vignette Info
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+## mem_full_bayes_exact() function
 
-## Figures
+This function conducts the exact computation based on the MEM method.
+```{r}
+library(basket)
+data(vemu_wide)
+baskets <- 1:5
+vemu_wide1 <- vemu_wide[baskets,]
+# Full Bayes exact method
+exact_res <- mem_full_bayes_exact(responses = vemu_wide1$responders, 
+                     size = vemu_wide1$evaluable,
+                     name = vemu_wide1$baskets, p0=rep(0.15, length(basket)))
+```
+The output "exact_res" is a list including three components:  call, basketwise, clusterwise.
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold', fig.cap='A caption for a boring plot.'}
-plot(10:1)
+The "call" is the exact call including parameters for the function. 
+```{r}
+print(exact_res$call)
 ```
 
-## More Examples
+The "basketwise" includes all results of the basketwise analyses.
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+```{r}
+print(exact_res$basketwise$PEP)
+print(exact_res$basketwise$MAP)
+print(exact_res$basketwise$post.prob)
+print(exact_res$basketwise$HPD)
+print(exact_res$basketwise$ESS)
+print(exact_res$basketwise$mean_est)
+print(exact_res$basketwise$median_est)
+```
+The "clusterwise" includes all results of the clusterwise analyses.
+```{r}
+print(exact_res$clusterwise$cluster)
+print(exact_res$clusterwise$post.prob)
+print(exact_res$clusterwise$HPD)
+print(exact_res$clusterwise$ESS)
+print(exact_res$clusterwise$mean_est)
+print(exact_res$clusterwise$median_est)
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
 ```
 
-Also a quote using `>`:
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+## mem_full_bayes_mcmc() function
+
+This function conducts the MCMC computation based on the MEM method.
+
+```{r}
+baskets <- 1:6
+vemu_wide2 <- vemu_wide[baskets,]
+
+MHResult1 <- mem_full_bayes_mcmc(responses = vemu_wide2$responders, 
+                                 size = vemu_wide2$evaluable,
+                                 name=c("NSCLC ","CRC.v ","CRC.vc","  BD  ","ED.LH "," ATC  "),
+                                 p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15), Initial = NA)
+
+```
+
+The output of the MCMC method "MHResult1" is a list including three components:  call, basketwise, clusterwise.
+
+```{r}
+print(MHResult1$call)
+
+print(MHResult1$basketwise$PEP)
+print(MHResult1$basketwise$MAP)
+print(MHResult1$basketwise$post.prob)
+print(MHResult1$basketwise$HPD)
+print(MHResult1$basketwise$ESS)
+print(MHResult1$basketwise$mean_est)
+print(MHResult1$basketwise$median_est)
+
+
+print(MHResult1$clusterwise$cluster)
+print(MHResult1$clusterwise$post.prob)
+print(MHResult1$clusterwise$HPD)
+print(MHResult1$clusterwise$ESS)
+print(MHResult1$clusterwise$mean_est)
+print(MHResult1$clusterwise$median_est)
+```
+
+## oc_table() function
+
+Summarize the operating characteristics from the result (basketwise or clusterwise)
+
+```{r}
+
+oc_table(exact_res$basketwise)
+oc_table(exact_res$clusterwise)
+```
+
+
+## update_result() function
+
+Update the result with the new threshold value p0 and the alternative parameter.
+
+```{r}
+exact_resNew <- update_result(exact_res, 0.25)
+
+oc_table(exact_res$basketwise)
+oc_table(exact_resNew$basketwise)
+
+```
+
+## plot functions
+Plot the density and the exchaneability
+
+```{r, fig.height = 3, fig.width= 4, fig.align= "center"}
+library(extrafont)
+loadfonts(device = "win", quiet=TRUE)
+plot_density(exact_res$basketwise)
+```
+
+```{r, out.width='100%',fig.width= 10, fig.align= "center"}
+
+plot_posterior_exchangeability(exact_res$basketwise)
+```
+
+Plot prior, likelihood, and posterior probability.
+```{r, out.width='100%',fig.width= 12, fig.align= "center"}
+plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), text_size=2.5)
+```
+```{r, out.width='100%',fig.width= 10, fig.align= "center", fig.}
+plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"), text_size=3)
+`````
+

@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.0.13
+Version: 0.0.16
 Authors@R: c(
   person("Brian", "Hobbs",
          email = "bhobbs@presagia.ai",
