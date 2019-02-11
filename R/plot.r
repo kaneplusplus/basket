@@ -196,7 +196,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       dimnames(mat) <- list(dn, dn)
     }
     plot2 <- (exchangeogram(mat, ...) +
-      ggtitle("Likelihood") +
+      ggtitle("MAP") +
       theme(
         plot.title = element_text(
           family = "Trebuchet MS",

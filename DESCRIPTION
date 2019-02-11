@@ -23,6 +23,7 @@ Imports:
     tidyr,
     dplyr,
     igraph,
+    gridExtra,
     itertools
 LazyData: true
 RoxygenNote: 6.1.1
