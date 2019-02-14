@@ -40,22 +40,26 @@ print(exact_res$clusterwise$ESS)
 print(exact_res$clusterwise$mean_est)
 print(exact_res$clusterwise$median_est)
 
-oc_table(exact_res$basketwise)
-oc_table(exact_res$clusterwise)
+summary(exact_res$basketwise)
+summary(exact_res$clusterwise)
 
 
 exact_resNew <- update_result(exact_res, 0.25)
 
-oc_table(exact_res$basketwise)
-oc_table(exact_resNew$basketwise)
+summary(exact_res$basketwise)
+summary(exact_resNew$basketwise)
 
-oc_table(exact_res$clusterwise)
-oc_table(exact_resNew$clusterwise)
+summary(exact_res$clusterwise)
+summary(exact_resNew$clusterwise)
 
 plot_density(exact_res$basketwise)
 plot_posterior_exchangeability(exact_res$basketwise)
-plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"))
-plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"))
+plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), 
+                         legend_position = c(0.45, -0.22),
+                         text_size=3, basket_name_hoffset=-0.2)
+plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"),
+                         legend_position = c(0.45, -0.22),
+                         text_size=3, basket_name_hoffset=-0.2)
 
 # rm(list=ls())
 ## Vectors of Observed number of Responses (X) and Patients (N)
@@ -90,16 +94,16 @@ print(MHResult1$clusterwise$ESS)
 print(MHResult1$clusterwise$mean_est)
 print(MHResult1$clusterwise$median_est)
 
-oc_table(MHResult1$basketwise)
-oc_table(MHResult1$clusterwise)
+summary(MHResult1$basketwise)
+summary(MHResult1$clusterwise)
 
 MHResult1New <- update_result(MHResult1, 0.25)
 
-oc_table(MHResult1$basketwise)
-oc_table(MHResult1New$basketwise)
+summary(MHResult1$basketwise)
+summary(MHResult1New$basketwise)
 
-oc_table(MHResult1$clusterwise)
-oc_table(MHResult1New$clusterwise)
+summary(MHResult1$clusterwise)
+summary(MHResult1New$clusterwise)
 
 
 baskets <- 1:6

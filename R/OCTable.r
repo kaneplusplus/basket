@@ -7,20 +7,10 @@
 #' @examples
 #' 
 #' @export
-oc_table <- function(res) {
-  UseMethod("oc_table")
-}
+
 
 #' @export
-oc_table.default <- function(res) {
-  stop(paste(
-    "Object class is not handled in OCTable function",
-    class(res)
-  ))
-}
-
-#' @export
-oc_table.full_bayes <- function(res) {
+summary.full_bayes <- function(res) {
   # res <- MHResult1$clusterwise
   if (class(res$post.prob) == "matrix") {
     cdfS <- c()

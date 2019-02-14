@@ -85,7 +85,7 @@ plot_posterior_exchangeability.default <- function(x, ...) {
 #' geom_text labs guides element_blank guide_colorbar
 exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
                           expand = c(0.3, 0.3), text_size = 4,
-                          legend_position = c(0.25, 0.8),
+                          legend_position = c(0.25, 0.8), drawLegend = TRUE,
                           basket_name_hoffset = 0) {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop("The matrix supplied must be symmetric in the values and names.")
@@ -117,7 +117,7 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
     x = seq_len(nrow(mat)) - 1 + basket_name_hoffset,
     y = seq_len(nrow(mat)), label = colnames(mat)
   )
-  ggplot(mg, aes(V2, V1, fill = value)) +
+  tG <- ggplot(mg, aes(V2, V1, fill = value)) +
     geom_tile(color = "white") +
     scale_fill_gradient2(
       low = low, high = high, mid = mid,
@@ -139,12 +139,14 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
     geom_text(aes(V2, V1, label = value),
       data = mg, color = "white",
       size = text_size
+    ) + geom_text(aes(x = x, y = y, label = label),
+                data = label_pos,
+                inherit.aes = FALSE, size = text_size
     ) +
-    geom_text(aes(x = x, y = y, label = label),
-      data = label_pos,
-      inherit.aes = FALSE, size = text_size
-    ) +
-    labs(x = "", y = "") +
+    labs(x = "", y = "")
+  if (drawLegend)
+  {
+    tG <- tG  +
     theme(
       panel.grid.major = element_blank(), panel.border = element_blank(),
       panel.background = element_blank(), axis.ticks = element_blank(),
@@ -153,7 +155,23 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
     guides(fill = guide_colorbar(
       barwidth = 7, barheight = 1,
       title.position = "top", title.hjust = 0.5
-    ))
+    )
+    )
+  } else{
+    tG <- tG  +
+      theme(
+        panel.grid.major = element_blank(), panel.border = element_blank(),
+        panel.background = element_blank(), axis.ticks = element_blank(),
+        legend.position = legend_position + c(-110,-100), legend.direction = "horizontal"
+      ) +
+      guides(fill = guide_colorbar(
+        barwidth = 7, barheight = 1,
+        title.position = "top", title.hjust = 0.5
+      )
+      )
+  }
+  
+  return(tG)
 }
 
 
@@ -171,7 +189,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot1 <- (exchangeogram(mat, ...) +
+    plot1 <- (exchangeogram(mat, drawLegend = FALSE, ...) +
       ggtitle("Prior") +
       theme(
         plot.title = element_text(
@@ -218,7 +236,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot3 <- exchangeogram(mat, ...) +
+    plot3 <- exchangeogram(mat, drawLegend = FALSE, ...) +
       ggtitle("Posterior Prob.") +
       theme(
         plot.title = element_text(
