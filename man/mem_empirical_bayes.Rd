@@ -39,15 +39,17 @@ Fit the MEM model using empirical Bayesian inference.
 }
 \examples{
 # 5 baskets, each with enrollement size 5
-trial_sizes <- rep(5, 5) 
+trial_sizes <- rep(5, 5)
 
 # The response rates for the baskets.
 resp_rate <- 0.15
 
 # The trials: a column of the number of responses and a column of the
 # the size of each trial.
-trials <- data.frame(responses=rbinom(trial_sizes, trial_sizes, resp_rate), 
-                     size = trial_sizes)
+trials <- data.frame(
+  responses = rbinom(trial_sizes, trial_sizes, resp_rate),
+  size = trial_sizes
+)
 
 mem_empirical_bayes(trials$responses, trials$size)
 }

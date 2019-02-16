@@ -26,7 +26,7 @@ sem(responses, size, name, p0 = 0.25, mu = 0, M = 0, inv_sig = 1,
 
 \item{num_chains}{the number of MCMC chains to run.}
 
-\item{quiet}{should the function be run with extra output messages? 
+\item{quiet}{should the function be run with extra output messages?
 Default: FALSE.}
 
 \item{num_iterations}{the number MCMC steps to take per chain.}
@@ -38,7 +38,7 @@ Default: interactive()}
 Fit the single source model.
 }
 \references{
-Berry SM, Broglio KR, Groshen S, Berry DA. Bayesian 
-hierarchical modeling of patient subpopulations: efficient designs of 
+Berry SM, Broglio KR, Groshen S, Berry DA. Bayesian
+hierarchical modeling of patient subpopulations: efficient designs of
 phase II oncology clinical trials. Clinical Trials. 2013 Oct;10(5):720-34.
 }

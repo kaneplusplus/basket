@@ -23,7 +23,7 @@ The "basket" package is an R package that can be applied to conduct basket trial
 
 - mem_full_bayes_exact
 - mem_full_bayes_mcmc
-- oc_table
+- summary
 - update_result
 - plot_density
 - plot_posterior_exchangeability
@@ -110,14 +110,14 @@ print(MHResult1$clusterwise$mean_est)
 print(MHResult1$clusterwise$median_est)
 ```
 
-## oc_table() function
+## summary() function
 
 Summarize the operating characteristics from the result (basketwise or clusterwise)
 
 ```{r}
 
-oc_table(exact_res$basketwise)
-oc_table(exact_res$clusterwise)
+summary(exact_res$basketwise)
+summary(exact_res$clusterwise)
 ```
 
 
@@ -128,8 +128,8 @@ Update the result with the new threshold value p0 and the alternative parameter.
 ```{r}
 exact_resNew <- update_result(exact_res, 0.25)
 
-oc_table(exact_res$basketwise)
-oc_table(exact_resNew$basketwise)
+summary(exact_res$basketwise)
+summary(exact_resNew$basketwise)
 
 ```
 
@@ -142,16 +142,21 @@ loadfonts(device = "win", quiet=TRUE)
 plot_density(exact_res$basketwise)
 ```
 
-```{r, out.width='100%',fig.width= 10, fig.align= "center"}
+```{r, out.width='80%',fig.width=8, fig.height=4, fig.align= "center"}
 
-plot_posterior_exchangeability(exact_res$basketwise)
+plot_posterior_exchangeability(exact_res$basketwise,
+                               text_size=2.5, basket_name_hoffset=-0.2)
 ```
 
 Plot prior, likelihood, and posterior probability.
-```{r, out.width='100%',fig.width= 12, fig.align= "center"}
-plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), text_size=2.5)
+```{r, out.width='100%',fig.width= 12, fig.height=6, fig.align= "center"}
+
+plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), 
+                         text_size=2.5, basket_name_hoffset=-0.2)
 ```
-```{r, out.width='100%',fig.width= 10, fig.align= "center", fig.}
-plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"), text_size=3)
+```{r, out.width='80%',fig.width= 8, fig.height=5,fig.align= "center", fig.}
+plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"),
+                         text_size=3, basket_name_hoffset=-0.2)
 `````
+
 

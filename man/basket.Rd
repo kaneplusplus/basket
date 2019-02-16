@@ -17,7 +17,7 @@ names for a basket trial.}
 \item{method}{the method for fitting the basket trial. This could be
 mem_empirical_bayes, mem_full_bayes, sem, or a custom fitting function.}
 
-\item{...}{other parameters to be passed to the supplied 
+\item{...}{other parameters to be passed to the supplied
 \code{method} argument.}
 }
 \description{

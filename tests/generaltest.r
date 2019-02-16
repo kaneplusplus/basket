@@ -55,7 +55,6 @@ summary(exact_resNew$clusterwise)
 plot_density(exact_res$basketwise)
 plot_posterior_exchangeability(exact_res$basketwise)
 plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), 
-                         legend_position = c(0.45, -0.22),
                          text_size=3, basket_name_hoffset=-0.2)
 plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"),
                          legend_position = c(0.45, -0.22),

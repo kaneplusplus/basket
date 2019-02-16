@@ -213,7 +213,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot2 <- (exchangeogram(mat, ...) +
+    plot2 <- (exchangeogram(mat, legend_position = c(0.45, -0.22),...) +
       ggtitle("MAP") +
       theme(
         plot.title = element_text(

@@ -1,5 +1,5 @@
 
-#' @title Make the operating characteristics table
+#' @title Make the summary table
 #'
 #' @description From the input full_bayes class object, summarize the CDF, HPD, ESS, Mean, and Median results.
 #' @param res the full_bayes class object..

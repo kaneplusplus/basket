@@ -10,7 +10,7 @@ cluster_mean(x, method = "maximizer")
 \item{x}{the exchangeability model}
 
 \item{method}{the exchangeability model to get the clusters for. This
-can be either "maximzer" or "pep" if a model includes a posterior 
+can be either "maximzer" or "pep" if a model includes a posterior
 exchangeability probability.}
 }
 \description{

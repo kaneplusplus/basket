@@ -21,9 +21,11 @@ resp_rate <- 0.15
 
 # The trials: a column of the number of responses and a column of the
 # the size of each trial.
-trials <- data.frame(responses=rbinom(trial_sizes, trial_sizes, resp_rate),
-                     size = trial_sizes, 
-                     name = paste("Basket", seq_len(5)))
+trials <- data.frame(
+  responses = rbinom(trial_sizes, trial_sizes, resp_rate),
+  size = trial_sizes,
+  name = paste("Basket", seq_len(5))
+)
 
 mem_empirical_bayes(trials$responses, trials$size, trials$basket)
 }

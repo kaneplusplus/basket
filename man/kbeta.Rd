@@ -42,9 +42,9 @@ otherwise, P[X > x].}
 \description{
 Density, distribution function, quantile function, and
 random geration for the K-Beta distribution with shape parameters
-\code{shape1}, \code{shape2}, \code{a}, and \code{b}. The shape 
+\code{shape1}, \code{shape2}, \code{a}, and \code{b}. The shape
 parameters are the same as those of the beta distribution. The
-\code{a} parameter defines the smallest value in the support of the 
+\code{a} parameter defines the smallest value in the support of the
 distribution and the \code{b} parameter defines the largest.
 }
 \examples{
@@ -55,7 +55,7 @@ shape1 <- 0.5
 shape2 <- 0.5
 x <- seq(a, b, by = 0.01)
 d <- data.frame(x = x, y = dkbeta(x, 0.5, 0.5, a, b))
-ggplot(d, aes(x = x, y = y)) + 
+ggplot(d, aes(x = x, y = y)) +
   geom_area(fill = "black", alpha = 0.7) +
   xlim(0, 3)
 }
