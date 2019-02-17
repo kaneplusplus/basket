@@ -174,7 +174,12 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
   return(tG)
 }
 
-
+#' @title Plot the Prior, MAP, and PEP of a Basket Trial
+#'
+#' @param x the exchangeability model.
+#' @param ... other options. See Details for more information.
+#' @details TODO: WRITE THIS
+#' @examples
 #' @export
 plot_all_exchangeability <- function(x, plotList, ...) {
   # library("gridExtra")

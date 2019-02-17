@@ -8,6 +8,13 @@ library(extrafont)
 font_import()
 loadfonts(device = "win")
 
+#roxygen2::roxygenise() 
+
+#pack <- "basket"
+#path <- find.package(pack)
+#system(paste(shQuote(file.path(R.home("bin"), "R")),
+#             "CMD", "Rd2pdf", shQuote(path)))
+
 data(vemu_wide)
 
 baskets <- 1:5
@@ -57,7 +64,6 @@ plot_posterior_exchangeability(exact_res$basketwise)
 plot_all_exchangeability(exact_res$basketwise, c("PRIOR", "MAP", "PEP"), 
                          text_size=3, basket_name_hoffset=-0.2)
 plot_all_exchangeability(exact_res$basketwise, c("MAP", "PEP"),
-                         legend_position = c(0.45, -0.22),
                          text_size=3, basket_name_hoffset=-0.2)
 
 # rm(list=ls())
