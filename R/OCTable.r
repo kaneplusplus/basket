@@ -24,5 +24,6 @@ summary.full_bayes <- function(res) {
   }
   oct <- rbind(res$post.prob, res$HPD, res$ESS, res$mean_est, res$median_est)
   rownames(oct) <- c(cdfS, "HPD LB", "HPD HB", "ESS", "Mean", "Median")
+  oct <- round(oct, 3)
   return(oct)
 }
