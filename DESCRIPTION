@@ -2,15 +2,18 @@ Package: basket
 Title: Basket Trial Analysis 
 Version: 0.0.18
 Authors@R: c(
+  person("Nan", "Chen",
+         email = "nchen2@mdanderson.org",
+         role = c("aut")),
   person("Brian", "Hobbs",
-         email = "bhobbs@presagia.ai",
+         email = "HobbsB@ccf.org",
          role = c("aut")),
   person("Michael", "Kane",
-         email = "mkane@presagia.ai",
+         email = "michael.kane@yale.edu",
          role = c("aut", "cre")))
 Description: Implemention of multisource exchangeability models for basket trial design and monitoring.
 License: LGPL-2
-Maintainer: Michael J. Kane <mkane@presagia.ai>
+Maintainer: Michael J. Kane <michael.kane@yale.edu>
 Encoding: UTF-8
 Imports: 
     foreach, 
