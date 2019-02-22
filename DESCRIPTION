@@ -14,7 +14,6 @@ Authors@R: c(
 Description: Implemention of multisource exchangeability models for basket trial design and monitoring.
 License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
-Encoding: UTF-8
 Imports: 
     foreach, 
     GenSA, 
@@ -29,6 +28,7 @@ Imports:
     gridExtra,
     itertools
 LazyData: true
+Encoding: UTF-8
 RoxygenNote: 6.1.1
 Suggests: 
     knitr,

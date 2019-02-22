@@ -220,15 +220,6 @@ MEM_modweight <- function(mod.mat, source.vec) {
   q.vec
 }
 
-# eval.Post <- function(p0, X, N, Omega, w){
-#  a=b=0.5
-#  alph <- a + Omega %*% X
-#  beta <- b + (Omega %*% N - Omega %*% X)
-#  return( sum( (1-pbeta(p0, alph, beta))*w ) )
-# }
-
-
-
 ESS <- function(X, N, Omega, a, b) {
   # a <- b <- 0.5
   alph <- a + Omega %*% X
@@ -236,14 +227,13 @@ ESS <- function(X, N, Omega, a, b) {
   alph + beta
 }
 
-
-
-post.HPD <- function(Data, pars, marg.M, alp) {
+post.HPD <- function(Data, pars, marg.M, alp, shape1, shape2) {
   U <- MEM.w(Data, pars, marg.M)
   out <- boa.hpd(
-    replicate(10000, samp.Post(Data$X, Data$N, U$models, U$weights[[1]])),
-    alp
-  )
+    replicate(10000, 
+              samp.Post(Data$X, Data$N, U$models, U$weights[[1]], shape1[1], 
+                        shape2[1])),
+    alp)
 
   K <- length(Data$X)
 
@@ -258,7 +248,7 @@ post.HPD <- function(Data, pars, marg.M, alp) {
         boa.hpd(
           replicate(10000, samp.Post(
             Data$X[Ii], Data$N[Ii], U$models,
-            U$weights[[j]]
+            U$weights[[j]], shape1[j], shape2[j]
           )),
           alp
         )
@@ -280,7 +270,7 @@ post.HPD <- function(Data, pars, marg.M, alp) {
   out <- rbind(out, boa.hpd(
     replicate(10000, samp.Post(
       Data$X[Ii], Data$N[Ii], U$models,
-      U$weights[[j]]
+      U$weights[[j]], shape1[j], shape2[j]
     )),
     alp
   ))
@@ -292,7 +282,7 @@ post.HPD <- function(Data, pars, marg.M, alp) {
 #' @importFrom foreach foreach %dopar%
 post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
   U <- MEM.w(Data, pars, marg.M)
-  out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1, shape2)
+  out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1[1], shape2[1])
   K <- length(Data$X)
   out <- c(
     out,
@@ -302,7 +292,8 @@ post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
     ) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
-        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, shape1, shape2)
+        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, 
+                               shape1[j], shape2[j])
       }
     }
   )
@@ -312,7 +303,9 @@ post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
   #  }
   j <- K
   Ii <- c(j, 1:(j - 1))
-  out <- out <- c(out, U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models), shape1, shape2)
+  out <- c(out, 
+           U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, shape1[j], 
+                                  shape2[j]))
   names(out) <- Data$X
   out
 }
@@ -389,114 +382,6 @@ post.Weights <- function(j, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
   out
 }
 
-# TODO: What is this? Do we need it?
-# MEM_FullInf <- function(xvec, nvec, avec, bvec, pr.Inclus, alp) {
-#  mod.mat <- list()
-#  k <- length(xvec)-1
-#  j <- 1
-#
-#  while (k > 0) {
-#    mod.mat[[j]] <- as.matrix(expand.grid( rep(list(c(0,1)), k) ))[
-#      order(rowSums(as.matrix(expand.grid( rep(list(c(0,1)), k) )))),]
-#    k <- k - 1
-#    j <- j + 1
-#  }
-#  H <- length(mod.mat)
-#  temp <- list()
-#
-#  for (h in 1:(H-1)) {
-#    temp[[h]] <- 1:dim(mod.mat[[h]])[1]
-#  }
-#  temp[[H]] <- 1:2
-#  Mod.I <- as.matrix(expand.grid( temp ))
-#
-#  ## identify maximizer of marginal density ##
-#  log.Marg <- apply(Mod.I, MARGIN=1, FUN=logMarg.Dens, mod.mat, xvec, nvec,
-#                    avec, bvec)
-#  max.i <- order(log.Marg,decreasing=TRUE)[1]
-#  MAX <- MEM.mat(Mod.I[max.i,], mod.mat, length(xvec))
-#  colnames(MAX) <- rownames(MAX) <- xvec
-#
-#  ## compute prior + posterior MEM probabilities ##
-#  PRIOR <- apply( Mod.I, MARGIN=1, FUN=mem.Prior, mod.mat, pr.Inclus)
-#  POST <- ( exp(log.Marg) * PRIOR ) / sum( exp(log.Marg) * PRIOR )
-#  map.i <- order(POST,decreasing=TRUE)[1]
-#  MAP <- MEM.mat(Mod.I[map.i,], mod.mat, length(xvec))
-#  colnames(MAP) <- rownames(MAP) <- xvec
-#
-#  ## Posterior Exchangeability Prob ##
-#  PEP <- matrix(NA, length(xvec), length(xvec)); colnames(PEP) <- rownames(PEP) <- xvec
-#  diag(PEP) <- 1
-#  for(i in 1:(nrow(PEP)-1)){ for(j in (i+1):ncol(PEP)){
-#   I.1 <- apply( Mod.I, MARGIN=1, FUN=mem.ij, mod.mat, pr.Inclus, i, j) #; print(sum(I.1))
-#   PEP[i,j] <- ( (exp(log.Marg)*PRIOR)%*%I.1)/sum( exp(log.Marg)*PRIOR )
-#  }}
-#
-#  ## Marginal CDF and ESS ##
-#  pweights <- list()
-#  w <- rep(NA, nrow(mod.mat[[1]]))
-#  j <- 1
-#
-#  for (i in 1:nrow(mod.mat[[1]])) {
-#    I.m <- apply(Mod.I, MARGIN=1, FUN=mem.j, mod.mat, pr.Inclus, j,
-#                 c(1,mod.mat[[1]][i,]) )
-#   w[i] <- ( (exp(log.Marg) * PRIOR) %*% I.m ) / sum( exp(log.Marg) * PRIOR )
-#  }
-#  pweights[[j]] <- w
-#
-#  for (j in 2:(length(xvec)-1)) {
-#    w <- rep(NA, nrow(mod.mat[[1]]))
-#    for(i in 1:nrow(mod.mat[[1]])) {
-#      u <- mod.mat[[1]][i,]
-#      I.m <- apply(Mod.I, MARGIN=1, FUN=mem.j, mod.mat, pr.Inclus, j,
-#                   c( u[1:(j-1)],1,u[j:length(u)] ) )
-#      w[i] <- ( (exp(log.Marg)*PRIOR) %*% I.m ) / sum( exp(log.Marg) * PRIOR )
-#    }
-#    pweights[[j]] <- w
-#  }
-#  j <- length(xvec)
-#
-#  for (i in 1:nrow(mod.mat[[1]])) {
-#    I.m <- apply(Mod.I, MARGIN=1, FUN=mem.j, mod.mat, pr.Inclus, j,
-#                 c(mod.mat[[1]][i,],1) )
-#   w[i] <- ( (exp(log.Marg) * PRIOR) %*% I.m ) / sum( exp(log.Marg) * PRIOR )
-#  }
-#  pweights[[j]] <- w
-#
-#
-#  pESS <- CDF <- rep(NA, length(xvec))
-#  names(pESS) <- names(CDF) <- xvec
-#  HPD <- matrix(NA,2,length(xvec))
-#  rownames(HPD)=c("lower","upper")
-#  colnames(HPD) <- xvec
-#  marg.M <- MEM_marginal(xvec, nvec, avec, bvec)
-#  models <- cbind(rep(1,dim(marg.M$mod.mat[[1]])[1]),marg.M$mod.mat[[1]])
-#
-#  CDF[1] <- eval.Post(p0, xvec, nvec, models, pweights[[1]])
-#  pESS[1] <- pweights[[1]] %*% ESS(xvec, nvec, models)
-#  HPD[,1] <- boa.hpd(
-#    replicate(10000, samp.Post(xvec, nvec, models, pweights[[1]]) ), alp)
-#  K <- length(xvec)
-#  for (j in 2:(K-1)) {
-#    Ii <- c(j,1:(j-1),(j+1):K)
-#    CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]])
-#    pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models)
-#    HPD[,j] <- boa.hpd(
-#      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ),
-#      alp)
-#  }
-#  j <- j + 1
-#  Ii <- c(j,1:(j-1))
-#  CDF[j] <- eval.Post(p0, xvec[Ii], nvec[Ii], models, pweights[[j]])
-#  pESS[j] <- pweights[[j]]%*%ESS(xvec[Ii], nvec[Ii], models)
-#  HPD[,j] <- boa.hpd(
-#    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]]) ),
-#    alp)
-#
-#  list(mod.mat = mod.mat, maximizer=MAX, MAP=MAP, PEP=PEP, CDF=CDF, ESS=pESS,
-#       HPD=HPD)
-# }
-
 MEM.w <- function(Data, pars, marg.M) {
   pr.Inclus <- pars$UB * marg.M$maximizer
   diag(pr.Inclus) <- rep(1, nrow(pr.Inclus))
@@ -514,7 +399,7 @@ MEM.w <- function(Data, pars, marg.M) {
 
 #' @importFrom foreach foreach %dopar%
 #' @importFrom itertools isplitVector
-MEM.cdf <- function(Data, pars, p0, marg.M) {
+MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
   pr.Inclus <- pars$UB * marg.M$maximizer
   diag(pr.Inclus) <- rep(1, nrow(pr.Inclus))
   pr.Inclus[which(pr.Inclus == 0)] <- pars$LB
@@ -526,7 +411,8 @@ MEM.cdf <- function(Data, pars, p0, marg.M) {
     )
   }
   models <- cbind(rep(1, dim(marg.M$mod.mat[[1]])[1]), marg.M$mod.mat[[1]])
-  out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]])
+  out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]], shape1[1], 
+                   shape2[1])
   K <- length(Data$X)
   out <- c(
     out,
@@ -536,7 +422,8 @@ MEM.cdf <- function(Data, pars, p0, marg.M) {
     ) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
-        eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]])
+        eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], shape1[j], 
+                  shape2[j])
       }
     }
   )
@@ -547,7 +434,8 @@ MEM.cdf <- function(Data, pars, p0, marg.M) {
   #  j <- j + 1
   j <- K
   Ii <- c(j, 1:(j - 1))
-  c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
+  c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], 
+    shape1[j], shape2[j]))
 }
 
 PostProb.mlab <- function(Data, pars, p0) {
@@ -655,7 +543,7 @@ dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
 
 
 ESS.from.HPD.i <- function(jj, fit, alpha) {
-  library(GenSA)
+  #library(GenSA)
   opt <-
     GenSA::GenSA(
       par = 1,
@@ -671,7 +559,7 @@ ESS.from.HPD.i <- function(jj, fit, alpha) {
 }
 
 ESS.from.HPDwid.i <- function(jj, fit, alpha) {
-  library(GenSA)
+  #library(GenSA)
   opt <-
     GenSA::GenSA(
       par = 1,

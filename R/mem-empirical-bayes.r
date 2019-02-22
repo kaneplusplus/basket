@@ -68,9 +68,9 @@ mem_empirical_bayes <- function(
   Data <- list(X = responses, N = size, Basket = name)
 
   marg.M <- MEM_marginal(Data$X, Data$N, shape1, shape2)
-  CDF <- MEM.cdf(Data, pars, p0, marg.M)
-  ESS <- post.ESS(Data, pars, marg.M)
-  HPD <- t(post.HPD(Data, pars, marg.M, hpd_alpha))
+  CDF <- MEM.cdf(Data, pars, p0, marg.M, shape1, shape2)
+  ESS <- post.ESS(Data, pars, marg.M, shape1, shape2)
+  HPD <- t(post.HPD(Data, pars, marg.M, hpd_alpha, shape1, shape2))
 
   if (is.null(call)) {
     call <- match.call()
@@ -93,9 +93,10 @@ mem_empirical_bayes <- function(
 #' @importFrom foreach foreach %dopar%
 #' @export
 sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
+  
   ret <- replicate(num_samples, samp.Post(
     model$responses, model$size,
-    model$U$models, model$U$weights[[1]]
+    model$U$models, model$U$weights[[1]], model$shape1[1], model$shape2[1]
   ))
   K <- length(model$responses)
   ret <- rbind(
@@ -106,7 +107,8 @@ sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
         num_samples,
         samp.Post(
           model$responses[Ii], model$size[Ii],
-          model$U$models, model$U$weights[[j]]
+          model$U$models, model$U$weights[[j]], 
+          model$shape1[j], model$shape2[j]
         )
       )
     }
@@ -119,7 +121,8 @@ sample_posterior.empirical_bayes <- function(model, num_samples = 10000) {
       num_samples,
       samp.Post(
         model$responses[Ii], model$size[Ii],
-        model$U$models, model$U$weights[[j]]
+        model$U$models, model$U$weights[[j]],
+        model$shape1[j], model$shape2[j]
       )
     )
   )

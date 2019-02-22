@@ -11,22 +11,22 @@ baskets <- 1:3
 vemu_wide <- vemu_wide[baskets, ]
 
 # Full Bayes
-fb <- mem_full_bayes(
-  responses = vemu_wide$responders,
-  size = vemu_wide$evaluable,
-  name = vemu_wide$baskets
-)
+#fb <- mem_full_bayes(
+#  responses = vemu_wide$responders,
+#  size = vemu_wide$evaluable,
+#  name = vemu_wide$baskets
+#)
 
 # Visualization
 # plot_posterior_exchangeability(fb,
 #   basket_name_hoffset = c(0, -0.1, -0.4, 0, -0.1, 0))
 
 
-expect_equal(fb$maximizer, fb_reference$maximizer)
-expect_equal(fb$PEP, fb_reference$PEP)
-expect_equal(fb$HPD, fb_reference$HPD, tolerance = 5e-2)
-expect_equal(fb$CDF, fb_reference$CDF)
-expect_equal(fb$ESS, fb_reference$ESS)
+#expect_equal(fb$maximizer, fb_reference$maximizer)
+#expect_equal(fb$PEP, fb_reference$PEP)
+#expect_equal(fb$HPD, fb_reference$HPD, tolerance = 5e-2)
+#expect_equal(fb$CDF, fb_reference$CDF)
+#expect_equal(fb$ESS, fb_reference$ESS)
 
 # Empirical Bayes
 eb <- mem_empirical_bayes(
