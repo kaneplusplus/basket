@@ -34,4 +34,5 @@ Suggests:
     knitr,
     rmarkdown,
     testthat,
+    covr
 VignetteBuilder: knitr
