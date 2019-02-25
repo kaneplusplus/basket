@@ -1,9 +1,6 @@
-# library(testthat)
 library(basket)
 library(igraph)
-# library(foreach)
 library(ggplot2)
-library(extrafont)
 
 font_import()
 loadfonts(device = "win")
