@@ -135,9 +135,9 @@ cluster_PEP <- function(responses,
 
     cBasket <- name[rank]
     clusterElement[[k]] <- cBasket
-    print(paste0("#### Cluster Assignment: ", k))
-    print(rank)
-    print(name[rank])
+#    print(paste0("#### Cluster Assignment: ", k))
+#    print(rank)
+#    print(name[rank])
     cName <- c(cName, paste0("Cluster ", k))
     numSamp <- num_samples / length(rank) + 1
     samples <- foreach(j = rank, .combine = cbind) %do% {

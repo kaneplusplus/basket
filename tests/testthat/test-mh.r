@@ -6,18 +6,19 @@ foreach::registerDoSEQ()
 context("Metropolis-Hasting test")
 
 # Load the reference outputs.
-load(file = "../../Data/fitMCMC1_reference.rda")
-load(file = "../../Data/fitMCMC2_reference.rda")
+data(fitMCMC1_reference) 
+data(fitMCMC2_reference)
 
 
 ## Vectors of Observed number of Responses (X) and Patients (N)
 #Data <- dget("../../inst/code-from-brian/MHAlgorithm/Vemu-data.txt")
+data(vemu_wide)
 
-#MHResult1 <- mem_full_bayes_mcmc(
-#  responses = Data$X, size = Data$N,
-#  name = c("NSCLC ", "CRC.v ", "CRC.vc", "  BD  ", "ED.LH ", " ATC  "),
-#  p0 = 0.15, Initial = NA
-#)
+MHResult1 <- mem_full_bayes_mcmc(
+  responses = vemu_wide$responders, size = vemu_wide$evaluable,
+  name = c("NSCLC ", "CRC.v ", "CRC.vc", "  BD  ", "ED.LH ", " ATC  "),
+  p0 = 0.15, Initial = NA
+)
 #
 #
 #expect_equal(MHResult1$PEP, fit.MCMC.1$PEP)
