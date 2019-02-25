@@ -52,8 +52,9 @@ resp_rate <- 0.15
 # the size of each trial.
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
-  size = trial_sizes
+  size = trial_sizes,
+  name = letters[1:5]
 )
 
-mem_full_bayes(trials$responses, trials$size)
+mem_full_bayes_exact(trials$responses, trials$size, trials$name)
 }

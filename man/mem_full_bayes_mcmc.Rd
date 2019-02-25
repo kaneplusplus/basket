@@ -56,7 +56,8 @@ resp_rate <- 0.15
 # the size of each trial.
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
-  size = trial_sizes
+  size = trial_sizes,
+  name = letters[1:5]
 )
 mem_full_bayes_mcmc(trials$responses, trials$size)
 }

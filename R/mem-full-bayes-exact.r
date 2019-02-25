@@ -29,10 +29,11 @@
 #' # the size of each trial.
 #' trials <- data.frame(
 #'   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
-#'   size = trial_sizes
+#'   size = trial_sizes,
+#'   name = letters[1:5]
 #' )
 #' 
-#' mem_full_bayes_exact(trials$responses, trials$size)
+#' mem_full_bayes_exact(trials$responses, trials$size, trials$name)
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median
@@ -238,8 +239,11 @@ mem_full_bayes_exact <- function(responses,
   )
 
   if (missing(name)) {
-    name <- NULL
+    name <- paste("basket", seq_along(size))
   } else {
+    if (is.factor(name)) {
+      name <- as.character(name)
+    }
     if (!is.character(name) ||
       length(name) != length(size)) {
       stop(

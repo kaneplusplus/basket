@@ -33,7 +33,8 @@
 #' # the size of each trial.
 #' trials <- data.frame(
 #'   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
-#'   size = trial_sizes
+#'   size = trial_sizes,
+#'   name = letters[1:5]
 #' )
 #' mem_full_bayes_mcmc(trials$responses, trials$size)
 #' @importFrom stats median
@@ -121,6 +122,12 @@ mem_full_bayes_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
   mweights <-
     matrix(0, nrow(models), length(responses))
+  if (missing(name)) {
+    name <- paste("basket", seq_along(size))
+  }
+  if (is.factor(name)) {
+    name <- as.character(name)
+  }
   colnames(mweights) <- name
   mem.Samp <-
     list(MOld)
