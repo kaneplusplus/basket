@@ -51,14 +51,6 @@
 #' %do%
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
-#'
-
-
-####################################################################
-########## Conduct the clystering based on PEP #################
-####################################################################
-
-
 cluster_PEP <- function(responses,
                         size,
                         name,
@@ -73,6 +65,7 @@ cluster_PEP <- function(responses,
                         seed = 1000,
                         num_samples = 20000,
                         call = NULL) {
+  j <- NULL
   set.seed(seed)
   if (is.null(getDoParName())) {
     registerDoSEQ()

@@ -197,7 +197,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       ggtitle("Prior") +
       theme(
         plot.title = element_text(
-          family = "Trebuchet MS",
+          #family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -221,7 +221,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       ggtitle("MAP") +
       theme(
         plot.title = element_text(
-          family = "Trebuchet MS",
+          #family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -244,7 +244,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       ggtitle("Posterior Prob.") +
       theme(
         plot.title = element_text(
-          family = "Trebuchet MS",
+          #family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -272,7 +272,8 @@ plot_posterior_exchangeability.full_bayes <- function(x, ...) {
   exchangeogram(mat, ...) +
     ggtitle("Posterior Exchangeability Probability") +
     theme(plot.title = element_text(
-      family = "Trebuchet MS", color = "#666666",
+      #family = "Trebuchet MS", 
+      color = "#666666",
       face = "bold", size = 20, hjust = 0.35
     ))
 }
@@ -312,7 +313,8 @@ plot_exchangeability.exchangeability_model <- function(x, ...) {
   exchangeogram(mat, ...) +
     ggtitle("Maximum A Posteriori MEM") +
     theme(plot.title = element_text(
-      family = "Trebuchet MS", color = "#666666",
+      #family = "Trebuchet MS", 
+      color = "#666666",
       face = "bold", size = 25, hjust = 0.5
     ))
 }

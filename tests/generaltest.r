@@ -2,8 +2,8 @@ library(basket)
 library(igraph)
 library(ggplot2)
 
-font_import()
-loadfonts(device = "win")
+#font_import()
+#loadfonts(device = "win")
 
 #roxygen2::roxygenise() 
 

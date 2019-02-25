@@ -7,8 +7,10 @@ output:
     fig_caption: yes
     keep_tex: yes
   word_document: default
-vignette: |
-  %\VignetteIndexEntry{Using the basket Package} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: 
+  %\VignetteIndexEntry{Using the basket Package} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
@@ -136,10 +138,7 @@ summary(exact_resNew$basketwise)
 Plot the density and the exchaneability
 
 ```{r, fig.height = 3, fig.width= 4, fig.align= "center", message=FALSE,warning=FALSE}
-library(extrafont)
 
-font_import()
-loadfonts(device = "pdf", quiet=TRUE)
 plot_density(exact_res$basketwise)
 ```
 

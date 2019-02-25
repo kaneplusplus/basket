@@ -16,11 +16,9 @@ License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
 Imports: 
     foreach, 
-    GenSA, 
     rjags, 
     ggplot2, 
     stats, 
-    GGally, 
     tibble, 
     tidyr,
     dplyr,
@@ -35,4 +33,5 @@ Suggests:
     rmarkdown,
     testthat,
     covr
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr

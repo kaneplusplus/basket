@@ -95,52 +95,6 @@ logMarg.DensPE <- function(m, mod.size, xvec, nvec, avec, bvec, Lambda) {
   return(-out)
 }
 
-
-#' @importFrom GenSA GenSA
-MEM_marginalPE <- function(xvec, nvec, avec, bvec, INITIAL, Lambda) {
-  ### Function to calculate the MEM marginal densities for binomial data with beta(alpha,beta) prior
-  # xvec: vector with counts of those with event (primary source first, supplemental afterwards)
-  # nvec: vector of total number of subjects
-  # avec: vector of alpha parameters for beta priors for each source
-  # bvec: vector of beta parameters for beta priors for each source
-
-  mod.mat <- list()
-  k <- length(xvec) - 1
-  j <- 1
-
-  while (k > 0) {
-    mod.mat[[j]] <- (as.matrix(expand.grid(rep(list(c(0, 1)), k))))[
-      order(rowSums(as.matrix(expand.grid(rep(list(c(0, 1)), k))))),
-    ]
-    k <- k - 1
-    j <- j + 1
-  }
-
-  if (is.na(INITIAL[1])) {
-    M.init <- diag(1, length(xvec))
-  } else {
-    M.init <- INITIAL
-  }
-
-  sa.opt <- GenSA(
-    par = M.init[upper.tri(M.init)], fn = logMarg.DensPE,
-    rep(0, sum(1:(length(xvec) - 1))), rep(1, sum(1:(length(xvec) - 1))),
-    mod.size = nrow(M.init), xvec = xvec, nvec = nvec, avec = avec, bvec = bvec,
-    Lambda = Lambda
-  )
-
-  M.out <- diag(1, nrow(M.init))
-  u <- upper.tri(M.out)
-  M.out[u] <- sa.opt$par
-  M. <- t(M.out)
-  l <- lower.tri(M.)
-  M.out[l] <- M.[l]
-
-  colnames(M.init) <- rownames(M.init) <- xvec
-  colnames(M.out) <- rownames(M.out) <- xvec
-  list(mod.mat = mod.mat, init = M.init, maximizer = M.out)
-}
-
 #' @importFrom itertools isplitRows
 MEM_marginal <- function(xvec, nvec, avec, bvec) {
   ### Function to calculate the MEM marginal densities for binomial data with beta(alpha,beta) prior
@@ -148,6 +102,7 @@ MEM_marginal <- function(xvec, nvec, avec, bvec) {
   # nvec: vector of total number of subjects
   # avec: vector of alpha parameters for beta priors for each source
   # bvec: vector of beta parameters for beta priors for each source
+  k <- h <- mod_i <- NULL
 
   mod.mat <- foreach(k = rev(seq_len(length(xvec) - 1))) %do% {
     m <- as.matrix(expand.grid(rep(list(c(0, 1)), k)))
@@ -228,6 +183,7 @@ ESS <- function(X, N, Omega, a, b) {
 }
 
 post.HPD <- function(Data, pars, marg.M, alp, shape1, shape2) {
+  js <- NULL
   U <- MEM.w(Data, pars, marg.M)
   out <- boa.hpd(
     replicate(10000, 
@@ -281,6 +237,7 @@ post.HPD <- function(Data, pars, marg.M, alp, shape1, shape2) {
 #' @importFrom itertools isplitVector
 #' @importFrom foreach foreach %dopar%
 post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
+  js <- NULL
   U <- MEM.w(Data, pars, marg.M)
   out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1[1], shape2[1])
   K <- length(Data$X)
@@ -400,6 +357,7 @@ MEM.w <- function(Data, pars, marg.M) {
 #' @importFrom foreach foreach %dopar%
 #' @importFrom itertools isplitVector
 MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
+  js <- NULL
   pr.Inclus <- pars$UB * marg.M$maximizer
   diag(pr.Inclus) <- rep(1, nrow(pr.Inclus))
   pr.Inclus[which(pr.Inclus == 0)] <- pars$LB
@@ -416,10 +374,8 @@ MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
   K <- length(Data$X)
   out <- c(
     out,
-    foreach(
-      js = isplitVector(2:(K - 1), chunks = num_workers()),
-      .combine = c
-    ) %dopar% {
+    foreach(js = isplitVector(2:(K - 1), chunks = num_workers()),
+            .combine = c) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
         eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], shape1[j], 
@@ -811,6 +767,7 @@ gen.Post <- function(X, N, Omega, a, b) {
   return(rbeta(1, alph, beta))
 }
 
+#' @importFrom stats rmultinom
 samp.Post <- function(X, N, Omega, w, a, b) {
   return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
 }

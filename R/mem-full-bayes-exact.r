@@ -40,7 +40,6 @@ mem_full_bayes_exact <- function(responses,
                                  size,
                                  name,
                                  p0 = 0.15,
-                                 # Null response rate for Posterior Probability Calc.
                                  shape1 = 0.5,
                                  shape2 = 0.5,
                                  prior_inclusion = diag(length(responses)) / 2 +
@@ -52,6 +51,7 @@ mem_full_bayes_exact <- function(responses,
                                  alternative = "greater",
                                  seed = 1000,
                                  call = NULL) {
+  h <- mod_i <- NULL
   if (is.null(getDoParName())) {
     registerDoSEQ()
   }
