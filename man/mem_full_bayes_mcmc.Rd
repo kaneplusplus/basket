@@ -26,6 +26,12 @@ mem_full_bayes_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
 \item{shape2}{the second shape parameter(s) for the prior of each basket
 (default 0.5).}
 
+\item{Prior}{the matrix giving the prior inclusion probability
+for each pair of baskets. The default is on on the main diagonal and 0.5
+elsewhere.}
+
+\item{HPD.alpha}{the highest posterior density trial significance.}
+
 \item{alternative}{the alternative case defination (default greater)}
 
 \item{niter.MCMC}{the number of MCMC iterations.}
@@ -35,12 +41,6 @@ mem_full_bayes_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
 \item{seed}{the random number seed.}
 
 \item{call}{the call of the function.}
-
-\item{prior}{the matrix giving the prior inclusion probability
-for each pair of baskets. The default is on on the main diagonal and 0.5
-elsewhere.}
-
-\item{hpd_alpha}{the highest posterior density trial significance.}
 }
 \description{
 Fit the MEM model using full Bayesian Metropolis-Hasting MCMC inference.

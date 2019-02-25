@@ -15,8 +15,8 @@ Description: Implemention of multisource exchangeability models for basket trial
 License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
 Imports: 
+    GenSA,
     foreach, 
-    rjags, 
     ggplot2, 
     stats, 
     tibble, 

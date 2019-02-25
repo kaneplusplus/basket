@@ -32,6 +32,10 @@ elsewhere.}
 
 \item{hpd_alpha}{the highest posterior density trial significance.}
 
+\item{alternative}{TODO: WRITE THIS}
+
+\item{seed}{TODO: WRITE THIS}
+
 \item{call}{the call of the function (default NULL).}
 }
 \description{

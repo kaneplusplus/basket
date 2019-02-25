@@ -15,7 +15,7 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param hpd_alpha the highest posterior density trial significance.
+#' @param HPD.alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default "greater"). 
 #' TODO: WHAT DOES THIS MEAN? WHAT ARE THE ALTERNATIVES?
 #' @param seed the random number seed.
@@ -36,16 +36,16 @@
 #'   name = c(" D1 ", " D2 ", " D3 ", " D4 ", " D5 ", " D6 ")
 #' )
 #' 
-#' result <- cluster_PEP(
-#'   responses = trials$responses, size = trials$size,
-#'   name = c(" D1 ", " D2 ", " D3 ", " D4 ", " D5 ", " D6 "),
-#'   models = MHResult2$models, pweights = MHResult2$pweights, p0 = 0.15,
-#'   PEP = MHResult2$PEP
-#' )
+#' #result <- cluster_PEP(
+#' #  responses = trials$responses, size = trials$size,
+#' #  name = c(" D1 ", " D2 ", " D3 ", " D4 ", " D5 ", " D6 "),
+#' #  models = MHResult2$models, pweights = MHResult2$pweights, p0 = 0.15,
+#' #  PEP = MHResult2$PEP
+#' #)
 #' print(trials)
-#' print(result$clusters)
-#' print(result$HPD)
-#' print(result$mean_est)
+#' #print(result$clusters)
+#' #print(result$HPD)
+#' #print(result$mean_est)
 #' @importFrom stats median
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
@@ -105,12 +105,9 @@ cluster_PEP <- function(responses,
     call <- match.call()
   }
 
-  graph <-
-    igraph::graph_from_adjacency_matrix(PEP,
-      mode = "undirected",
-      weighted = TRUE,
-      diag = FALSE
-    )
+  graph <- graph_from_adjacency_matrix(PEP, mode = "undirected", 
+      weighted = TRUE, diag = FALSE)
+
   result <- factor(cluster_louvain(graph, weights = E(graph)$weight)$membership)
   # samples <- sample_posterior.full_bayes(MODEL)
   # sample2 <- foreach(j = 1:6, .combine = cbind) %do%

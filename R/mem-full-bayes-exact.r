@@ -15,6 +15,8 @@
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
+#' @param alternative TODO: WRITE THIS
+#' @param seed TODO: WRITE THIS
 #' @param call the call of the function (default NULL).
 #' @examples
 #' # 5 baskets, each with enrollement size 5
@@ -30,7 +32,7 @@
 #'   size = trial_sizes
 #' )
 #' 
-#' mem_full_bayes(trials$responses, trials$size)
+#' mem_full_bayes_exact(trials$responses, trials$size)
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median

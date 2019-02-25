@@ -13,10 +13,10 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param prior the matrix giving the prior inclusion probability
+#' @param Prior the matrix giving the prior inclusion probability
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
-#' @param hpd_alpha the highest posterior density trial significance.
+#' @param HPD.alpha the highest posterior density trial significance.
 #' @param alternative the alternative case defination (default greater)
 #' @param niter.MCMC the number of MCMC iterations.
 #' @param Initial the initial MEM matrix.
@@ -39,26 +39,12 @@
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @export
-#'
+mem_full_bayes_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
+  shape2 = 0.5, Prior = diag(length(responses)) / 2 + 
+                        matrix(0.5, nrow = length(responses), 
+  ncol = length(responses)), HPD.alpha = 0.05, alternative = "greater",
+  niter.MCMC = 10000, Initial = NA, seed = 1000, call = NULL) {
 
-
-####################################################################
-########## MCMC for Bayes with Metropolis-Hastings #################
-####################################################################
-
-mem_full_bayes_mcmc <- function(responses,
-                                size,
-                                name,
-                                p0 = 0.15,
-                                shape1 = 0.5,
-                                shape2 = 0.5,
-                                Prior = diag(length(responses)) / 2 + matrix(0.5, nrow = length(responses), ncol = length(responses)),
-                                HPD.alpha = 0.05,
-                                alternative = "greater",
-                                niter.MCMC = 10000,
-                                Initial = NA,
-                                seed = 1000,
-                                call = NULL) {
   set.seed(seed)
   if (is.null(getDoParName())) {
     registerDoSEQ()
@@ -167,14 +153,14 @@ mem_full_bayes_mcmc <- function(responses,
   }
   for (KK in 3:niter.MCMC) {
     # print(KK)
-    mem.Samp[[KK]] <-
-      update.MH(mem.Samp[[KK - 1]], M, responses, size, shape1, shape2, mod.mat, Prior)
+    mem.Samp[[KK]] <- update.MH(mem.Samp[[KK - 1]], M, responses, size, 
+      shape1, shape2, mod.mat, Prior)
 
     # print(mem.Samp[[KK]])
-    mweights <-
-      mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
+    mweights <- mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
     Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
-    if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) < length(mem.Samp[[KK - 1]])) {
+    if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) < 
+        length(mem.Samp[[KK - 1]])) {
       n.chg <- n.chg + 1
     }
     i.Map <-
