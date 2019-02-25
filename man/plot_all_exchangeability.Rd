@@ -9,11 +9,10 @@ plot_all_exchangeability(x, plotList, ...)
 \arguments{
 \item{x}{the exchangeability model.}
 
+\item{plotList}{TODO: WHAT IS THIS?}
+
 \item{...}{other options. See Details for more information.}
 }
 \description{
-Plot the Prior, MAP, and PEP of a Basket Trial
-}
-\details{
-TODO: WRITE THIS
+: TODO: WRITE THIS
 }

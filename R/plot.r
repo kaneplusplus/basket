@@ -175,10 +175,10 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 }
 
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
-#'
+#' @description: TODO: WRITE THIS
 #' @param x the exchangeability model.
+#' @param plotList TODO: WHAT IS THIS?
 #' @param ... other options. See Details for more information.
-#' @details TODO: WRITE THIS
 #' @export
 plot_all_exchangeability <- function(x, plotList, ...) {
   # library("gridExtra")

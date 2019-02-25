@@ -4,6 +4,7 @@
 #' @title Update Full Bayes results with different p0 values
 #'
 #' @description Update Full Bayes results with different p0 values and alternative
+#' @param res TODO: WHAT IS THIS?
 #' @param p0 the null response rate for the poster probability calculation
 #' (default 0.15).
 #' @param alternative the alternative case defination (default greater)

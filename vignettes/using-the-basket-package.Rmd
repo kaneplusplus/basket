@@ -7,7 +7,7 @@ output:
     fig_caption: yes
     keep_tex: yes
   word_document: default
-vignette: 
+vignette: |
   %\VignetteIndexEntry{Using the basket Package} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}

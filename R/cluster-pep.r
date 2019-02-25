@@ -15,9 +15,9 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-
 #' @param hpd_alpha the highest posterior density trial significance.
-#' @param alternative the alternative case defination (default greater)
+#' @param alternative the alternative case definition (default "greater"). 
+#' TODO: WHAT DOES THIS MEAN? WHAT ARE THE ALTERNATIVES?
 #' @param seed the random number seed.
 #' @param num_samples the number of sample iterations for each cluster.
 #' @param call the call of the function.

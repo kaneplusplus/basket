@@ -7,6 +7,8 @@
 update_result(res, p0 = 0.15, alternative = "greater")
 }
 \arguments{
+\item{res}{TODO: WHAT IS THIS?}
+
 \item{p0}{the null response rate for the poster probability calculation
 (default 0.15).}
 
