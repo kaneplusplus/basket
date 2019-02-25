@@ -179,7 +179,6 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 #' @param x the exchangeability model.
 #' @param ... other options. See Details for more information.
 #' @details TODO: WRITE THIS
-#' @examples
 #' @export
 plot_all_exchangeability <- function(x, plotList, ...) {
   # library("gridExtra")
