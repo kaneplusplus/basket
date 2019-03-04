@@ -6,8 +6,8 @@ foreach::registerDoSEQ()
 context("Metropolis-Hasting test")
 
 # Load the reference outputs.
-data(fitMCMC1_reference) 
-data(fitMCMC2_reference)
+load("../../inst/test-data/fitMCMC1_reference.rda")
+load("../../inst/test-data/fitMCMC2_reference.rda")
 
 
 ## Vectors of Observed number of Responses (X) and Patients (N)

@@ -1,9 +1,10 @@
 context("fit MEM models")
 
 # Load the reference outputs.
-data(eb_reference)
-data(eb_reference_ub)
-data(fb_reference)
+load("../../inst/test-data/eb_reference.rda")
+load("../../inst/test-data/eb_reference_ub.rda")
+load("../../inst/test-data/fb_reference.rda")
+
 data(vemu_wide)
 
 baskets <- 1:3
