@@ -472,6 +472,7 @@ euc.dist <- function(x1, x2, w = c(1, 1)) {
 }
 
 
+#' @importFrom stats qbeta
 dist.beta.HPD <- function(ess, fit, alpha, jj) {
   al <- fit$mean_est[jj] * ess
   al <- max(1e-2, al)
@@ -484,6 +485,7 @@ dist.beta.HPD <- function(ess, fit, alpha, jj) {
 }
 
 
+#' @importFrom stats qbeta
 dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
   al <- fit$median_est[jj] * ess
   al <- max(1e-2, al)
@@ -747,6 +749,8 @@ mem.PostProb <- function(model, method = "samples", fit) {
 #############################################################
 ### Added Shape and Direction to Posterior Prob #############
 #############################################################
+
+#' @importFrom stats pbeta
 eval.Post <- function(p0, X, N, Omega, w, a, b, alternative = "greater") {
   alph <- a + Omega %*% X
   beta <- b + (Omega %*% N - Omega %*% X)
@@ -761,6 +765,8 @@ eval.Post <- function(p0, X, N, Omega, w, a, b, alternative = "greater") {
 #############################################################
 ### Fixed shape paramter specification in gen.Post() ########
 #############################################################
+
+#' @importFrom stats rbeta
 gen.Post <- function(X, N, Omega, a, b) {
   alph <- a + Omega %*% X
   beta <- b + (Omega %*% N - Omega %*% X)
