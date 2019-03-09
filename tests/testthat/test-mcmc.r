@@ -1,9 +1,10 @@
 library(testthat)
 library(basket)
-library(foreach)
-foreach::registerDoSEQ()
+#library(foreach)
+#foreach::registerDoSEQ()
 
-context("Metropolis-Hasting test")
+
+context("fit full Bayes MCMC models")
 
 # Load the reference outputs.
 load("../../inst/test-data/fitMCMC1_reference.rda")
@@ -38,3 +39,4 @@ expect_equal(mem_fit2$basketwise$HPD, fit.MCMC.2$HPD, tolerance = 5e-2)
 expect_equal(mem_fit2$basketwise$CDF, fit.MCMC.2$CDF)
 expect_equal(mem_fit2$basketwise$ESS, fit.MCMC.2$ESS, tolerance = 5e-2)
 
+  
