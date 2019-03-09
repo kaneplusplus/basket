@@ -30,4 +30,6 @@
 #' Wolf J, Raje NS, Diamond EL, Hollebecque A, et al. Vemurafenib in multiple
 #' nonmelanoma cancers with braf v600 mutations. New England Journal of
 #' Medicine 2015; \strong{373}(8):726
+
+
 NULL

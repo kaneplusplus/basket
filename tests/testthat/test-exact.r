@@ -1,11 +1,10 @@
+library(testthat)
+library(basket)
 context("fit full Bayes exact models")
 
-# Load the reference outputs.
-#load("../../inst/test-data/eb_reference.rda")
-#load("../../inst/test-data/eb_reference_ub.rda")
-load("../../inst/test-data/fb_reference.rda")
 
 data(vemu_wide)
+data(fb_reference)
 
 baskets <- 1:3
 
@@ -16,8 +15,9 @@ vemu_wide1 <- vemu_wide[baskets, ]
 exact_res <- mem_full_bayes_exact(
   responses = vemu_wide1$responders,
   size = vemu_wide1$evaluable,
-  name = c("8", "0", "1"), p0 = rep(0.25, length(basket))
+  name = c("8", "0", "1"), p0 = rep(0.25, length(baskets))
 )
+
 
 fb <- exact_res$basketwise
 

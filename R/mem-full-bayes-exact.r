@@ -282,7 +282,7 @@ mem_full_bayes_exact <- function(responses,
     )
 
   class(ret) <- c("full_bayes", "exchangeability_model")
-  ret$samples <- sample_posterior(ret)
+  ret$samples <- sample_posterior.full_bayes(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   clusterRet <- clusterComp(ret)
