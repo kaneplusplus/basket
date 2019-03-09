@@ -42,7 +42,7 @@ vemu_wide1 <- vemu_wide[baskets,]
 # Full Bayes exact method
 exact_res <- mem_full_bayes_exact(responses = vemu_wide1$responders, 
                      size = vemu_wide1$evaluable,
-                     name = vemu_wide1$baskets, p0=rep(0.15, length(basket)))
+                     name = vemu_wide1$baskets, p0=rep(0.15, length(baskets)))
 ```
 The output "exact_res" is a list including three components:  call, basketwise, clusterwise.
 
