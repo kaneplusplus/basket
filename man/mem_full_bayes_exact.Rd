@@ -56,5 +56,5 @@ trials <- data.frame(
   name = letters[1:5]
 )
 
-mem_full_bayes_exact(trials$responses, trials$size, trials$name)
+resu <- mem_full_bayes_exact(trials$responses, trials$size, trials$name)
 }

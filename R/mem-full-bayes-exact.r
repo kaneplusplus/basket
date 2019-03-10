@@ -33,7 +33,7 @@
 #'   name = letters[1:5]
 #' )
 #' 
-#' mem_full_bayes_exact(trials$responses, trials$size, trials$name)
+#' resu <- mem_full_bayes_exact(trials$responses, trials$size, trials$name)
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median
@@ -282,7 +282,7 @@ mem_full_bayes_exact <- function(responses,
     )
 
   class(ret) <- c("full_bayes", "exchangeability_model")
-  ret$samples <- sample_posterior(ret)
+  ret$samples <- sample_posterior.full_bayes(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   clusterRet <- clusterComp(ret)
@@ -294,47 +294,3 @@ mem_full_bayes_exact <- function(responses,
     )
   return(result)
 }
-
-sample_posterior.full_bayes <-
-  function(model, num_samples = 10000) {
-    ret <- replicate(
-      num_samples,
-      samp.Post(
-        model$responses, model$size,
-        model$models, model$pweights[[1]]
-      )
-    )
-    K <- length(model$responses)
-    ret <- rbind(
-      ret,
-      foreach(j = 2:(K - 1), .combine = rbind) %do% {
-        Ii <- c(j, 1:(j - 1), (j + 1):K)
-        replicate(
-          num_samples,
-          samp.Post(
-            model$responses[Ii],
-            model$size[Ii],
-            model$models,
-            model$pweights[[j]]
-          )
-        )
-      }
-    )
-    j <- K
-    Ii <- c(j, 1:(j - 1))
-    ret <- rbind(
-      ret,
-      replicate(
-        num_samples,
-        samp.Post(
-          model$responses[Ii],
-          model$size[Ii],
-          model$models,
-          model$pweights[[j]]
-        )
-      )
-    )
-    ret <- t(ret)
-    dimnames(ret) <- list(NULL, model$name)
-    ret
-  }

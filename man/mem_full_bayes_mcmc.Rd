@@ -59,5 +59,5 @@ trials <- data.frame(
   size = trial_sizes,
   name = letters[1:5]
 )
-mem_full_bayes_mcmc(trials$responses, trials$size)
+resu <- mem_full_bayes_mcmc(trials$responses, trials$size)
 }

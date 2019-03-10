@@ -12,7 +12,7 @@ sample_posterior(model, num_samples = 10000)
 \item{num_samples}{the number of samples to draw. Default 10000}
 }
 \description{
-TODO FINISH THIS
+Sample Posterior Samples from a Basket Trial
 }
 \examples{
 # WRITE THIS
