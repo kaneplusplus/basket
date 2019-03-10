@@ -1,7 +1,7 @@
 
 #' @title Sample Posterior Samples from a Basket Trial
 #'
-#' @description TODO FINISH THIS
+#' @description Sample Posterior Samples from a Basket Trial 
 #' @param model the exchangeability model
 #' @param num_samples the number of samples to draw. Default 10000
 #' @examples

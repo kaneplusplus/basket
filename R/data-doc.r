@@ -30,6 +30,45 @@
 #' Wolf J, Raje NS, Diamond EL, Hollebecque A, et al. Vemurafenib in multiple
 #' nonmelanoma cancers with braf v600 mutations. New England Journal of
 #' Medicine 2015; \strong{373}(8):726
+NULL
 
+
+#' @title MCMC reference data 1
+#'
+#' @description
+#' Reference computation data using MCMC method (Data 1).
+#' @name fit.MCMC.1
+#' @docType data
+#' @rdname fit.MCMC.1
+
+NULL
+
+#' @title MCMC reference data 2
+#'
+#' @description
+#' Reference computation data using MCMC method (Data 1).
+#' @name fit.MCMC.2
+#' @docType data
+#' @rdname fit.MCMC.2
+
+NULL
+
+#' @title MCMC init data for testing
+#'
+#' @description
+#' Reference computation data using MCMC method (Data 1).
+#' @name initdata
+#' @docType data
+#' @rdname initdata
+
+NULL
+
+#' @title Exact reference data
+#'
+#' @description
+#' Reference computation data using MCMC method (Data 1).
+#' @name fb_reference
+#' @docType data
+#' @rdname fb_reference
 
 NULL
