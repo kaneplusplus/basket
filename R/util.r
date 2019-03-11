@@ -121,9 +121,12 @@ MEM_marginal <- function(xvec, nvec, avec, bvec) {
   # identify maximizer of marginal density ##
 
   log.Marg <- foreach(
-    mod_i = isplitRows(Mod.I, chunks = num_workers()), .combine = c) %dopar% {
-    apply(mod_i, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, avec, 
-          bvec)
+    mod_i = isplitRows(Mod.I, chunks = num_workers()), .combine = c
+  ) %dopar% {
+    apply(mod_i,
+      MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, avec,
+      bvec
+    )
   }
   o <- order(log.Marg, decreasing = TRUE)[1]
 

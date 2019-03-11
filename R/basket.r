@@ -41,7 +41,9 @@ basket_name <- function(model) {
 basket_name.default <- function(model) {
   stop(cat_line(
     "Don't know how to get basket names for model of type",
-    paste(class(model), collapse = ", "), ".\n", col = "red"))
+    paste(class(model), collapse = ", "), ".\n",
+    col = "red"
+  ))
 }
 
 basket_name.exchangeability_model <- function(model) {

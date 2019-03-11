@@ -22,8 +22,10 @@ make_em_summary <- function(x) {
 }
 
 summary.exchangeability_model <- function(object, ...) {
-  ret <- list(basket = summary(object$basket), 
-              cluster = summary(object$cluster))
+  ret <- list(
+    basket = summary(object$basket),
+    cluster = summary(object$cluster)
+  )
   class(ret) <- "mem_summary"
   ret
 }
@@ -40,12 +42,14 @@ print.mem_summary <- function(x, ...) {
 }
 
 make_basket_summary <- function(object) {
-   mm <- rbind(object$mean_est, object$median_est)
+  mm <- rbind(object$mean_est, object$median_est)
   rownames(mm) <- c("Mean", "Median")
 
-  ret <- list(null = object$p0, post_prob = object$post.prob, 
-              mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD, 
-              ess = object$ESS)
+  ret <- list(
+    null = object$p0, post_prob = object$post.prob,
+    mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD,
+    ess = object$ESS
+  )
   class(ret) <- "mem_basket_summary"
   ret
 }
@@ -59,9 +63,11 @@ summary.mem_basket <- function(object, ...) {
 print.mem_basket_summary <- function(x, ...) {
 
   # Posterior Probability Response is Greater than the Null
-  cat_line("\nPosterior Probability Reponse is ", 
-           "Greater than Null of ", paste(x$null, collapse = ", "), 
-           ":", col = "bold")
+  cat_line("\nPosterior Probability Reponse is ",
+    "Greater than Null of ", paste(x$null, collapse = ", "),
+    ":",
+    col = "bold"
+  )
   print(round(x$post_prob, 3))
 
   # The Mean and Median Response Rates
@@ -69,10 +75,12 @@ print.mem_basket_summary <- function(x, ...) {
   print(round(x$mm_resp, 3))
 
   # The Highest Posterior Density Interval
-  cat_line("\nHigest Posterior Density Interval with Significance of ", 
-           x$hpd_signif, ":", col = "bold")
+  cat_line("\nHigest Posterior Density Interval with Significance of ",
+    x$hpd_signif, ":",
+    col = "bold"
+  )
   print(round(x$hpd, 3))
-  
+
   # The Effective Sample Size
   cat_line("\nThe Effective Sample Size:", col = bold)
   print(round(x$ess, 3))
@@ -82,12 +90,14 @@ print.mem_basket_summary <- function(x, ...) {
 }
 
 make_cluster_summary <- function(object) {
-   mm <- rbind(object$mean_est, object$median_est)
+  mm <- rbind(object$mean_est, object$median_est)
   rownames(mm) <- c("Mean", "Median")
 
-  ret <- list(null = object$p0, post_prob = object$post.prob, 
-              mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD, 
-              ess = object$ESS)
+  ret <- list(
+    null = object$p0, post_prob = object$post.prob,
+    mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD,
+    ess = object$ESS
+  )
   class(ret) <- "mem_basket_summary"
   ret
 }
@@ -100,9 +110,11 @@ summary.mem_cluster <- function(object, ...) {
 #' @importFrom crayon bold
 print.mem_basket_summary <- function(x, ...) {
   # Posterior Probability Response is Greater than the Null
-  cat_line("\nPosterior Probability Reponse is ", 
-           "Greater than Null of ", paste(x$null, collapse = ", "), 
-           ":", col = "bold")
+  cat_line("\nPosterior Probability Reponse is ",
+    "Greater than Null of ", paste(x$null, collapse = ", "),
+    ":",
+    col = "bold"
+  )
   print(round(x$post_prob, 3))
 
   # The Mean and Median Response Rates
@@ -110,10 +122,12 @@ print.mem_basket_summary <- function(x, ...) {
   print(round(x$mm_resp, 3))
 
   # The Highest Posterior Density Interval
-  cat_line("\nHigest Posterior Density Interval with Significance of ", 
-           x$hpd_signif, ":", col = "bold")
+  cat_line("\nHigest Posterior Density Interval with Significance of ",
+    x$hpd_signif, ":",
+    col = "bold"
+  )
   print(round(x$hpd, 3))
-  
+
   # The Effective Sample Size
   cat_line("\nThe Effective Sample Size:", col = bold)
   print(round(x$ess, 3))
@@ -121,4 +135,3 @@ print.mem_basket_summary <- function(x, ...) {
 
   invisible(x)
 }
-

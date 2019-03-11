@@ -24,4 +24,3 @@ expect_equal(exact_res$PEP, fb_reference$PEP)
 expect_equal(exact_res$HPD, fb_reference$HPD, tolerance = 5e-2)
 expect_equal(exact_res$post.prob, fb_reference$CDF)
 expect_equal(exact_res$ESS, fb_reference$ESS)
-

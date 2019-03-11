@@ -32,19 +32,25 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
     shape1 <- res$basket$shape1
     shape2 <- res$basket$shape2
     names(CDF) <- name
-    CDF[1] <- eval.Post(p0[1], xvec, nvec, models, pweights[[1]], 
-                        shape1[1], shape2[1], alternative)
+    CDF[1] <- eval.Post(
+      p0[1], xvec, nvec, models, pweights[[1]],
+      shape1[1], shape2[1], alternative
+    )
 
     K <- length(xvec)
     for (j in 2:(K - 1)) {
       Ii <- c(j, 1:(j - 1), (j + 1):K)
-      CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], 
-                          shape1[j], shape2[j], alternative)
+      CDF[j] <- eval.Post(
+        p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
+        shape1[j], shape2[j], alternative
+      )
     }
     j <- j + 1
     Ii <- c(j, 1:(j - 1))
-    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], 
-                        shape1[j], shape2[j], alternative)
+    CDF[j] <- eval.Post(
+      p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
+      shape1[j], shape2[j], alternative
+    )
     ret$basket$post.prob <- CDF
   } else {
     MODEL <- ret$basket

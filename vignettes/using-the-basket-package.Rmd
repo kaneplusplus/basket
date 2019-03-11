@@ -94,21 +94,23 @@ The output of the MCMC method "MHResult1" is a list including three components: 
 ```{r}
 print(MHResult1$call)
 
-print(MHResult1$basketwise$PEP)
-print(MHResult1$basketwise$MAP)
-print(MHResult1$basketwise$post.prob)
-print(MHResult1$basketwise$HPD)
-print(MHResult1$basketwise$ESS)
-print(MHResult1$basketwise$mean_est)
-print(MHResult1$basketwise$median_est)
+print(MHResult1$call)
+
+print(MHResult1$basket$PEP)
+print(MHResult1$basket$MAP)
+print(MHResult1$basket$post.prob)
+print(MHResult1$basket$HPD)
+print(MHResult1$basket$ESS)
+print(MHResult1$basket$mean_est)
+print(MHResult1$basket$median_est)
 
 
-print(MHResult1$clusterwise$cluster)
-print(MHResult1$clusterwise$post.prob)
-print(MHResult1$clusterwise$HPD)
-print(MHResult1$clusterwise$ESS)
-print(MHResult1$clusterwise$mean_est)
-print(MHResult1$clusterwise$median_est)
+print(MHResult1$cluster$cluster)
+print(MHResult1$cluster$post.prob)
+print(MHResult1$cluster$HPD)
+print(MHResult1$cluster$ESS)
+print(MHResult1$cluster$mean_est)
+print(MHResult1$cluster$median_est)
 ```
 
 ## summary() function
@@ -117,8 +119,8 @@ Summarize the operating characteristics from the result (basketwise or clusterwi
 
 ```{r}
 
-summary(exact_res$basketwise)
-summary(exact_res$clusterwise)
+summary(exact_res$basket)
+summary(exact_res$cluster)
 ```
 
 
@@ -129,8 +131,8 @@ Update the result with the new threshold value p0 and the alternative parameter.
 ```{r}
 exact_resNew <- update_result(exact_res, 0.25)
 
-summary(exact_res$basketwise)
-summary(exact_resNew$basketwise)
+summary(exact_res$basket)
+summary(exact_resNew$basket)
 
 ```
 
