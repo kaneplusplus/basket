@@ -18,5 +18,5 @@ update_result(res, p0 = 0.15, alternative = "greater")
 Update Full Bayes results with different p0 values and alternative
 }
 \examples{
-#MHResult1New <- update_result(MHResult1, 0.25)
+# MHResult1New <- update_result(MHResult1, 0.25)
 }

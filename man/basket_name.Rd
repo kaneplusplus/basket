@@ -13,7 +13,7 @@ basket_name(model)
 Retrieve the basket names in an exchangeability model.
 }
 \examples{
-#' # 5 baskets, each with enrollement size 5
+# 5 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 5)
 
 # The response rates for the baskets.
@@ -27,5 +27,5 @@ trials <- data.frame(
   name = paste("Basket", seq_len(5))
 )
 
-mem_empirical_bayes(trials$responses, trials$size, trials$basket)
+mem_mcmc(trials$responses, trials$size, trials$basket)
 }

@@ -27,7 +27,7 @@ plot_density.default <- function(x, ...) {
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid
 #' xlab ylab theme_minimal xlim geom_vline labeller label_wrap_gen
 #' @export
-plot_density.exchangeability_model <- function(x, ...) {
+plot_density.mem <- function(x, ...) {
   dots <- list(...)
   Basket <- Density <- NULL
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
@@ -64,12 +64,12 @@ plot_density.exchangeability_model <- function(x, ...) {
 #' @examples
 #' # WRITE THIS
 #' @export
-plot_posterior_exchangeability <- function(x, ...) {
-  UseMethod("plot_posterior_exchangeability")
+plot_pep <- function(x, ...) {
+  UseMethod("plot_pep")
 }
 
 #' @export
-plot_posterior_exchangeability.default <- function(x, ...) {
+plot_pep.default <- function(x, ...) {
   stop(paste(
     "Don't know how to make a posterior exchangeability plot",
     "with an object of type", class(x)
@@ -140,55 +140,52 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
       data = mg, color = "white",
       size = text_size
     ) + geom_text(aes(x = x, y = y, label = label),
-                data = label_pos,
-                inherit.aes = FALSE, size = text_size
+      data = label_pos,
+      inherit.aes = FALSE, size = text_size
     ) +
     labs(x = "", y = "")
-  if (drawLegend)
-  {
-    tG <- tG  +
-    theme(
-      panel.grid.major = element_blank(), panel.border = element_blank(),
-      panel.background = element_blank(), axis.ticks = element_blank(),
-      legend.position = legend_position, legend.direction = "horizontal"
-    ) +
-    guides(fill = guide_colorbar(
-      barwidth = 7, barheight = 1,
-      title.position = "top", title.hjust = 0.5
-    )
-    )
-  } else{
-    tG <- tG  +
+  if (drawLegend) {
+    tG <- tG +
       theme(
         panel.grid.major = element_blank(), panel.border = element_blank(),
         panel.background = element_blank(), axis.ticks = element_blank(),
-        legend.position = legend_position + c(-110,-100), legend.direction = "horizontal"
+        legend.position = legend_position, legend.direction = "horizontal"
       ) +
       guides(fill = guide_colorbar(
         barwidth = 7, barheight = 1,
         title.position = "top", title.hjust = 0.5
-      )
-      )
+      ))
+  } else {
+    tG <- tG +
+      theme(
+        panel.grid.major = element_blank(), panel.border = element_blank(),
+        panel.background = element_blank(), axis.ticks = element_blank(),
+        legend.position = legend_position + c(-110, -100), legend.direction = "horizontal"
+      ) +
+      guides(fill = guide_colorbar(
+        barwidth = 7, barheight = 1,
+        title.position = "top", title.hjust = 0.5
+      ))
   }
-  
+
   return(tG)
 }
 
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
 #' @description: TODO: WRITE THIS
 #' @param x the exchangeability model.
-#' @param plotList TODO: WHAT IS THIS?
+#' @param plot_list TODO: WHAT IS THIS?
 #' @param ... other options. See Details for more information.
 #' @export
-plot_all_exchangeability <- function(x, plotList, ...) {
+plot_mem <- function(x, plot_list, ...) {
   # library("gridExtra")
 
   numC <- 0
   allPlot <- list()
-  if (any(plotList == "PRIOR")) {
+  if (any(plot_list == "PRIOR")) {
     mat <- round(x$PRIOR, 3)
-    if (!is.null(basket_name(x))) {
-      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    if (!is.null(x$name)) {
+      dimnames(mat) <- list(x$name, x$name)
     } else {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
@@ -197,7 +194,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       ggtitle("Prior") +
       theme(
         plot.title = element_text(
-          #family = "Trebuchet MS",
+          # family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -209,19 +206,19 @@ plot_all_exchangeability <- function(x, plotList, ...) {
   }
 
 
-  if (any(plotList == "MAP")) {
+  if (any(plot_list == "MAP")) {
     mat <- round(x$MAP, 3)
-    if (!is.null(basket_name(x))) {
-      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    if (!is.null(x$name)) {
+      dimnames(mat) <- list(x$name, x$name)
     } else {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot2 <- (exchangeogram(mat, legend_position = c(0.45, -0.22),...) +
+    plot2 <- (exchangeogram(mat, legend_position = c(0.45, -0.22), ...) +
       ggtitle("MAP") +
       theme(
         plot.title = element_text(
-          #family = "Trebuchet MS",
+          # family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -232,10 +229,10 @@ plot_all_exchangeability <- function(x, plotList, ...) {
     numC <- numC + 1
   }
 
-  if (any(plotList == "PEP")) {
+  if (any(plot_list == "PEP")) {
     mat <- round(x$PEP, 3)
-    if (!is.null(basket_name(x))) {
-      dimnames(mat) <- list(basket_name(x), basket_name(x))
+    if (!is.null(x$name)) {
+      dimnames(mat) <- list(x$name, x$name)
     } else {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
@@ -244,7 +241,7 @@ plot_all_exchangeability <- function(x, plotList, ...) {
       ggtitle("Posterior Prob.") +
       theme(
         plot.title = element_text(
-          #family = "Trebuchet MS",
+          # family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -261,10 +258,10 @@ plot_all_exchangeability <- function(x, plotList, ...) {
 }
 
 #' @export
-plot_posterior_exchangeability.full_bayes <- function(x, ...) {
+plot_pep.mem <- function(x, ...) {
   mat <- round(x$PEP, 3)
-  if (!is.null(basket_name(x))) {
-    dimnames(mat) <- list(basket_name(x), basket_name(x))
+  if (!is.null(x$name)) {
+    dimnames(mat) <- list(x$name, x$name)
   } else {
     dn <- paste("Basket", seq_len(nrow(mat)))
     dimnames(mat) <- list(dn, dn)
@@ -272,7 +269,7 @@ plot_posterior_exchangeability.full_bayes <- function(x, ...) {
   exchangeogram(mat, ...) +
     ggtitle("Posterior Exchangeability Probability") +
     theme(plot.title = element_text(
-      #family = "Trebuchet MS", 
+      # family = "Trebuchet MS",
       color = "#666666",
       face = "bold", size = 20, hjust = 0.35
     ))
@@ -287,12 +284,12 @@ plot_posterior_exchangeability.full_bayes <- function(x, ...) {
 #' @examples
 #' # WRITE THIS
 #' @export
-plot_exchangeability <- function(x, ...) {
+plot_map <- function(x, ...) {
   UseMethod("plot_exchangeability")
 }
 
 #' @export
-plot_exchangeability.default <- function(x, ...) {
+plot_map.default <- function(x, ...) {
   stop(paste(
     "Don't know how to make a posterior exchangeability plot",
     "with an object of type", class(x)
@@ -301,10 +298,10 @@ plot_exchangeability.default <- function(x, ...) {
 
 #' @importFrom ggplot2 ggtitle element_text theme
 #' @export
-plot_exchangeability.exchangeability_model <- function(x, ...) {
+plot_map.mem <- function(x, ...) {
   mat <- round(x$maximizer, 3)
   mat[lower.tri(mat)] <- NA
-  if (!is.null(basket_name(x))) {
+  if (!is.null(x$name)) {
     dimnames(mat) <- list(x$name, x$name)
   } else {
     dn <- paste("Basket", seq_len(nrow(mat)))
@@ -313,7 +310,7 @@ plot_exchangeability.exchangeability_model <- function(x, ...) {
   exchangeogram(mat, ...) +
     ggtitle("Maximum A Posteriori MEM") +
     theme(plot.title = element_text(
-      #family = "Trebuchet MS", 
+      # family = "Trebuchet MS",
       color = "#666666",
       face = "bold", size = 25, hjust = 0.5
     ))

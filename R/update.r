@@ -9,52 +9,54 @@
 #' (default 0.15).
 #' @param alternative the alternative case defination (default greater)
 #' @examples
-#' #MHResult1New <- update_result(MHResult1, 0.25)
+#' # MHResult1New <- update_result(MHResult1, 0.25)
 #' @importFrom stats median
 #' @export
 update_result <- function(res, p0 = 0.15, alternative = "greater") {
   if (length(p0) == 1) {
-    p0 <- rep(p0, length(res$basketwise$responses))
+    p0 <- rep(p0, length(res$basket$responses))
   }
   ret <- res
   # basket
-  ret$basketwise$p0 <- p0
-  ret$basketwise$alternative <- alternative
+  ret$basket$p0 <- p0
+  ret$basket$alternative <- alternative
 
 
   if (grepl("exact", res$call[1])) {
-    xvec <- res$basketwise$responses
-    nvec <- res$basketwise$size
-    name <- res$basketwise$name
+    xvec <- res$basket$responses
+    nvec <- res$basket$size
+    name <- res$basket$name
     CDF <- rep(NA, length(xvec))
-    models <- res$basketwise$models
-    pweights <- res$basketwise$pweights
-    shape1 <- res$basketwise$shape1
-    shape2 <- res$basketwise$shape2
+    models <- res$basket$models
+    pweights <- res$basket$pweights
+    shape1 <- res$basket$shape1
+    shape2 <- res$basket$shape2
     names(CDF) <- name
-    CDF[1] <- eval.Post(p0[1], xvec, nvec, models, pweights[[1]], shape1[1], shape2[1], alternative)
+    CDF[1] <- eval.Post(p0[1], xvec, nvec, models, pweights[[1]], 
+                        shape1[1], shape2[1], alternative)
 
     K <- length(xvec)
     for (j in 2:(K - 1)) {
       Ii <- c(j, 1:(j - 1), (j + 1):K)
-      CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
+      CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], 
+                          shape1[j], shape2[j], alternative)
     }
     j <- j + 1
     Ii <- c(j, 1:(j - 1))
-    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j], alternative)
-    ret$basketwise$post.prob <- CDF
+    CDF[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]], 
+                        shape1[j], shape2[j], alternative)
+    ret$basket$post.prob <- CDF
   } else {
-    MODEL <- ret$basketwise
-    ret$basketwise$post.prob <- mem.PostProb(MODEL, fit = ret$basketwise)
+    MODEL <- ret$basket
+    ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
   }
   # cluster
-  retB <- ret$basketwise
-  sampleC <- ret$clusterwise$samples
-  numClusters <- length(ret$clusterwise$name)
+  retB <- ret$basket
+  sampleC <- ret$cluster$samples
+  numClusters <- length(ret$cluster$name)
   p0Test <- unique(retB$p0)
   allCDF <- matrix(0, 0, 2)
-  for (kk in 1:length(p0Test))
-  {
+  for (kk in 1:length(p0Test)) {
     if (retB$alternative == "greater") {
       res1 <- unlist(lapply(
         1:numClusters,
@@ -76,9 +78,9 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
     }
     allCDF <- rbind(allCDF, res1)
   }
-  colnames(allCDF) <- ret$clusterwise$name
+  colnames(allCDF) <- ret$cluster$name
   rownames(allCDF) <- p0Test
-  ret$clusterwise$post.prob <- allCDF
+  ret$cluster$post.prob <- allCDF
 
   return(ret)
 }

@@ -1,7 +1,7 @@
 
 #' @title Sample Posterior Samples from a Basket Trial
 #'
-#' @description Sample Posterior Samples from a Basket Trial 
+#' @description Sample Posterior Samples from a Basket Trial
 #' @param model the exchangeability model
 #' @param num_samples the number of samples to draw. Default 10000
 #' @examples
@@ -11,15 +11,13 @@ sample_posterior <- function(model, num_samples = 10000) {
   UseMethod("sample_posterior", model)
 }
 
-
-
-
 #' @title The Names of the Baskets
 #'
 #' @description Retrieve the basket names in an exchangeability model.
 #' @param model the model to retrieve the basket names of
+#' @importFrom stats rbinom
 #' @examples
-#' #' # 5 baskets, each with enrollement size 5
+#' # 5 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 5)
 #' 
 #' # The response rates for the baskets.
@@ -33,25 +31,23 @@ sample_posterior <- function(model, num_samples = 10000) {
 #'   name = paste("Basket", seq_len(5))
 #' )
 #' 
-#' mem_empirical_bayes(trials$responses, trials$size, trials$basket)
+#' mem_mcmc(trials$responses, trials$size, trials$basket)
 #' @export
 basket_name <- function(model) {
   UseMethod("basket_name", model)
 }
 
-#' @export
+#' @importFrom crayon red
 basket_name.default <- function(model) {
-  stop(paste(
+  stop(cat_line(
     "Don't know how to get basket names for model of type",
-    class(model)
-  ))
+    paste(class(model), collapse = ", "), ".\n", col = "red"))
 }
 
-#' @export
 basket_name.exchangeability_model <- function(model) {
   ret <- NULL
-  if ("name" %in% names(model)) {
-    ret <- model$name
+  if ("name" %in% names(model$basket)) {
+    ret <- model$basket$name
   }
   ret
 }

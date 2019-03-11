@@ -121,10 +121,9 @@ MEM_marginal <- function(xvec, nvec, avec, bvec) {
   # identify maximizer of marginal density ##
 
   log.Marg <- foreach(
-    mod_i = isplitRows(Mod.I, chunks = num_workers()),
-    .combine = c
-  ) %dopar% {
-    apply(mod_i, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, avec, bvec)
+    mod_i = isplitRows(Mod.I, chunks = num_workers()), .combine = c) %dopar% {
+    apply(mod_i, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, avec, 
+          bvec)
   }
   o <- order(log.Marg, decreasing = TRUE)[1]
 
@@ -186,10 +185,15 @@ post.HPD <- function(Data, pars, marg.M, alp, shape1, shape2) {
   js <- NULL
   U <- MEM.w(Data, pars, marg.M)
   out <- boa.hpd(
-    replicate(10000, 
-              samp.Post(Data$X, Data$N, U$models, U$weights[[1]], shape1[1], 
-                        shape2[1])),
-    alp)
+    replicate(
+      10000,
+      samp.Post(
+        Data$X, Data$N, U$models, U$weights[[1]], shape1[1],
+        shape2[1]
+      )
+    ),
+    alp
+  )
 
   K <- length(Data$X)
 
@@ -249,8 +253,10 @@ post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
     ) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
-        U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, 
-                               shape1[j], shape2[j])
+        U$weights[[j]] %*% ESS(
+          Data$X[Ii], Data$N[Ii], U$models,
+          shape1[j], shape2[j]
+        )
       }
     }
   )
@@ -260,9 +266,13 @@ post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
   #  }
   j <- K
   Ii <- c(j, 1:(j - 1))
-  out <- c(out, 
-           U$weights[[j]] %*% ESS(Data$X[Ii], Data$N[Ii], U$models, shape1[j], 
-                                  shape2[j]))
+  out <- c(
+    out,
+    U$weights[[j]] %*% ESS(
+      Data$X[Ii], Data$N[Ii], U$models, shape1[j],
+      shape2[j]
+    )
+  )
   names(out) <- Data$X
   out
 }
@@ -369,17 +379,23 @@ MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
     )
   }
   models <- cbind(rep(1, dim(marg.M$mod.mat[[1]])[1]), marg.M$mod.mat[[1]])
-  out <- eval.Post(p0, Data$X, Data$N, models, weights[[1]], shape1[1], 
-                   shape2[1])
+  out <- eval.Post(
+    p0, Data$X, Data$N, models, weights[[1]], shape1[1],
+    shape2[1]
+  )
   K <- length(Data$X)
   out <- c(
     out,
-    foreach(js = isplitVector(2:(K - 1), chunks = num_workers()),
-            .combine = c) %dopar% {
+    foreach(
+      js = isplitVector(2:(K - 1), chunks = num_workers()),
+      .combine = c
+    ) %dopar% {
       foreach(j = js, .combine = c) %do% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
-        eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], shape1[j], 
-                  shape2[j])
+        eval.Post(
+          p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], shape1[j],
+          shape2[j]
+        )
       }
     }
   )
@@ -390,8 +406,10 @@ MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
   #  j <- j + 1
   j <- K
   Ii <- c(j, 1:(j - 1))
-  c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], 
-    shape1[j], shape2[j]))
+  c(out, eval.Post(
+    p0, Data$X[Ii], Data$N[Ii], models, weights[[j]],
+    shape1[j], shape2[j]
+  ))
 }
 
 PostProb.mlab <- function(Data, pars, p0) {
@@ -459,7 +477,7 @@ Power.bask <- function(ALT, thres, N, pars, p0) {
 ####################################################################
 #### Alternative Computation of ESS using HPD interval matching ####
 ####################################################################
-# fit <- mem_full_bayes(responses = Data$X, size = Data$N, name = Data$Basket, p0 = 0.25, shape1 = 0.5, shape2 = 0.5, alpha = 0.05, call = NULL)
+# fit <- mem_exact(responses = Data$X, size = Data$N, name = Data$Basket, p0 = 0.25, shape1 = 0.5, shape2 = 0.5, alpha = 0.05, call = NULL)
 
 
 euc.dist <- function(x1, x2, w = c(1, 1)) {
@@ -501,7 +519,7 @@ dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
 
 
 ESS.from.HPD.i <- function(jj, fit, alpha) {
-  #library(GenSA)
+  # library(GenSA)
   opt <-
     GenSA::GenSA(
       par = 1,
@@ -517,7 +535,7 @@ ESS.from.HPD.i <- function(jj, fit, alpha) {
 }
 
 ESS.from.HPDwid.i <- function(jj, fit, alpha) {
-  #library(GenSA)
+  # library(GenSA)
   opt <-
     GenSA::GenSA(
       par = 1,
@@ -826,7 +844,7 @@ samplePostOneBasket <- function(index, model, num_samples = 10000) {
   return(result)
 }
 
-sample_posterior.full_bayes <- function(model, num_samples = 10000) {
+sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
   ret <- replicate(
     num_samples,
     samp.Post(
@@ -899,9 +917,9 @@ clusterComp <- function(basketRet) {
 
     cBasket <- name[rank]
     clusterElement[[k]] <- cBasket
-#    print(paste0("#### Cluster Assignment: ", k))
-#    print(rank)
-#    print(name[rank])
+    #    print(paste0("#### Cluster Assignment: ", k))
+    #    print(rank)
+    #    print(name[rank])
     cName <- c(cName, paste0("Cluster ", k))
 
     sampV <- as.vector(allSamp[, rank])
@@ -967,6 +985,6 @@ clusterComp <- function(basketRet) {
   #  calc.ESS.from.HPDwid(fit = ret, alpha = ret$alpha)
   # names(ret$ESS2) <- cName
   # ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
-  class(ret) <- c("full_bayes", "exchangeability_model")
-  return(ret)
+  class(ret) <- c("mem_exact", "exchangeability_model")
+  ret
 }
