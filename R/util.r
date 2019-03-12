@@ -848,6 +848,7 @@ samplePostOneBasket <- function(index, model, num_samples = 10000) {
 }
 
 sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
+ 
   ret <- replicate(
     num_samples,
     samp.Post(
@@ -860,23 +861,24 @@ sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
     )
   )
   K <- length(model$responses)
-  ret <- rbind(
-    ret,
-    foreach(j = 2:(K - 1), .combine = rbind) %do% {
-      Ii <- c(j, 1:(j - 1), (j + 1):K)
-      replicate(
-        num_samples,
-        samp.Post(
-          model$responses[Ii],
-          model$size[Ii],
-          model$models,
-          model$pweights[[j]],
-          model$shape1[j],
-          model$shape2[j]
-        )
-      )
-    }
-  )
+  if (K > 2)
+  {
+    ret <- rbind(ret,
+                 foreach(j = 2:(K - 1), .combine = rbind) %do% {
+                   Ii <- c(j, 1:(j - 1), (j + 1):K)
+                   replicate(
+                     num_samples,
+                     samp.Post(
+                       model$responses[Ii],
+                       model$size[Ii],
+                       model$models,
+                       model$pweights[[j]],
+                       model$shape1[j],
+                       model$shape2[j]
+                     )
+                   )
+                 })
+  }
   j <- K
   Ii <- c(j, 1:(j - 1))
   ret <- rbind(
@@ -901,7 +903,7 @@ sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
 clusterComp <- function(basketRet) {
   PEP <- basketRet$PEP
   name <- basketRet$name
-  p0 <- basketRet$p0
+  p0 <- unique(basketRet$p0)
   allSamp <- basketRet$samples
   graph <-
     igraph::graph_from_adjacency_matrix(PEP,
@@ -931,6 +933,7 @@ clusterComp <- function(basketRet) {
   names(sampleC) <- cName
 
   ret <- basketRet
+  ret$p0<-unique(ret$p0)
   ret$name <- cName
   ret$cluster <- clusterElement
   # browser()

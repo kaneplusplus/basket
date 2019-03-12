@@ -117,9 +117,10 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       K <- K + 1
     }
   }
-
+  #browser()
   ### Implement Metropolis-Hastings Alg ###
   n.chg <- 0
+  mod.mat[[1]] <- as.matrix(mod.mat[[1]])
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
   mweights <-
     matrix(0, nrow(models), length(responses))
