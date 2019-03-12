@@ -24,6 +24,17 @@ plot_density.default <- function(x, ...) {
     paste(class(x), collapse = ", "), "."))
 }
 
+plot_density.exchangeability_model <- function(x, ...) {
+  dots <- list(...)
+  if ("type" %in% names(dots)) {
+    ps <- dots$type
+  } else {
+    ps <- c("basket", "cluster")
+  }
+  plots <- lapply(ps, function(pt) plot_density(x[[pt]]))
+  do.call(grid.arrange, c(plots, ncol = length(plots)))
+}
+
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid
 #' xlab ylab theme_minimal xlim geom_vline labeller label_wrap_gen
 #' @export
@@ -31,6 +42,7 @@ plot_density.mem <- function(x, ...) {
   dots <- list(...)
   Basket <- Density <- NULL
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
+  d$p0 <- x$p0
 
   if ("basket_levels" %in% names(dots)) {
     basket_levels <- dots$basket_levels
@@ -44,14 +56,16 @@ plot_density.mem <- function(x, ...) {
   } else {
     basket_colors <- rep("black", length(x$responses))
   }
+  d$p0 <- x$p0[match(d$Basket, x$name)]
+  d$basket_name <- paste0(d$Basket, " (p0=", d$p0, ")")
   ggplot(d, aes(x = Density, fill = Basket)) +
     geom_density(alpha = 0.7) +
+    facet_grid( basket_name~ ., labeller = label_wrap_gen(width = 10)) +
+    geom_vline(aes(xintercept = p0)) +
     scale_fill_manual(values = basket_colors, guide = FALSE) +
-    facet_grid(Basket ~ ., labeller = label_wrap_gen(width = 10)) +
     xlab("") +
     ylab("Density") +
     xlim(0, 1) +
-    geom_vline(xintercept = x$p0) +
     theme_minimal()
 }
 
