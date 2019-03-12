@@ -96,14 +96,14 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   ### Check symmetry of Initial MEM ###
   d <- length(responses)
   update.Init <- FALSE
-  for (i in 1:(d - 1))
-    for (k in (i + 1):d)
-    {
+  for (i in 1:(d - 1)) {
+    for (k in (i + 1):d) {
       if (MOld[i, k] != MOld[k, i]) {
         MOld[i, k] <- MOld[k, i] <- rbinom(1, 1, 0.5)
         update.Init <- TRUE
       }
     }
+  }
   if (update.Init) {
     M.init <- MOld
   }
@@ -117,13 +117,11 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       K <- K + 1
     }
   }
-  #browser()
   ### Implement Metropolis-Hastings Alg ###
   n.chg <- 0
   mod.mat[[1]] <- as.matrix(mod.mat[[1]])
   models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
-  mweights <-
-    matrix(0, nrow(models), length(responses))
+  mweights <- matrix(0, nrow(models), length(responses))
   if (missing(name)) {
     name <- paste("basket", seq_along(size))
   }
@@ -131,16 +129,13 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     name <- as.character(name)
   }
   colnames(mweights) <- name
-  mem.Samp <-
-    list(MOld)
-  mweights <-
-    mweights + models.Count(Samp = mem.Samp[[1]], models = models)
+  mem.Samp <- list(MOld)
+  mweights <- mweights + models.Count(Samp = mem.Samp[[1]], models = models)
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
   mem.Samp[[2]] <-
     update.MH(MOld, M, responses, size, shape1, shape2, mod.mat, Prior)
-  mweights <-
-    mweights + models.Count(Samp = mem.Samp[[2]], models = models)
+  mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
   Samp.Sum <- mem.Samp[[1]] + mem.Samp[[2]]
   if (sum(mem.Samp[[2]] == mem.Samp[[1]]) < length(mem.Samp[[2]])) {
     n.chg <- n.chg + 1
@@ -166,9 +161,23 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       mem.Samp[[KK - 1]], M, responses, size,
       shape1, shape2, mod.mat, Prior
     )
+  }
+ 
+  models_count <- foreach(
+    it = isplitVector(3:niter.MCMC, chunks = num_workers()), 
+    .combine=c) %dopar% {
+
+    foreach(k = it) %do% {
+      models.Count(Samp = mem.Samp[[k]], models = models)
+    }
+  }
+
+  # this can be made faster with a list of mweights and Samp.Sum
+  for (KK in 3:niter.MCMC) {
 
     # print(mem.Samp[[KK]])
-    mweights <- mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
+#    mweights <- mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
+    mweights <- mweights + models_count[[KK-2]]
     Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
     if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) <
       length(mem.Samp[[KK - 1]])) {
@@ -192,8 +201,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   }
 
   ### Compute Posterior Model Weights ###
-  pweights <-
-    list()
+  pweights <- list()
   for (KK in 1:ncol(mweights)) {
     pweights[[KK]] <- mweights[, KK] / niter.MCMC
   }

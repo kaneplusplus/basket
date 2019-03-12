@@ -32,12 +32,14 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
     shape1 <- res$basket$shape1
     shape2 <- res$basket$shape2
     names(CDF) <- name
+  # TODO: THIS IS THE SECOND TIME I'VE SEEN THIS PATTERN. MAKE IT A FUNCTION.
     CDF[1] <- eval.Post(
       p0[1], xvec, nvec, models, pweights[[1]],
       shape1[1], shape2[1], alternative
     )
 
     K <- length(xvec)
+    # TODO: This can be made faster.
     for (j in 2:(K - 1)) {
       Ii <- c(j, 1:(j - 1), (j + 1):K)
       CDF[j] <- eval.Post(
@@ -57,6 +59,7 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
     ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
   }
   # cluster
+  # TODO: THIS IS THE SECOND TIME I'VE SEEN THIS PATTERN. MAKE IT A FUNCTION.
   retB <- ret$basket
   sampleC <- ret$cluster$samples
   numClusters <- length(ret$cluster$name)

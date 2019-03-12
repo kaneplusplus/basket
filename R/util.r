@@ -254,7 +254,7 @@ post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
       js = isplitVector(2:(K - 1), chunks = num_workers()),
       .combine = c
     ) %dopar% {
-      foreach(j = js, .combine = c) %do% {
+      foreach(j = js, .combine = c) %dopar% {
         Ii <- c(j, 1:(j - 1), (j + 1):K)
         U$weights[[j]] %*% ESS(
           Data$X[Ii], Data$N[Ii], U$models,
@@ -556,12 +556,15 @@ ESS.from.HPDwid.i <- function(jj, fit, alpha) {
 
 calc.ESS.from.HPD <- function(fit, alpha) {
   ## fit is list with median vec and HPD vec ##
-  return(sapply(
-    1:length(fit$mean_est),
-    FUN = ESS.from.HPD.i,
-    fit = fit,
-    alpha = alpha
-  ))
+  foreach(i = seq_along(fit$mean_est), .combine = c) %dopar% {
+    ESS.from.HPD.i(i, fit, alpha)
+  }
+#  return(sapply(
+#    1:length(fit$mean_est),
+#    FUN = ESS.from.HPD.i,
+#    fit = fit,
+#    alpha = alpha
+#  ))
 }
 
 
@@ -674,12 +677,16 @@ I.models <- function(hh, models, Samp) {
 
 models.Count <- function(Samp, models) {
   out <- matrix(0, nrow(models), ncol(models))
-  u <-
-    sapply(1:length(models[1, ]),
-      FUN = I.models,
-      models = models,
-      Samp = Samp
-    )
+#  u <- sapply(1:length(models[1, ]),
+#              FUN = I.models,
+#              models = models,
+#              Samp = Samp
+#       )
+  u <- vapply(seq_len(ncol(models)),
+              FUN = I.models,
+              FUN.VALUE = as.integer(NA),
+              models = models,
+              Samp = Samp)
   for (i in 1:length(u)) {
     out[u[i], i] <- 1
   }
@@ -936,7 +943,6 @@ clusterComp <- function(basketRet) {
   ret$p0<-unique(ret$p0)
   ret$name <- cName
   ret$cluster <- clusterElement
-  # browser()
   # ret$models <- models
   # ret$pweights <- pweights
   ret$samples <- sampleC
