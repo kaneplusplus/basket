@@ -21,7 +21,6 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
   ret$basket$p0 <- p0
   ret$basket$alternative <- alternative
 
-
   if (grepl("exact", res$call[1])) {
     xvec <- res$basket$responses
     nvec <- res$basket$size
@@ -56,12 +55,13 @@ update_result <- function(res, p0 = 0.15, alternative = "greater") {
     MODEL <- ret$basket
     ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
   }
+
   # cluster
   retB <- ret$basket
   sampleC <- ret$cluster$samples
   numClusters <- length(ret$cluster$name)
   p0Test <- unique(retB$p0)
-  allCDF <- matrix(0, 0, 2)
+  allCDF <- matrix(0, 0, numClusters)
   for (kk in 1:length(p0Test)) {
     if (retB$alternative == "greater") {
       res1 <- unlist(lapply(

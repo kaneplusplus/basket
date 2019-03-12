@@ -14,13 +14,7 @@ boa.hpd <- function(x, alpha) {
   structure(c(a[i], b[i]), names = c("Lower Bound", "Upper Bound"))
 }
 
-sigmoid <- function(psi) {
-  1 / (1 + exp(-psi))
-}
 
-logit <- function(a0) {
-  log(a0) - log(1 - a0)
-}
 
 MEM.mat <- function(Indices, mod.mat, H) {
   M <- matrix(NA, H, H)
@@ -30,14 +24,6 @@ MEM.mat <- function(Indices, mod.mat, H) {
   }
   M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <- (0:1)[ Indices[length(Indices)] ]
   M
-}
-
-#' @importFrom stats rgamma
-rdirichlet <- function(n, alpha) {
-  l <- length(alpha)
-  x <- matrix(rgamma(l * n, alpha), ncol = l, byrow = TRUE)
-  sm <- x %*% rep(1, l)
-  x / as.vector(sm)
 }
 
 
@@ -73,109 +59,6 @@ logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
 
 
 
-logMarg.DensPE <- function(m, mod.size, xvec, nvec, avec, bvec, Lambda) {
-  # M <- MEM.mat(I, mod.mat, length(xvec))
-  M <- diag(1, mod.size)
-  u <-
-    upper.tri(M)
-  M[u] <- m
-  M. <- t(M)
-  l <- lower.tri(M.)
-  M[l] <- M.[l]
-  marg.vec <- rep(NA, dim(M)[1])
-  prod.vec <-
-    beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) # calculate the product portion of integrated marginal likelihood
-  for (i in 1:dim(M)[1]) {
-    p.vec <- prod(prod.vec^(1 - M[i, ]))
-    marg.vec[i] <-
-      (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) / beta(avec[i], bvec[i])) * p.vec
-  } # return( list(mod = M, marg = prod(marg.vec)) )
-  u <- upper.tri(M)
-  out <- sum(log(marg.vec)) - Lambda * sum(M[u])
-  return(-out)
-}
-
-#' @importFrom itertools isplitRows
-MEM_marginal <- function(xvec, nvec, avec, bvec) {
-  ### Function to calculate the MEM marginal densities for binomial data with beta(alpha,beta) prior
-  # xvec: vector with counts of those with event (primary source first, supplemental afterwards)
-  # nvec: vector of total number of subjects
-  # avec: vector of alpha parameters for beta priors for each source
-  # bvec: vector of beta parameters for beta priors for each source
-  k <- h <- mod_i <- NULL
-
-  mod.mat <- foreach(k = rev(seq_len(length(xvec) - 1))) %do% {
-    m <- as.matrix(expand.grid(rep(list(c(0, 1)), k)))
-    m[order(rowSums(m)), ]
-  }
-
-  H <- length(mod.mat)
-  temp <- foreach(h = seq_len(H - 1)) %do% {
-    seq_len(dim(mod.mat[[h]])[1])
-  }
-  temp[[H]] <- 1:2
-
-  temp[[H]] <- 1:2
-  Mod.I <- as.matrix(expand.grid(temp))
-
-  # identify maximizer of marginal density ##
-
-  log.Marg <- foreach(
-    mod_i = isplitRows(Mod.I, chunks = num_workers()), .combine = c
-  ) %dopar% {
-    apply(mod_i,
-      MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec, nvec, avec,
-      bvec
-    )
-  }
-  o <- order(log.Marg, decreasing = TRUE)[1]
-
-  MAX <- matrix(NA, length(xvec), length(xvec))
-  diag(MAX) <- rep(1, dim(MAX)[1])
-
-  for (i in 1:(length(Mod.I[o, ]) - 1)) {
-    MAX[(i + 1):dim(MAX)[2], i] <- MAX[i, (i + 1):dim(MAX)[2]] <-
-      mod.mat[[i]][Mod.I[o, i], ]
-  }
-  MAX[dim(MAX)[2], i + 1] <- MAX[i + 1, dim(MAX)[2]] <-
-    (0:1)[ Mod.I[o, length(Mod.I[o, ])] ]
-  colnames(MAX) <- rownames(MAX) <- xvec
-
-  # Create list to return matrix which identifies which sources are included
-  # in each model and the marginal densities
-  list(mod.mat = mod.mat, maximizer = MAX)
-}
-
-MEM_modweight <- function(mod.mat, source.vec) {
-  # Function to calculate model weights for each MEM given source inclusion
-  # probabilities applied to each row of the symmetric source inclusion prior
-  # probabilities
-  # mod.mat: matrix which specifies which supplemental sources are included
-  # for analysis of each subtype
-  # source.mat: rows of symmetric matrix of source inclusion probabilties for MEM
-
-  s.in <- source.vec # source inclusion probability
-  s.ex <- 1 - source.vec # source exclusion probability
-
-  # Calculate model weights
-  # TODO: change this to vapply
-  q.mat <- sapply(
-    1:dim(mod.mat)[1],
-    function(x) s.in^(mod.mat[x, ]) * s.ex^(1 - mod.mat[x, ])
-  )
-
-  if (length(s.in) == 1) {
-    # if only one supplemental sources, q.mat is equal to q.vec for model
-    # weights
-    q.vec <- q.mat
-  } else {
-    # if more than one supplemental source, take product of source
-    # probabilities for each model
-    q.vec <- apply(q.mat, 2, prod)
-  }
-
-  q.vec
-}
 
 ESS <- function(X, N, Omega, a, b) {
   # a <- b <- 0.5
@@ -184,62 +67,6 @@ ESS <- function(X, N, Omega, a, b) {
   alph + beta
 }
 
-post.HPD <- function(Data, pars, marg.M, alp, shape1, shape2) {
-  js <- NULL
-  U <- MEM.w(Data, pars, marg.M)
-  out <- boa.hpd(
-    replicate(
-      10000,
-      samp.Post(
-        Data$X, Data$N, U$models, U$weights[[1]], shape1[1],
-        shape2[1]
-      )
-    ),
-    alp
-  )
-
-  K <- length(Data$X)
-
-  out <- rbind(
-    out,
-    foreach(
-      js = isplitVector(2:(K - 1), chunks = num_workers()),
-      .combine = rbind
-    ) %dopar% {
-      foreach(j = js, .combine = rbind) %do% {
-        Ii <- c(j, 1:(j - 1), (j + 1):K)
-        boa.hpd(
-          replicate(10000, samp.Post(
-            Data$X[Ii], Data$N[Ii], U$models,
-            U$weights[[j]], shape1[j], shape2[j]
-          )),
-          alp
-        )
-      }
-    }
-  )
-
-  #  for(j in 2:(K-1)) {
-  #    Ii <- c(j,1:(j-1),(j+1):K)
-  #    out <- rbind(out, boa.hpd(
-  #      replicate(10000, samp.Post(Data$X[Ii], Data$N[Ii], U$models,
-  #                U$weights[[j]]) ),
-  #      alp))
-  #  }
-  #  j <- j + 1
-  j <- K
-  Ii <- c(j, 1:(j - 1))
-
-  out <- rbind(out, boa.hpd(
-    replicate(10000, samp.Post(
-      Data$X[Ii], Data$N[Ii], U$models,
-      U$weights[[j]], shape1[j], shape2[j]
-    )),
-    alp
-  ))
-  rownames(out) <- Data$X
-  out
-}
 
 #' @importFrom itertools isplitVector
 #' @importFrom foreach foreach %dopar%
@@ -367,114 +194,6 @@ MEM.w <- function(Data, pars, marg.M) {
   list(models = models, weights = weights)
 }
 
-#' @importFrom foreach foreach %dopar%
-#' @importFrom itertools isplitVector
-MEM.cdf <- function(Data, pars, p0, marg.M, shape1, shape2) {
-  js <- NULL
-  pr.Inclus <- pars$UB * marg.M$maximizer
-  diag(pr.Inclus) <- rep(1, nrow(pr.Inclus))
-  pr.Inclus[which(pr.Inclus == 0)] <- pars$LB
-  weights <- list()
-  for (i in 1:nrow(pr.Inclus)) {
-    weights[[i]] <- MEM_modweight(
-      mod.mat = marg.M$mod.mat[[1]],
-      source.vec = pr.Inclus[i, ][-i]
-    )
-  }
-  models <- cbind(rep(1, dim(marg.M$mod.mat[[1]])[1]), marg.M$mod.mat[[1]])
-  out <- eval.Post(
-    p0, Data$X, Data$N, models, weights[[1]], shape1[1],
-    shape2[1]
-  )
-  K <- length(Data$X)
-  out <- c(
-    out,
-    foreach(
-      js = isplitVector(2:(K - 1), chunks = num_workers()),
-      .combine = c
-    ) %dopar% {
-      foreach(j = js, .combine = c) %do% {
-        Ii <- c(j, 1:(j - 1), (j + 1):K)
-        eval.Post(
-          p0, Data$X[Ii], Data$N[Ii], models, weights[[j]], shape1[j],
-          shape2[j]
-        )
-      }
-    }
-  )
-  #  for(j in 2:(K-1)) {
-  #    Ii <- c(j,1:(j-1),(j+1):K)
-  #    out <- c(out, eval.Post(p0, Data$X[Ii], Data$N[Ii], models, weights[[j]]))
-  #  }
-  #  j <- j + 1
-  j <- K
-  Ii <- c(j, 1:(j - 1))
-  c(out, eval.Post(
-    p0, Data$X[Ii], Data$N[Ii], models, weights[[j]],
-    shape1[j], shape2[j]
-  ))
-}
-
-PostProb.mlab <- function(Data, pars, p0) {
-  pp.mem <- MEM.cdf(Data, pars, p0)
-
-  if (is.na(pars$ESS)) {
-    out <- sum(pars$m.BasketWeights * pp.mem)
-  } else {
-    out <- rdirichlet(1, pars$m.BasketWeights * pars$ESS) * pp.mem
-  }
-  out
-}
-
-genObs.mlab <- function(hyp, N, pars, p0) {
-  D <- list(X = rbinom(rep(1, length(N)), N, hyp), N = N)
-  PostProb.mlab(D, pars, p0)
-}
-
-checkThres.mlab <- function(THRES, null, N, pars, p0) {
-  N.rep <- 5000
-  sum(replicate(N.rep, genObs.mlab(null, N, pars, p0)) > THRES) / N.rep
-}
-
-CalibrateTypeIError.mlab <- function(null, Grid, N, pars, p0) {
-  typeIerror <- sapply(X = Grid, FUN = checkThres.mlab, null, N, pars, p0)
-  list(Threshold = Grid, TypeIerror = typeIerror)
-}
-
-Power.mlab <- function(ALT, thres, N, pars, p0) {
-  N.rep <- 5000
-  list(
-    PostProbThreshold = thres,
-    power = sum(replicate(N.rep, genObs.mlab(ALT, N, pars, p0)) > thres) / N.rep
-  )
-}
-
-genObs.bask <- function(THRES, hyp, N, pars, p0) {
-  D <- list(X = rbinom(rep(1, length(N)), N, hyp), N = N)
-  as.numeric(MEM.cdf(D, pars, p0) > THRES)
-}
-
-checkThres.bask <- function(THRES, null, N, pars, p0) {
-  N.rep <- 5000 ## Compute FWER ##
-  1 - (
-    sum(rowSums(t(replicate(N.rep, genObs.bask(THRES, null, N, pars, p0)))) == 0) /
-      N.rep)
-}
-
-CalibrateFWER.bask <- function(null, Grid, N, pars, p0) {
-  FWER <- sapply(X = Grid, FUN = checkThres.bask, null, N, pars, p0)
-  list(Threshold = Grid, FWER = FWER)
-}
-
-Power.bask <- function(ALT, thres, N, pars, p0) {
-  N.rep <- 5000
-  list(
-    PostProbThreshold = thres,
-    power = colSums(t(replicate(N.rep, genObs.bask(thres, ALT, N, pars, p0)))) /
-      N.rep
-  )
-}
-
 
 
 ####################################################################
@@ -537,6 +256,7 @@ ESS.from.HPD.i <- function(jj, fit, alpha) {
   return(opt$par)
 }
 
+
 ESS.from.HPDwid.i <- function(jj, fit, alpha) {
   # library(GenSA)
   opt <-
@@ -575,9 +295,6 @@ calc.ESS.from.HPDwid <- function(fit, alpha) {
   ))
 }
 
-# calc.ESS.from.HPD(fit, alpha=0.05)
-
-# calc.ESS.from.HPDwid(fit, alpha=0.05)
 ####################################################################
 ####################################################################
 ####################################################################
@@ -797,54 +514,6 @@ gen.Post <- function(X, N, Omega, a, b) {
 #' @importFrom stats rmultinom
 samp.Post <- function(X, N, Omega, w, a, b) {
   return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
-}
-
-samplePostOneBasket <- function(index, model, num_samples = 10000) {
-  if (index == 1) {
-    result <- replicate(
-      num_samples,
-      samp.Post(
-        model$responses,
-        model$size,
-        model$models,
-        model$pweights[[1]],
-        model$shape1[1],
-        model$shape2[1]
-      )
-    )
-    return(result)
-  }
-  numBasket <- length(model$responses)
-  if (index == numBasket) {
-    Ii <- c(numBasket, 1:(numBasket - 1))
-    result <-
-      replicate(
-        num_samples,
-        samp.Post(
-          model$responses[Ii],
-          model$size[Ii],
-          model$models,
-          model$pweights[[numBasket]],
-          model$shape1[numBasket],
-          model$shape2[numBasket]
-        )
-      )
-    return(result)
-  }
-  Ii <- c(index, 1:(index - 1), (index + 1):numBasket)
-  result <-
-    replicate(
-      num_samples,
-      samp.Post(
-        model$responses[Ii],
-        model$size[Ii],
-        model$models,
-        model$pweights[[index]],
-        model$shape1[index],
-        model$shape2[index]
-      )
-    )
-  return(result)
 }
 
 sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
