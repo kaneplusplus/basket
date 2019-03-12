@@ -16,12 +16,12 @@ plot_density <- function(x, ...) {
   UseMethod("plot_density")
 }
 
+#' @importFrom crayon red
 #' @export
 plot_density.default <- function(x, ...) {
-  stop(paste(
+  stop(red(
     "Don't know how to make a density plot with an object of type",
-    class(x)
-  ))
+    paste(class(x), collapse = ", "), "."))
 }
 
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid
@@ -68,18 +68,20 @@ plot_pep <- function(x, ...) {
   UseMethod("plot_pep")
 }
 
+#' @importFrom crayon red
 #' @export
 plot_pep.default <- function(x, ...) {
-  stop(paste(
+  stop(red(
     "Don't know how to make a posterior exchangeability plot",
-    "with an object of type", class(x)
-  ))
+    "with an object of type", 
+    paste(class(x), collpase = ", "), "."))
 }
 
 #' @importFrom stats na.omit
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr mutate %>%
 #' @importFrom tidyr gather
+#' @importFrom crayon red
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient2 theme_minimal
 #' theme element_text coord_fixed scale_x_discrete scale_y_discrete
 #' geom_text labs guides element_blank guide_colorbar
@@ -88,7 +90,8 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
                           legend_position = c(0.25, 0.8), drawLegend = TRUE,
                           basket_name_hoffset = 0) {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
-    stop("The matrix supplied must be symmetric in the values and names.")
+    stop(red("The matrix supplied must be symmetric in the",
+             "values and names."))
   }
 
   for (i in 1:dim(mat)[1])
@@ -288,12 +291,13 @@ plot_map <- function(x, ...) {
   UseMethod("plot_exchangeability")
 }
 
+#' @importFrom crayon red
 #' @export
 plot_map.default <- function(x, ...) {
-  stop(paste(
+  stop(red(
     "Don't know how to make a posterior exchangeability plot",
-    "with an object of type", class(x)
-  ))
+    "with an object of type", 
+    paste(class(x), collpase = ", ", ".")))
 }
 
 #' @importFrom ggplot2 ggtitle element_text theme

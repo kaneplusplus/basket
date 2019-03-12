@@ -276,6 +276,7 @@ ESS.from.HPDwid.i <- function(jj, fit, alpha) {
 
 calc.ESS.from.HPD <- function(fit, alpha) {
   ## fit is list with median vec and HPD vec ##
+  i <- NULL
   foreach(i = seq_along(fit$mean_est), .combine = c) %dopar% {
     ESS.from.HPD.i(i, fit, alpha)
   }

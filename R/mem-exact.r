@@ -39,6 +39,8 @@
 #' %do%
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
+#' @importFrom crayon red
+#' @importFrom itertools isplitRows
 #' @export
 mem_exact <- function(responses,
                       size,
@@ -61,7 +63,7 @@ mem_exact <- function(responses,
   }
 
   if (length(responses) != length(size)) {
-    stop(paste(
+    stop(red(
       "The length of the responses and size parameters",
       "must be equal."
     ))
@@ -247,12 +249,9 @@ mem_exact <- function(responses,
     }
     if (!is.character(name) ||
       length(name) != length(size)) {
-      stop(
-        paste(
-          "The basket name argument must be a character vector with",
-          "one name per basket."
-        )
-      )
+      stop(red(
+        "The basket name argument must be a character vector with",
+        "one name per basket."))
     }
   }
 

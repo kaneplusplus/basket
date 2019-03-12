@@ -39,6 +39,7 @@
 #' res <- mem_mcmc(trials$responses, trials$size)
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
+#' @importFrom crayon red
 #' @export
 mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
                      shape2 = 0.5, Prior = diag(length(responses)) / 2 +
@@ -52,10 +53,9 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     registerDoSEQ()
   }
   if (length(responses) != length(size)) {
-    stop(paste(
+    stop(red(
       "The length of the responses and size parameters",
-      "must be equal."
-    ))
+      "must be equal."))
   }
   if (length(shape1) == 1) {
     shape1 <- rep(shape1, length(responses))
@@ -162,7 +162,8 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       shape1, shape2, mod.mat, Prior
     )
   }
- 
+
+  it <- NULL 
   models_count <- foreach(
     it = isplitVector(3:niter.MCMC, chunks = num_workers()), 
     .combine=c) %dopar% {

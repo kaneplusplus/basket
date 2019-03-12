@@ -39,10 +39,9 @@ basket_name <- function(model) {
 
 #' @importFrom crayon red
 basket_name.default <- function(model) {
-  stop(cat_line(
+  stop(red(
     "Don't know how to get basket names for model of type",
-    paste(class(model), collapse = ", "), ".\n",
-    col = "red"
+    paste(class(model), collapse = ", "), "."
   ))
 }
 

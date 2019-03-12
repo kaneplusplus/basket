@@ -12,10 +12,11 @@ basket_pep <- function(x) {
 
 #' @importFrom crayon red
 basket_pep.default <- function(x) {
-  stop(cat_line(
-    "Don't know how to extract posterior probability matrix from ",
-    "an object of type ", class(x), "\n"
-  ))
+  stop(red(
+    "Don't know how to extract posterior probability matrix from",
+    "an object of type", 
+    paste(class(x), collapse = ", "), ".")
+  )
 }
 
 basket_pep.mem_basket <- function(x) {
@@ -38,10 +39,9 @@ basket_map <- function(x) {
 
 #' @importFrom crayon red
 basket_map.default <- function(x) {
-  stop(cat_line(
-    "Don't know how to extract maximum a posteriori probability ",
-    "matrix from an object of type ", class(x), "\n"
-  ))
+  stop(red(
+    "Don't know how to extract maximum a posteriori probability",
+    "matrix from an object of type", paste(class(x), collapse = ", "), "."))
 }
 
 basket_map.mem_basket <- function(x) {
@@ -66,10 +66,10 @@ cluster_pep <- function(x) {
 
 #' @importFrom crayon red
 cluster_pep.default <- function(x) {
-  stop(cat_line(
-    "Don't know how to extract posterior probability matrix from ",
-    "an object of type ", class(x), "\n"
-  ))
+  stop(red(
+    "Don't know how to extract posterior probability matrix from",
+    "an object of type", 
+    paste(class(x), collapse = ", "), "."))
 }
 
 cluster_pep.mem_basket <- function(x) {
@@ -92,9 +92,10 @@ cluster_map <- function(x) {
 
 #' @importFrom crayon red
 cluster_map.default <- function(x) {
-  stop(cat_line(
-    "Don't know how to extract maximum a posteriori probability ",
-    "matrix from an object of type ", class(x), "\n"
+  stop(red(
+    "Don't know how to extract maximum a posteriori probability",
+    "matrix from an object of type", 
+    paste(class(x), collapse = ", "), "."
   ))
 }
 
