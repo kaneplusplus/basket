@@ -5,8 +5,8 @@
 \title{Fit the MEM Model using MCMC}
 \usage{
 mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
-  shape2 = 0.5, Prior = diag(length(responses))/2 + matrix(0.5, nrow =
-  length(responses), ncol = length(responses)), HPD.alpha = 0.05,
+  shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
+  length(responses), ncol = length(responses)), hpd_alpha = 0.05,
   alternative = "greater", niter.MCMC = 10000, Initial = NA,
   seed = 1000, call = NULL)
 }
@@ -26,11 +26,11 @@ mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
 \item{shape2}{the second shape parameter(s) for the prior of each basket
 (default 0.5).}
 
-\item{Prior}{the matrix giving the prior inclusion probability
+\item{prior}{the matrix giving the prior inclusion probability
 for each pair of baskets. The default is on on the main diagonal and 0.5
 elsewhere.}
 
-\item{HPD.alpha}{the highest posterior density trial significance.}
+\item{hpd_alpha}{the highest posterior density trial significance.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
@@ -47,8 +47,8 @@ Fit the MEM model using Bayesian Metropolis-Hasting MCMC
 inference.
 }
 \examples{
-# 5 baskets, each with enrollement size 5
-trial_sizes <- rep(5, 5)
+# 3 baskets, each with enrollement size 5
+trial_sizes <- rep(5, 3)
 
 # The response rates for the baskets.
 resp_rate <- 0.15
@@ -58,7 +58,7 @@ resp_rate <- 0.15
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
   size = trial_sizes,
-  name = letters[1:5]
+  name = letters[1:3]
 )
 res <- mem_mcmc(trials$responses, trials$size)
 }

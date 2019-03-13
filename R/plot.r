@@ -24,6 +24,7 @@ plot_density.default <- function(x, ...) {
     paste(class(x), collapse = ", "), "."))
 }
 
+#' @export
 plot_density.exchangeability_model <- function(x, ...) {
   dots <- list(...)
   if ("type" %in% names(dots)) {
@@ -32,7 +33,7 @@ plot_density.exchangeability_model <- function(x, ...) {
     ps <- c("basket", "cluster")
   }
   plots <- lapply(ps, function(pt) plot_density(x[[pt]]))
-  do.call(grid.arrange, c(plots, ncol = length(plots)))
+  suppressWarnings(do.call(grid.arrange, c(plots, ncol = length(plots))))
 }
 
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid
@@ -40,7 +41,10 @@ plot_density.exchangeability_model <- function(x, ...) {
 #' @export
 plot_density.mem <- function(x, ...) {
   dots <- list(...)
-  Basket <- Density <- NULL
+  Basket <- Density <- p0 <- NULL
+  if (length(x$p0) == 1 && length(x$size) > 1) {
+    x$p0 <- rep(x$p0, length(x$size))
+  }
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
   d$p0 <- x$p0
 
@@ -102,7 +106,7 @@ plot_pep.default <- function(x, ...) {
 exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
                           expand = c(0.3, 0.3), text_size = 4,
                           legend_position = c(0.25, 0.8), drawLegend = TRUE,
-                          basket_name_hoffset = 0) {
+                          basket_name_hoffset = 0, basket_name_hjust = 1) {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop(red("The matrix supplied must be symmetric in the",
              "values and names."))
@@ -158,7 +162,7 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
       size = text_size
     ) + geom_text(aes(x = x, y = y, label = label),
       data = label_pos,
-      inherit.aes = FALSE, size = text_size
+      inherit.aes = FALSE, size = text_size, hjust = basket_name_hjust
     ) +
     labs(x = "", y = "")
   if (drawLegend) {
@@ -191,16 +195,33 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
 #' @description: TODO: WRITE THIS
 #' @param x the exchangeability model.
-#' @param plot_list TODO: WHAT IS THIS?
+#' @param type TODO: WHAT IS THIS?
 #' @param ... other options. See Details for more information.
 #' @export
-plot_mem <- function(x, plot_list, ...) {
-  # library("gridExtra")
+plot_mem <- function(x, type = c("prior", "map", "pep"), ...) {
+  UseMethod("plot_mem", x)
+}
 
+#' @export
+plot_mem.default <- function(x, type = c("prior", "map", "pep"), ...) {
+  stop(red(
+    "Don't know how to make an MEM plot with an object of type", 
+    paste(class(x), collpase = ", ", ".")))
+}
+
+#' @export
+plot_mem.exchangeability_model <- 
+  function(x, type = c("prior", "map", "pep"), ...) {
+  plot_mem(x$basket, type, ...)
+}
+
+#' @export
+plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
+  # library("gridExtra")
   numC <- 0
   allPlot <- list()
-  if (any(plot_list == "PRIOR")) {
-    mat <- round(x$PRIOR, 3)
+  if (any(type == "prior")) {
+    mat <- round(x$prior, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
@@ -223,7 +244,7 @@ plot_mem <- function(x, plot_list, ...) {
   }
 
 
-  if (any(plot_list == "MAP")) {
+  if (any(type == "map")) {
     mat <- round(x$MAP, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
@@ -246,7 +267,7 @@ plot_mem <- function(x, plot_list, ...) {
     numC <- numC + 1
   }
 
-  if (any(plot_list == "PEP")) {
+  if (any(type == "pep")) {
     mat <- round(x$PEP, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)

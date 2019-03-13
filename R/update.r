@@ -9,10 +9,10 @@
 #' (default 0.15).
 #' @param alternative the alternative case defination (default greater)
 #' @examples
-#' # MHResult1New <- update_result(MHResult1, 0.25)
+#' # MHResult1New <- update_p0(MHResult1, 0.25)
 #' @importFrom stats median
 #' @export
-update_result <- function(res, p0 = 0.15, alternative = "greater") {
+update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   if (length(p0) == 1) {
     p0 <- rep(p0, length(res$basket$responses))
   }

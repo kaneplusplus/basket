@@ -22,6 +22,7 @@ make_em_summary <- function(x) {
   ret
 }
 
+#' @export
 summary.exchangeability_model <- function(object, ...) {
   ret <- list(
     call = object$call,
@@ -35,6 +36,7 @@ summary.exchangeability_model <- function(object, ...) {
 
 #' @importFrom cli rule
 #' @importFrom crayon bold
+#' @export
 print.mem_summary <- function(x, ...) {
   cat("\n")
   cat_line(rule(left = "The MEM Model Call", col = "bold"))
@@ -67,6 +69,7 @@ summary.mem_basket <- function(object, ...) {
 
 #' @importFrom cli cat_line
 #' @importFrom crayon bold
+#' @export
 print.mem_basket_summary <- function(x, ...) {
   # Posterior Probability Response is Greater than the Null
   cat_line("\nThe Null Response Rates (alternative is ", x$alternative, "):")
@@ -99,7 +102,9 @@ make_cluster_summary <- function(object) {
     null = object$p0, post_prob = object$post.prob,
     mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD,
     ess = object$ESS,
-    alternative = object$alternative
+    alternative = object$alternative,
+    name = object$name,
+    cluster = object$cluster
   )
   class(ret) <- "mem_cluster_summary"
   ret
@@ -111,6 +116,16 @@ summary.mem_cluster <- function(object, ...) {
 
 
 #' @importFrom crayon bold
+#' @importFrom cli cat_line cat_print
+#' @export
 print.mem_cluster_summary <- function(x, ...) {
+  cat("\n")
+  for (i in seq_along(x$cluster)) {
+    cat(x$name[i])
+    pm <- matrix(x$cluster[[i]], nrow = 1)
+    colnames(pm) <- rep("", ncol(pm))
+    rownames(pm) <- rep("", nrow(pm))
+    print(pm)
+  }
   print.mem_basket_summary(x, ...)
 }

@@ -12,10 +12,10 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param Prior the matrix giving the prior inclusion probability
+#' @param prior the matrix giving the prior inclusion probability
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
-#' @param HPD.alpha the highest posterior density trial significance.
+#' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param niter.MCMC the number of MCMC iterations.
 #' @param Initial the initial MEM matrix. TODO: WHAT DOES THIS MEAN.
@@ -23,8 +23,8 @@
 #' @param call the call of the function.
 #' @importFrom stats rbinom
 #' @examples
-#' # 5 baskets, each with enrollement size 5
-#' trial_sizes <- rep(5, 5)
+#' # 3 baskets, each with enrollement size 5
+#' trial_sizes <- rep(5, 3)
 #' 
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
@@ -34,7 +34,7 @@
 #' trials <- data.frame(
 #'   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
 #'   size = trial_sizes,
-#'   name = letters[1:5]
+#'   name = letters[1:3]
 #' )
 #' res <- mem_mcmc(trials$responses, trials$size)
 #' @importFrom stats median
@@ -42,11 +42,11 @@
 #' @importFrom crayon red
 #' @export
 mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
-                     shape2 = 0.5, Prior = diag(length(responses)) / 2 +
+                     shape2 = 0.5, prior = diag(length(responses)) / 2 +
                        matrix(0.5,
                          nrow = length(responses),
                          ncol = length(responses)
-                       ), HPD.alpha = 0.05, alternative = "greater",
+                       ), hpd_alpha = 0.05, alternative = "greater",
                      niter.MCMC = 10000, Initial = NA, seed = 1000, call = NULL) {
   set.seed(seed)
   if (is.null(getDoParName())) {
@@ -134,7 +134,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
   mem.Samp[[2]] <-
-    update.MH(MOld, M, responses, size, shape1, shape2, mod.mat, Prior)
+    update.MH(MOld, M, responses, size, shape1, shape2, mod.mat, prior)
   mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
   Samp.Sum <- mem.Samp[[1]] + mem.Samp[[2]]
   if (sum(mem.Samp[[2]] == mem.Samp[[1]]) < length(mem.Samp[[2]])) {
@@ -159,7 +159,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     # print(KK)
     mem.Samp[[KK]] <- update.MH(
       mem.Samp[[KK - 1]], M, responses, size,
-      shape1, shape2, mod.mat, Prior
+      shape1, shape2, mod.mat, prior
     )
   }
 
@@ -218,7 +218,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       models = models,
       pweights = pweights,
       p0 = p0,
-      alpha = HPD.alpha,
+      alpha = hpd_alpha,
       alternative = alternative
     )
 
@@ -240,11 +240,11 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       size = size,
       name = name,
       p0 = p0,
-      alpha = HPD.alpha,
+      alpha = hpd_alpha,
       alternative = alternative,
       shape1 = shape1,
       shape2 = shape2,
-      Prior = Prior,
+      prior = prior,
       call = call
     )
   ret$mod.mat <- mod.mat

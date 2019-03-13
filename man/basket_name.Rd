@@ -13,8 +13,8 @@ basket_name(model)
 Retrieve the basket names in an exchangeability model.
 }
 \examples{
-# 5 baskets, each with enrollement size 5
-trial_sizes <- rep(5, 5)
+# 3 baskets, each with enrollement size 5
+trial_sizes <- rep(5, 3)
 
 # The response rates for the baskets.
 resp_rate <- 0.15
@@ -24,8 +24,8 @@ resp_rate <- 0.15
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
   size = trial_sizes,
-  name = paste("Basket", seq_len(5))
+  name = paste("Basket", seq_len(3))
 )
 
-mem_mcmc(trials$responses, trials$size, trials$basket)
+basket_name(mem_mcmc(trials$responses, trials$size, trials$basket))
 }

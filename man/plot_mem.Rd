@@ -4,12 +4,12 @@
 \alias{plot_mem}
 \title{Plot the Prior, MAP, and PEP of a Basket Trial}
 \usage{
-plot_mem(x, plot_list, ...)
+plot_mem(x, type = c("prior", "map", "pep"), ...)
 }
 \arguments{
 \item{x}{the exchangeability model.}
 
-\item{plot_list}{TODO: WHAT IS THIS?}
+\item{type}{TODO: WHAT IS THIS?}
 
 \item{...}{other options. See Details for more information.}
 }

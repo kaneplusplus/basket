@@ -1,4 +1,29 @@
 
+#' @title Get the Members of each cluster
+#' 
+#' @description TODO: WRITE THIS
+#' @param x either an exchangeability model or basket object.
+#' @examples
+#' # TODO: WRITE THIS
+#' @export
+cluster_arms <- function(x) {
+  UseMethod("cluster_arms", x)
+}
+
+cluster_arms.default <- function(x) {
+  stop(red(
+    "Don't know how to arms from an object of type", 
+    paste(class(x), collapse = ", "), "."))
+}
+
+cluster_arms.mem_cluster <- function(x) {
+  x$cluster
+}
+
+cluster_arms.exchangeability_model <- function(x) {
+  cluster_arms(x$basket)
+}
+
 #' @title Get the Basketwise Posterior Exchangeability Matrix
 #'
 #' @description TODO: WRITE THIS
@@ -15,8 +40,7 @@ basket_pep.default <- function(x) {
   stop(red(
     "Don't know how to extract posterior probability matrix from",
     "an object of type", 
-    paste(class(x), collapse = ", "), ".")
-  )
+    paste(class(x), collapse = ", "), "."))
 }
 
 basket_pep.mem_basket <- function(x) {
