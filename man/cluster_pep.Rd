@@ -10,8 +10,20 @@ cluster_pep(x)
 \item{x}{either an exchangeability model or basket object.}
 }
 \description{
-TODO: WRITE THIS
+MEM analyses include the posterior exachangeability 
+probability (PEP) of clusters of arms giving the probability
+that any two arms are exchangeable. This function returns the matrix
+of those probabilities.
 }
 \examples{
-# TODO: WRITE THIS
+# Create an MEM analysis of the first three arms in the Vemurafenib
+# trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders, 
+                          vemu_wide$evaluablee,
+                          vemu_wide$baskets)
+
+# Get cluster PEPs.
+basket_pep(mem_analysis)
 }

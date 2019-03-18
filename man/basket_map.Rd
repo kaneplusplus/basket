@@ -10,8 +10,20 @@ basket_map(x)
 \item{x}{either an exchangeability model or basket object.}
 }
 \description{
-TODO: WRITE THIS
+MEM analyses include the maximum a posterior exachangeability 
+probability (MAP) of included arms indicating whether 
+two arms in the trial are exchangeable. This function returns the matrix
+of those relationships.
 }
 \examples{
-# TODO: WRITE THIS
+# Create an MEM analysis of the first three arms in the Vemurafenib
+# trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders, 
+                          vemu_wide$evaluablee,
+                          vemu_wide$baskets)
+
+# Get basket MAPs.
+basket_map(mem_analysis)
 }

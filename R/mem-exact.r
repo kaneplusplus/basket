@@ -16,7 +16,7 @@
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative TODO: WRITE THIS
-#' @param seed TODO: WRITE THIS
+#' @param seed the RNG seed to run the MCMC.
 #' @param call the call of the function (default NULL).
 #' @importFrom stats rbinom
 #' @examples
@@ -55,8 +55,9 @@ mem_exact <- function(responses,
                         ),
                       hpd_alpha = 0.05,
                       alternative = "greater",
-                      seed = 1000,
+                      seed = .Random.seed(),
                       call = NULL) {
+  set.seed(seed)
   h <- mod_i <- NULL
   if (is.null(getDoParName())) {
     registerDoSEQ()
@@ -289,6 +290,7 @@ mem_exact <- function(responses,
   class(clusterRet) <- c("mem_cluster", "mem")
   result <-
     list(
+      seed = seed,
       call = call,
       basket = ret,
       cluster = clusterRet

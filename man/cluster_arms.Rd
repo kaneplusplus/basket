@@ -2,16 +2,33 @@
 % Please edit documentation in R/accessors.r
 \name{cluster_arms}
 \alias{cluster_arms}
-\title{Get the Members of each cluster}
+\title{Get the Cluster Members of MEM Models}
 \usage{
 cluster_arms(x)
 }
 \arguments{
 \item{x}{either an exchangeability model or basket object.}
 }
+\value{
+A named list is returned where the name is the cluster name and
+each element of the list is comprise do a character vector of the 
+baskets in each cluster.
+}
 \description{
-TODO: WRITE THIS
+Object returned by the `mem_mcmc()` and `mem_exact()` include
+information about the arms in the trials and the cluster 
+composed of sets of similar arms. This function returns the name
+of each arm in a cluster.
 }
 \examples{
-# TODO: WRITE THIS
+# Create an MEM analysis of the first three arms in the Vemurafenib
+# trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders, 
+                          vemu_wide$evaluablee,
+                          vemu_wide$baskets)
+
+# Get the arms in the clusters.
+cluster_arms(mem_analysis)
 }
