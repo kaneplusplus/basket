@@ -3,13 +3,25 @@
 
 #' @title Update Full Bayes results with different p0 values
 #'
-#' @description Update Full Bayes results with different p0 values and alternative
-#' @param res TODO: WHAT IS THIS?
+#' @description After running either `mem_mcmc` or `mem_exact`, the
+#' test can be updated without rerunning the entire analyis. This function
+#' provides updating of both the null response rate along with the
+#' alternative rerunning relevant test.
+#' @param res the result of an mem analysis.
 #' @param p0 the null response rate for the poster probability calculation
 #' (default 0.15).
 #' @param alternative the alternative case defination (default greater)
 #' @examples
-#' # MHResult1New <- update_p0(MHResult1, 0.25)
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#'
+#' mem_analysis <- mem_exact(vemu_wide$responders,
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Update the null from p0 = 0.15 the default, to p = 0.25.
+#' update_p0(mem_analysis, 0.20)
 #' @importFrom stats median
 #' @export
 update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
