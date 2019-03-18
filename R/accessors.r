@@ -1,10 +1,25 @@
 
-#' @title Get the Members of each cluster
+#' @title Get the Cluster Members of MEM Models
 #' 
-#' @description TODO: WRITE THIS
+#' @description Object returned by the `mem_mcmc()` and `mem_exact()` include
+#' information about the arms in the trials and the cluster 
+#' composed of sets of similar arms. This function returns the name
+#' of each arm in a cluster.
 #' @param x either an exchangeability model or basket object.
+#' @return A named list is returned where the name is the cluster name and
+#' each element of the list is comprise do a character vector of the 
+#' baskets in each cluster.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#' 
+#' mem_analysis <- mem_exact(vemu_wide$responders, 
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Get the arms in the clusters.
+#' cluster_arms(mem_analysis)
 #' @export
 cluster_arms <- function(x) {
   UseMethod("cluster_arms", x)
@@ -26,10 +41,22 @@ cluster_arms.exchangeability_model <- function(x) {
 
 #' @title Get the Basketwise Posterior Exchangeability Matrix
 #'
-#' @description TODO: WRITE THIS
+#' @description MEM analyses include the posterior exachangeability 
+#' probability (PEP) of included arms giving the probability
+#' that any two arms are exchangeable. This function returns the matrix
+#' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#' 
+#' mem_analysis <- mem_exact(vemu_wide$responders, 
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Get the PEP for baskets.
+#' basket_pep(mem_analysis)
 #' @export
 basket_pep <- function(x) {
   UseMethod("basket_pep", x)
@@ -52,10 +79,23 @@ basket_pep.exchangeability_model <- function(x) {
 }
 
 #' @title Get the Basketwise Maximum A Posteriori Probability Matrix
-#' @description TODO: WRITE THIS
+#' 
+#' @description MEM analyses include the maximum a posterior exachangeability 
+#' probability (MAP) of included arms indicating whether 
+#' two arms in the trial are exchangeable. This function returns the matrix
+#' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#' 
+#' mem_analysis <- mem_exact(vemu_wide$responders, 
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Get basket MAPs.
+#' basket_map(mem_analysis)
 #' @export
 basket_map <- function(x) {
   UseMethod("basket_map", x)
@@ -76,13 +116,24 @@ basket_map.exchangeability_model <- function(x) {
   basket_map(x$basket)
 }
 
-
 #' @title Get the Clusterwise Posterior Exchangeability Matrix
 #'
-#' @description TODO: WRITE THIS
+#' @description MEM analyses include the posterior exachangeability 
+#' probability (PEP) of clusters of arms giving the probability
+#' that any two arms are exchangeable. This function returns the matrix
+#' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#' 
+#' mem_analysis <- mem_exact(vemu_wide$responders, 
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Get cluster PEPs.
+#' basket_pep(mem_analysis)
 #' @export
 cluster_pep <- function(x) {
   UseMethod("cluster_pep", x)
@@ -105,10 +156,23 @@ cluster_pep.exchangeability_model <- function(x) {
 }
 
 #' @title Get the Clusterwise Maximum A Posteriori Probability Matrix
-#' @description TODO: WRITE THIS
+#' 
+#' @description MEM analyses include the maximum a posterior exachangeability 
+#' probability (MAP) of included arms indicating whether 
+#' two arms in the trial are exchangeable. This function returns the matrix
+#' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#' 
+#' mem_analysis <- mem_exact(vemu_wide$responders, 
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' # Get the cluster MAPs.
+#' cluster_map(mem_analysis)
 #' @export
 cluster_map <- function(x) {
   UseMethod("cluster_map", x)
