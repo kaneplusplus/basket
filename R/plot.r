@@ -1,5 +1,4 @@
 
-
 #' @title Plot the Densities of Baskets in a Trial
 #'
 #' @description TODO: WRITE THIS
@@ -7,7 +6,15 @@
 #' @param x the exchangeability model.
 #' @param ... other options. See Details for more information.
 #' @examples
-#' # TODO: WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#'
+#' mem_analysis <- mem_exact(vemu_wide$responders,
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' plot_density(mem_analysis)
 #' @importFrom tidyr gather
 #' @importFrom tibble as_tibble
 #' @importFrom gridExtra grid.arrange
@@ -75,12 +82,22 @@ plot_density.mem <- function(x, ...) {
 
 #' @title Plot the Posterior Exchangeability of a Basket Trial
 #'
-#' @description TODO: WRITE THIS
+#' @description The posterior exchangeability of the baskets in an an 
+#' MEM analysis can be visualized via an exchangeogram using this function.
 #' @param x the exchangeability model.
-#' @param ... other options. See Details for more information.
-#' @details TODO: WRITE THIS
+#' @param ... Other options passed to ggplot2 to alter the visual 
+#' characteristics of the plot. See Details for more information.
+#' @details TODO finish this 
 #' @examples
-#' # WRITE THIS
+#' # Create an MEM analysis of the first three arms in the Vemurafenib
+#' # trial data.
+#' data(vemu_wide)
+#'
+#' mem_analysis <- mem_exact(vemu_wide$responders,
+#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$baskets)
+#'
+#' plot_pep(mem_analysis)
 #' @export
 plot_pep <- function(x, ...) {
   UseMethod("plot_pep")
@@ -193,6 +210,7 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 }
 
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
+#' 
 #' @description: TODO: WRITE THIS
 #' @param x the exchangeability model.
 #' @param type TODO: WHAT IS THIS?
