@@ -67,45 +67,45 @@ ESS <- function(X, N, Omega, a, b) {
   alph + beta
 }
 
-
-#' @importFrom itertools isplitVector
-#' @importFrom foreach foreach %dopar%
-post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
-  js <- NULL
-  U <- MEM.w(Data, pars, marg.M)
-  out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1[1], shape2[1])
-  K <- length(Data$X)
-  out <- c(
-    out,
-    foreach(
-      js = isplitVector(2:(K - 1), chunks = num_workers()),
-      .combine = c
-    ) %dopar% {
-      foreach(j = js, .combine = c) %dopar% {
-        Ii <- c(j, 1:(j - 1), (j + 1):K)
-        U$weights[[j]] %*% ESS(
-          Data$X[Ii], Data$N[Ii], U$models,
-          shape1[j], shape2[j]
-        )
-      }
-    }
-  )
-  #  for(j in 2:(K-1)){
-  #    Ii <- c(j,1:(j-1),(j+1):K)
-  #    out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
-  #  }
-  j <- K
-  Ii <- c(j, 1:(j - 1))
-  out <- c(
-    out,
-    U$weights[[j]] %*% ESS(
-      Data$X[Ii], Data$N[Ii], U$models, shape1[j],
-      shape2[j]
-    )
-  )
-  names(out) <- Data$X
-  out
-}
+#' 
+#' #' @importFrom itertools isplitVector
+#' #' @importFrom foreach foreach %dopar%
+#' post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
+#'   js <- NULL
+#'   U <- MEM.w(Data, pars, marg.M)
+#'   out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1[1], shape2[1])
+#'   K <- length(Data$X)
+#'   out <- c(
+#'     out,
+#'     foreach(
+#'       js = isplitVector(2:(K - 1), chunks = num_workers()),
+#'       .combine = c
+#'     ) %dopar% {
+#'       foreach(j = js, .combine = c) %dopar% {
+#'         Ii <- c(j, 1:(j - 1), (j + 1):K)
+#'         U$weights[[j]] %*% ESS(
+#'           Data$X[Ii], Data$N[Ii], U$models,
+#'           shape1[j], shape2[j]
+#'         )
+#'       }
+#'     }
+#'   )
+#'   #  for(j in 2:(K-1)){
+#'   #    Ii <- c(j,1:(j-1),(j+1):K)
+#'   #    out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
+#'   #  }
+#'   j <- K
+#'   Ii <- c(j, 1:(j - 1))
+#'   out <- c(
+#'     out,
+#'     U$weights[[j]] %*% ESS(
+#'       Data$X[Ii], Data$N[Ii], U$models, shape1[j],
+#'       shape2[j]
+#'     )
+#'   )
+#'   names(out) <- Data$X
+#'   out
+#' }
 
 mem.Prior <- function(I, mod.mat, pr.Inclus) {
   M <- MEM.mat(I, mod.mat, nrow(pr.Inclus))

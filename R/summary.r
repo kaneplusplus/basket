@@ -63,6 +63,8 @@ make_basket_summary <- function(object) {
   ret
 }
 
+
+#' @export
 summary.mem_basket <- function(object, ...) {
   make_basket_summary(object)
 }
@@ -110,6 +112,7 @@ make_cluster_summary <- function(object) {
   ret
 }
 
+#' @export
 summary.mem_cluster <- function(object, ...) {
   make_cluster_summary(object)
 }
