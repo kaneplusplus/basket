@@ -36,7 +36,7 @@ cluster_arms.mem_cluster <- function(x) {
 }
 
 cluster_arms.exchangeability_model <- function(x) {
-  cluster_arms(x$basket)
+  cluster_arms(x$cluster)
 }
 
 #' @title Get the Basketwise Posterior Exchangeability Matrix
@@ -73,7 +73,7 @@ basket_pep.default <- function(x) {
 basket_pep.mem_basket <- function(x) {
   x$PEP
 }
-
+#' @export
 basket_pep.exchangeability_model <- function(x) {
   basket_pep(x$basket)
 }
@@ -109,9 +109,9 @@ basket_map.default <- function(x) {
 }
 
 basket_map.mem_basket <- function(x) {
-  x$PEP
+  x$MAP
 }
-
+#' @export
 basket_map.exchangeability_model <- function(x) {
   basket_map(x$basket)
 }
@@ -150,7 +150,7 @@ cluster_pep.default <- function(x) {
 cluster_pep.mem_basket <- function(x) {
   x$PEP
 }
-
+#' @export
 cluster_pep.exchangeability_model <- function(x) {
   cluster_pep(x$basket)
 }
@@ -188,9 +188,9 @@ cluster_map.default <- function(x) {
 }
 
 cluster_map.mem_basket <- function(x) {
-  x$PEP
+  x$MAP
 }
-
+#' @export
 cluster_map.exchangeability_model <- function(x) {
   basket_map(x$basket)
 }
