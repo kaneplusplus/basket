@@ -25,9 +25,9 @@ of each arm in a cluster.
 # trial data.
 data(vemu_wide)
 
-mem_analysis <- mem_exact(vemu_wide$responders, 
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+mem_analysis <- mem_exact(vemu_wide$responders[1:3], 
+                          vemu_wide$evaluable[1:3],
+                          vemu_wide$baskets[1:3])
 
 # Get the arms in the clusters.
 cluster_arms(mem_analysis)
