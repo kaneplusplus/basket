@@ -15,7 +15,7 @@
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
-#' @param alternative TODO: WRITE THIS
+#' @param alternative the alternative case definition (default greater)
 #' @param seed the RNG seed to run the MCMC.
 #' @param call the call of the function (default NULL).
 #' @importFrom stats rbinom
@@ -55,7 +55,7 @@ mem_exact <- function(responses,
                         ),
                       hpd_alpha = 0.05,
                       alternative = "greater",
-                      seed = .Random.seed(),
+                      seed = .Random.seed[1],
                       call = NULL) {
   set.seed(seed)
   h <- mod_i <- NULL
