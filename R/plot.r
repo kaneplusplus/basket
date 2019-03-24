@@ -341,7 +341,7 @@ plot_pep.mem <- function(x, ...) {
 #' # WRITE THIS
 #' @export
 plot_map <- function(x, ...) {
-  UseMethod("plot_exchangeability")
+  UseMethod("plot_map")
 }
 
 #' @importFrom crayon red
@@ -356,7 +356,7 @@ plot_map.default <- function(x, ...) {
 #' @importFrom ggplot2 ggtitle element_text theme
 #' @export
 plot_map.mem <- function(x, ...) {
-  mat <- round(x$maximizer, 3)
+  mat <- round(x$MAP, 3)
   mat[lower.tri(mat)] <- NA
   if (!is.null(x$name)) {
     dimnames(mat) <- list(x$name, x$name)
