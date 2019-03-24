@@ -21,7 +21,7 @@ of those probabilities.
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders, 
-                          vemu_wide$evaluablee,
+                          vemu_wide$evaluable,
                           vemu_wide$baskets)
 
 # Get the PEP for baskets.

@@ -11,7 +11,7 @@
 #' data(vemu_wide)
 #'
 #' mem_analysis <- mem_exact(vemu_wide$responders,
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' plot_density(mem_analysis)
@@ -94,7 +94,7 @@ plot_density.mem <- function(x, ...) {
 #' data(vemu_wide)
 #'
 #' mem_analysis <- mem_exact(vemu_wide$responders,
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' plot_pep(mem_analysis)

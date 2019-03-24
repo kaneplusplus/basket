@@ -17,7 +17,7 @@
 #' data(vemu_wide)
 #'
 #' mem_analysis <- mem_exact(vemu_wide$responders,
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Update the null from p0 = 0.15 the default, to p = 0.25.

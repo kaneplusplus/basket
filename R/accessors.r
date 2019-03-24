@@ -15,7 +15,7 @@
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Get the arms in the clusters.
@@ -52,7 +52,7 @@ cluster_arms.exchangeability_model <- function(x) {
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Get the PEP for baskets.
@@ -91,7 +91,7 @@ basket_pep.exchangeability_model <- function(x) {
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Get basket MAPs.
@@ -129,7 +129,7 @@ basket_map.exchangeability_model <- function(x) {
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Get cluster PEPs.
@@ -168,7 +168,7 @@ cluster_pep.exchangeability_model <- function(x) {
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
-#'                           vemu_wide$evaluablee,
+#'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
 #' # Get the cluster MAPs.

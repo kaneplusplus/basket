@@ -7,7 +7,7 @@
 mem_exact(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior_inclusion = diag(length(responses))/2 +
   matrix(0.5, nrow = length(responses), ncol = length(responses)),
-  hpd_alpha = 0.05, alternative = "greater", seed = 1000,
+  hpd_alpha = 0.05, alternative = "greater", seed = .Random.seed[1],
   call = NULL)
 }
 \arguments{
