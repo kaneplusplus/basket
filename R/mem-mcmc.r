@@ -40,6 +40,7 @@
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @importFrom crayon red
+#' @importFrom itertools isplitVector
 #' @export
 mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
                      shape2 = 0.5, prior = diag(length(responses)) / 2 +

@@ -9,14 +9,24 @@ plot_pep(x, ...)
 \arguments{
 \item{x}{the exchangeability model.}
 
-\item{...}{other options. See Details for more information.}
+\item{...}{Other options passed to ggplot2 to alter the visual 
+characteristics of the plot. See Details for more information.}
 }
 \description{
-TODO: WRITE THIS
+The posterior exchangeability of the baskets in an an 
+MEM analysis can be visualized via an exchangeogram using this function.
 }
 \details{
-TODO: WRITE THIS
+TODO finish this
 }
 \examples{
-# WRITE THIS
+# Create an MEM analysis of the first three arms in the Vemurafenib
+# trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders,
+                          vemu_wide$evaluable,
+                          vemu_wide$baskets)
+
+plot_pep(mem_analysis)
 }

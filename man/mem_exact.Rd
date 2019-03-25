@@ -7,8 +7,7 @@
 mem_exact(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior_inclusion = diag(length(responses))/2 +
   matrix(0.5, nrow = length(responses), ncol = length(responses)),
-  hpd_alpha = 0.05, alternative = "greater", seed = .Random.seed[1],
-  call = NULL)
+  hpd_alpha = 0.05, alternative = "greater", call = NULL)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -32,9 +31,7 @@ elsewhere.}
 
 \item{hpd_alpha}{the highest posterior density trial significance.}
 
-\item{alternative}{TODO: WRITE THIS}
-
-\item{seed}{TODO: WRITE THIS}
+\item{alternative}{the alternative case definition (default greater)}
 
 \item{call}{the call of the function (default NULL).}
 }
