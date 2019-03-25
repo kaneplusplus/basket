@@ -282,7 +282,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
 
   clusterRet <- clusterComp(ret)
   class(clusterRet) <- c("mem_cluster", "mem")
-  result <- list(call = call, basket = ret, cluster = clusterRet)
+  result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
   class(result) <- c("mem_mcmc", "exchangeability_model")
   result
 }
