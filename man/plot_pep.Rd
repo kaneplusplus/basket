@@ -20,6 +20,7 @@ MEM analysis can be visualized via an exchangeogram using this function.
 TODO finish this
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the first three arms in the Vemurafenib
 # trial data.
 data(vemu_wide)
@@ -29,4 +30,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$baskets)
 
 plot_pep(mem_analysis)
-}
+}}
