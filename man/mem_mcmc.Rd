@@ -7,7 +7,7 @@
 mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", niter.MCMC = 10000, Initial = NA,
+  alternative = "greater", mcmc_iter = 10000, Initial = NA,
   seed = 1000, call = NULL)
 }
 \arguments{
@@ -34,7 +34,7 @@ elsewhere.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
-\item{niter.MCMC}{the number of MCMC iterations.}
+\item{mcmc_iter}{the number of MCMC iterations.}
 
 \item{Initial}{the initial MEM matrix. TODO: WHAT DOES THIS MEAN.}
 

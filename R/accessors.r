@@ -111,6 +111,7 @@ basket_map.default <- function(x) {
 basket_map.mem_basket <- function(x) {
   x$MAP
 }
+
 #' @export
 basket_map.exchangeability_model <- function(x) {
   basket_map(x$basket)
@@ -150,6 +151,7 @@ cluster_pep.default <- function(x) {
 cluster_pep.mem_basket <- function(x) {
   x$PEP
 }
+
 #' @export
 cluster_pep.exchangeability_model <- function(x) {
   cluster_pep(x$basket)
@@ -190,6 +192,7 @@ cluster_map.default <- function(x) {
 cluster_map.mem_basket <- function(x) {
   x$MAP
 }
+
 #' @export
 cluster_map.exchangeability_model <- function(x) {
   basket_map(x$basket)

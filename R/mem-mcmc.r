@@ -17,7 +17,7 @@
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
-#' @param niter.MCMC the number of MCMC iterations.
+#' @param mcmc_iter the number of MCMC iterations.
 #' @param Initial the initial MEM matrix. TODO: WHAT DOES THIS MEAN.
 #' @param seed the random number seed.
 #' @param call the call of the function.
@@ -48,7 +48,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
                          nrow = length(responses),
                          ncol = length(responses)
                        ), hpd_alpha = 0.05, alternative = "greater",
-                     niter.MCMC = 10000, Initial = NA, seed = 1000, call = NULL) {
+                     mcmc_iter = 10000, Initial = NA, seed = 1000, call = NULL) {
   set.seed(seed)
   if (is.null(getDoParName())) {
     registerDoSEQ()
@@ -58,6 +58,9 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       "The length of the responses and size parameters",
       "must be equal."))
   }
+
+  # If the shape and p0 argument is a single value, make it a vector of
+  # appropriate length.
   if (length(shape1) == 1) {
     shape1 <- rep(shape1, length(responses))
   }
@@ -65,24 +68,15 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     shape2 <- rep(shape2, length(responses))
   }
 
-  isP0Vector <- TRUE
   if (length(p0) == 1) {
-    isP0Vector <- FALSE
     p0 <- rep(p0, length(responses))
   }
+
+  # TODO: How is this the sample space?
   ### Produce sample space of MEM ###
-  mod.mat <- list()
-  k <- length(responses) - 1
-  j <- 1
-  while (k > 0) {
-    mod.mat[[j]] <-
-      (as.matrix(expand.grid(rep(list(
-        c(0, 1)
-      ), k))))[order(rowSums(as.matrix(expand.grid(rep(
-        list(c(0, 1)), k
-      ))))), ]
-    k <- k - 1
-    j <- j + 1
+  mod_mat <- foreach(k = rev(seq_len(length(responses)-1))) %do% {
+    mem_sample_space <- as.matrix(expand.grid(rep(list(c(0, 1)), k)))
+    mem_sample_space[order(rowSums(mem_sample_space)),]
   }
 
   ### Set initial MEM for MCMC ###
@@ -120,8 +114,8 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   }
   ### Implement Metropolis-Hastings Alg ###
   n.chg <- 0
-  mod.mat[[1]] <- as.matrix(mod.mat[[1]])
-  models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
+  mod_mat[[1]] <- as.matrix(mod_mat[[1]])
+  models <- cbind(rep(1, dim(mod_mat[[1]])[1]), mod_mat[[1]])
   mweights <- matrix(0, nrow(models), length(responses))
   if (missing(name)) {
     name <- paste("basket", seq_along(size))
@@ -135,7 +129,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
   mem.Samp[[2]] <-
-    update.MH(MOld, M, responses, size, shape1, shape2, mod.mat, prior)
+    update.MH(MOld, M, responses, size, shape1, shape2, mod_mat, prior)
   mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
   Samp.Sum <- mem.Samp[[1]] + mem.Samp[[2]]
   if (sum(mem.Samp[[2]] == mem.Samp[[1]]) < length(mem.Samp[[2]])) {
@@ -156,29 +150,29 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       mem.Samp[[2]]
     MAP.count <- c(MAP.count, 1)
   }
-  for (KK in 3:niter.MCMC) {
+  for (KK in seq_len(mcmc_iter)[-(1:2)]) {
     # print(KK)
     mem.Samp[[KK]] <- update.MH(
       mem.Samp[[KK - 1]], M, responses, size,
-      shape1, shape2, mod.mat, prior
+      shape1, shape2, mod_mat, prior
     )
   }
 
   it <- NULL 
   models_count <- foreach(
-    it = isplitVector(3:niter.MCMC, chunks = num_workers()), 
+    it = isplitVector(seq_len(mcmc_iter)[-(1:2)], 
+    chunks = num_workers()), 
     .combine=c) %dopar% {
 
     foreach(k = it) %do% {
       models.Count(Samp = mem.Samp[[k]], models = models)
     }
+
   }
 
   # this can be made faster with a list of mweights and Samp.Sum
-  for (KK in 3:niter.MCMC) {
+  for (KK in seq_len(mcmc_iter)[-(1:2)]) {
 
-    # print(mem.Samp[[KK]])
-#    mweights <- mweights + models.Count(Samp = mem.Samp[[KK]], models = models)
     mweights <- mweights + models_count[[KK-2]]
     Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
     if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) <
@@ -205,7 +199,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   ### Compute Posterior Model Weights ###
   pweights <- list()
   for (KK in 1:ncol(mweights)) {
-    pweights[[KK]] <- mweights[, KK] / niter.MCMC
+    pweights[[KK]] <- mweights[, KK] / mcmc_iter
   }
 
   ### List for post-processing ###
@@ -225,7 +219,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
 
   ### Compute and output results ###
   PEP <-
-    Samp.Sum / niter.MCMC
+    Samp.Sum / mcmc_iter
   rownames(PEP) <- colnames(PEP) <- MODEL$name
   MAP <-
     MAP.list[[order(MAP.count, decreasing = TRUE)[1]]]
@@ -248,7 +242,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       prior = prior,
       call = call
     )
-  ret$mod.mat <- mod.mat
+  ret$mod_mat <- mod_mat
   ret$Inital <-
     M.init
   rownames(ret$Inital) <- colnames(ret$Inital) <- MODEL$name
@@ -257,7 +251,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   # Ret doesn't have class information yet so, we'll call
   # sample_posterior.exchangeability_model directly.
   ret$samples <- sample_posterior.exchangeability_model(MODEL)
-  ret$accept.rate <- (n.chg) / niter.MCMC
+  ret$accept.rate <- (n.chg) / mcmc_iter
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   ret$PEP <- PEP
@@ -274,11 +268,6 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
   class(ret) <- c("mem_basket", "mem")
-  # ret$ESS2 <-
-  #  calc.ESS.from.HPDwid(fit = ret, alpha = MODEL$alpha)
-  # names(ret$ESS2) <- MODEL$name
-  # ret$PostProb <-
-  #  mem.PostProb(MODEL, method = "samples", fit = ret)
 
   clusterRet <- clusterComp(ret)
   class(clusterRet) <- c("mem_cluster", "mem")

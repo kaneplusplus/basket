@@ -120,9 +120,6 @@ mem_exact <- function(responses,
       )
     }
 
-  #  log.Marg <- apply(Mod.I, MARGIN = 1, FUN = logMarg.Dens, mod.mat, xvec,
-  #                    nvec, avec, bvec)
-  #
   max.i <- order(log.Marg, decreasing = TRUE)[1]
 
   MAX <- MEM.mat(Mod.I[max.i, ], mod.mat, length(xvec))

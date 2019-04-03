@@ -40,7 +40,11 @@ plot_density.exchangeability_model <- function(x, ...) {
     ps <- c("basket", "cluster")
   }
   plots <- lapply(ps, function(pt) plot_density(x[[pt]]))
-  suppressWarnings(do.call(grid.arrange, c(plots, ncol = length(plots))))
+  if (length(plots[[1]])) {
+    plots[[1]]
+  } else {
+    suppressWarnings(do.call(grid.arrange, c(plots, ncol = length(plots))))
+  }
 }
 
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid

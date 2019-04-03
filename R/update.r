@@ -1,6 +1,3 @@
-
-
-
 #' @title Update Full Bayes results with different p0 values
 #'
 #' @description After running either `mem_mcmc` or `mem_exact`, the
@@ -33,6 +30,7 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   ret$basket$p0 <- p0
   ret$basket$alternative <- alternative
 
+  # TODO dispatch on the mem type *not* grepping the call.
   if (grepl("exact", res$call[1])) {
     xvec <- res$basket$responses
     nvec <- res$basket$size
@@ -105,3 +103,5 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
 
   return(ret)
 }
+
+

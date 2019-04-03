@@ -1,4 +1,5 @@
 
+
 #' @importFrom foreach getDoParWorkers
 num_workers <- function(factor = 1) {
   getDoParWorkers() * factor
@@ -66,46 +67,6 @@ ESS <- function(X, N, Omega, a, b) {
   beta <- b + (Omega %*% N - Omega %*% X)
   alph + beta
 }
-
-#' 
-#' #' @importFrom itertools isplitVector
-#' #' @importFrom foreach foreach %dopar%
-#' post.ESS <- function(Data, pars, marg.M, shape1, shape2) {
-#'   js <- NULL
-#'   U <- MEM.w(Data, pars, marg.M)
-#'   out <- U$weights[[1]] %*% ESS(Data$X, Data$N, U$models, shape1[1], shape2[1])
-#'   K <- length(Data$X)
-#'   out <- c(
-#'     out,
-#'     foreach(
-#'       js = isplitVector(2:(K - 1), chunks = num_workers()),
-#'       .combine = c
-#'     ) %dopar% {
-#'       foreach(j = js, .combine = c) %dopar% {
-#'         Ii <- c(j, 1:(j - 1), (j + 1):K)
-#'         U$weights[[j]] %*% ESS(
-#'           Data$X[Ii], Data$N[Ii], U$models,
-#'           shape1[j], shape2[j]
-#'         )
-#'       }
-#'     }
-#'   )
-#'   #  for(j in 2:(K-1)){
-#'   #    Ii <- c(j,1:(j-1),(j+1):K)
-#'   #    out <- c(out, U$weights[[j]]%*%ESS(Data$X[Ii], Data$N[Ii], U$models) )
-#'   #  }
-#'   j <- K
-#'   Ii <- c(j, 1:(j - 1))
-#'   out <- c(
-#'     out,
-#'     U$weights[[j]] %*% ESS(
-#'       Data$X[Ii], Data$N[Ii], U$models, shape1[j],
-#'       shape2[j]
-#'     )
-#'   )
-#'   names(out) <- Data$X
-#'   out
-#' }
 
 mem.Prior <- function(I, mod.mat, pr.Inclus) {
   M <- MEM.mat(I, mod.mat, nrow(pr.Inclus))
@@ -179,24 +140,6 @@ post.Weights <- function(j, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
   out
 }
 
-# 
-# MEM.w <- function(Data, pars, marg.M) {
-#   pr.Inclus <- pars$UB * marg.M$maximizer
-#   diag(pr.Inclus) <- rep(1, nrow(pr.Inclus))
-#   pr.Inclus[which(pr.Inclus == 0)] <- pars$LB
-#   weights <- list()
-#   for (i in 1:nrow(pr.Inclus)) {
-#     weights[[i]] <- MEM_modweight(
-#       mod.mat = marg.M$mod.mat[[1]],
-#       source.vec = pr.Inclus[i, ][-i]
-#     )
-#   }
-#   models <- cbind(rep(1, dim(marg.M$mod.mat[[1]])[1]), marg.M$mod.mat[[1]])
-#   list(models = models, weights = weights)
-# }
-# 
-# 
-
 ####################################################################
 #### Alternative Computation of ESS using HPD interval matching ####
 ####################################################################
@@ -225,22 +168,6 @@ dist.beta.HPD <- function(ess, fit, alpha, jj) {
   )))
 }
 
-
-#' #' @importFrom stats qbeta
-#' dist.beta.HPDwid <- function(ess, fit, alpha, jj) {
-#'   al <- fit$median_est[jj] * ess
-#'   al <- max(1e-2, al)
-#'   be <- ess - al
-#'   be <- max(1e-2, be)
-#'   return(abs((fit$HPD[2, jj] - fit$HPD[1, jj]) - (diff(
-#'     qbeta(
-#'       c(alpha / 2, 1 - alpha / 2),
-#'       al, be
-#'     )
-#'   ))))
-#' }
-#' 
-
 ESS.from.HPD.i <- function(jj, fit, alpha) {
   # library(GenSA)
   opt <-
@@ -257,24 +184,6 @@ ESS.from.HPD.i <- function(jj, fit, alpha) {
   return(opt$par)
 }
 
-# 
-# ESS.from.HPDwid.i <- function(jj, fit, alpha) {
-#   # library(GenSA)
-#   opt <-
-#     GenSA::GenSA(
-#       par = 1,
-#       fn = dist.beta.HPDwid,
-#       lower = 0,
-#       upper = 10000000,
-#       # control=list(maxit=pars$DTW.maxit),
-#       fit = fit,
-#       alpha = alpha,
-#       jj = jj
-#     )
-#   return(opt$par)
-# }
-
-
 calc.ESS.from.HPD <- function(fit, alpha) {
   ## fit is list with median vec and HPD vec ##
   i <- NULL
@@ -288,22 +197,6 @@ calc.ESS.from.HPD <- function(fit, alpha) {
 #    alpha = alpha
 #  ))
 }
-
-# 
-# calc.ESS.from.HPDwid <- function(fit, alpha) {
-#   ## fit is list with median vec and HPD vec ##
-#   return(sapply(
-#     1:length(fit$median_est),
-#     FUN = ESS.from.HPDwid.i,
-#     fit = fit,
-#     alpha = alpha
-#   ))
-# }
-
-####################################################################
-####################################################################
-####################################################################
-
 
 ####################################################################
 ########## MCMC for Bayes with Metropolis-Hastings #################

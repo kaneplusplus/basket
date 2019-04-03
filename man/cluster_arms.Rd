@@ -21,7 +21,6 @@ composed of sets of similar arms. This function returns the name
 of each arm in a cluster.
 }
 \examples{
-\dontrun{
 # Create an MEM analysis of the first three arms in the Vemurafenib
 # trial data.
 data(vemu_wide)
@@ -32,4 +31,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Get the arms in the clusters.
 cluster_arms(mem_analysis)
-}}
+}
