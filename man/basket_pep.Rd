@@ -16,8 +16,8 @@ that any two arms are exchangeable. This function returns the matrix
 of those probabilities.
 }
 \examples{
-# Create an MEM analysis of the first three arms in the Vemurafenib
-# trial data.
+# Create an MEM analysis of the Vemurafenib trial data.
+
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders, 

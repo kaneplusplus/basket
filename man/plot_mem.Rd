@@ -9,10 +9,21 @@ plot_mem(x, type = c("prior", "map", "pep"), ...)
 \arguments{
 \item{x}{the exchangeability model.}
 
-\item{type}{TODO: WHAT IS THIS?}
+\item{type}{the plot type that will be plotted.}
 
 \item{...}{other options. See Details for more information.}
 }
 \description{
-: TODO: WRITE THIS
+Plot multiple sub-plot of the exchangeability model, including "prior", "map", and "pep".
 }
+\examples{
+\dontrun{
+# Create an MEM analysisthe Vemurafenib trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders,
+                          vemu_wide$evaluable,
+                          vemu_wide$baskets)
+
+plot_mem(mem_analysis)
+}}

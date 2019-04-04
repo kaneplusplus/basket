@@ -12,11 +12,19 @@ plot_map(x, ...)
 \item{...}{other options. See Details for more information.}
 }
 \description{
-TODO: WRITE THIS
+Plot the MAP of the exchaneability model.
 }
 \details{
 TODO: WRITE THIS
 }
 \examples{
-# WRITE THIS
-}
+\dontrun{
+# Create an MEM analysisthe Vemurafenib trial data.
+data(vemu_wide)
+
+mem_analysis <- mem_exact(vemu_wide$responders,
+                          vemu_wide$evaluable,
+                          vemu_wide$baskets)
+
+plot_map(mem_analysis)
+}}

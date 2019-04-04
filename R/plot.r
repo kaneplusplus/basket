@@ -6,8 +6,7 @@
 #' @param x the exchangeability model.
 #' @param ... other options. See Details for more information.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
 #' mem_analysis <- mem_exact(vemu_wide$responders,
@@ -93,8 +92,7 @@ plot_density.mem <- function(x, ...) {
 #' characteristics of the plot. See Details for more information.
 #' @details TODO finish this 
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
 #' mem_analysis <- mem_exact(vemu_wide$responders,

@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.35
+Version: 0.36
 Authors@R: c(
   person("Nan", "Chen",
          email = "nchen2@mdanderson.org",
@@ -12,10 +12,32 @@ Authors@R: c(
          email = "michael.kane@yale.edu",
          role = c("aut", "cre"),
          comment = "http://orcid.org/0000-0003-1899-6662"))
-Description: Implemention of multisource exchangeability models for basket trial design and monitoring.
+Description: Implemention of multisource exchangeability models for basket trial design 
+  and monitoring. The R `basket` package provides for the designs and analysis of basket 
+  trials for [multi-source exchangeability models (MEM)], which allows arms to "share" power 
+  with similar arms in a trial. The package is intended to perform the exact or MCMC 
+  computation of the operating characteristics of different scenarios. Calculations derived 
+  from these analyses include the posterior probabilities, HPD boundaries, 
+  effective sample sizes (ESS), mean and median estimations can be calculated with this package 
+  using the MEM method. Along with providing "basketwise" analyses, the package includes similar calculations for "clusterwise" analyses where a cluster a set of similar baskets. In addition 
+  plotting tools are provided to visualize basket and cluster density as well as their exchangeability. 
 Depends: R (>= 3.4.0)
 License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
+References:     
+  1. Vemurafenib in multiple nonmelanoma cancers with braf v600 mutations
+  Hyman DM, Puzanov I, Subbiah V, Faris JE, Chau I, Blay JY, Wolf J, Raje NS, Diamond EL,
+  Hollebecque A, et al. 
+  New England Journal of Medicine 2015; 373(8):726–736.
+  2. Bayesian basket trial design with exchangeability monitoring
+  BP Hobbs, R Landin
+  Statistics in medicine 37 (25), 3557-357
+  3. Statistical challenges posed by uncontrolled master protocols: sensitivity analysis of the vemurafenib study
+  BP Hobbs, MJ Kane, DS Hong, R Landin
+  Annals of Oncology 29 (12), 2296-2301
+  4. Bayesian hierarchical modeling based on multisource exchangeability
+  AM Kaizer, JS Koopmeiners, BP Hobbs
+  Biostatistics 19 (2), 169-184
 Imports: 
     GenSA,
     foreach, 

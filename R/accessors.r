@@ -10,8 +10,7 @@
 #' each element of the list is comprise do a character vector of the 
 #' baskets in each cluster.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -47,8 +46,7 @@ cluster_arms.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -86,8 +84,7 @@ basket_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -125,8 +122,7 @@ basket_map.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -165,8 +161,7 @@ cluster_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' # Create an MEM analysis of the first three arms in the Vemurafenib
-#' # trial data.
+#' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
 #' mem_analysis <- mem_exact(vemu_wide$responders, 
