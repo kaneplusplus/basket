@@ -2,51 +2,51 @@
 % Please edit documentation in R/mem-exact.r
 \name{mem_exact}
 \alias{mem_exact}
-\title{Fit the Exact MEM Model}
+\title{Fit the MEM Model using Exact posterior inference}
 \usage{
 mem_exact(responses, size, name, p0 = 0.15, shape1 = 0.5,
-  shape2 = 0.5, prior_inclusion = diag(length(responses))/2 +
+  shape2 = 0.5, prior = diag(length(responses))/2 +
   matrix(0.5, nrow = length(responses), ncol = length(responses)),
   hpd_alpha = 0.05, alternative = "greater", call = NULL)
 }
 \arguments{
-\item{responses}{the number of responses in each basket.}
+\item{responses}{the number of responses observed in each subgroup.}
 
-\item{size}{the size of each basket.}
+\item{size}{the size of each subgroup.}
 
-\item{name}{the name of each basket.}
+\item{name}{the name of each subgroup.}
 
 \item{p0}{the null response rate for the poster probability calculation
 (default 0.15).}
 
-\item{shape1}{the first shape parameter(s) for the prior of each basket
+\item{shape1}{the first beta shape parameter(s) for the prior distribution of the response probability for each basket
 (default 0.5).}
 
-\item{shape2}{the second shape parameter(s) for the prior of each basket
+\item{shape2}{the second beta shape parameter(s) for the prior distribution of the response probability for each basket
 (default 0.5).}
 
-\item{prior_inclusion}{the matrix giving the prior inclusion probability
-for each pair of baskets. The default is on on the main diagonal and 0.5
+\item{prior}{the symmetric matrix giving the prior exchangeability probability
+for each pair of subgroups. The default includes 1 on the main diagonal and 0.5
 elsewhere.}
 
-\item{hpd_alpha}{the highest posterior density trial significance.}
+\item{hpd_alpha}{the highest posterior density interval significance threshold.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
 \item{call}{the call of the function (default NULL).}
 }
 \description{
-Fit the MEM model using full Bayesian inference.
+Fit the MEM model using full posterior Bayesian inference with exact solution.
 }
 \examples{
-# 3 baskets, each with enrollement size 5
+# 3 subgroups, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
-# The response rates for the baskets.
+# The response rates for the subgroups.
 resp_rate <- 0.15
 
-# The trials: a column of the number of responses and a column of the
-# the size of each trial.
+# The trial data: a column of the number of responses and a column of the
+# the size of each subgroup.
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
   size = trial_sizes,
