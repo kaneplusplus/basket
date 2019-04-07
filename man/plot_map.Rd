@@ -2,24 +2,24 @@
 % Please edit documentation in R/plot.r
 \name{plot_map}
 \alias{plot_map}
-\title{Plot the Map Exchangeability of a Basket Trial}
+\title{Plot the MAP MEM matrix}
 \usage{
 plot_map(x, ...)
 }
 \arguments{
-\item{x}{the exchangeability model.}
+\item{x}{the MEM model.}
 
 \item{...}{other options. See Details for more information.}
 }
 \description{
-Plot the MAP of the exchaneability model.
+Plot the MAP MEM matrix.
 }
 \details{
 TODO: WRITE THIS
 }
 \examples{
 \dontrun{
-# Create an MEM analysisthe Vemurafenib trial data.
+# Create an MEM analysisthe of Vemurafenib trial data.
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders,

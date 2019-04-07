@@ -11,7 +11,7 @@
 #' (default 0.5).
 #' @param shape2 the second shape parameter(s) for the prior of each basket
 #' (default 0.5).
-#' @param prior_inclusion the matrix giving the prior inclusion probability
+#' @param prior the matrix giving the prior inclusion probability
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
@@ -47,7 +47,7 @@ mem_exact <- function(responses,
                       p0 = 0.15,
                       shape1 = 0.5,
                       shape2 = 0.5,
-                      prior_inclusion = diag(length(responses)) / 2 +
+                      prior = diag(length(responses)) / 2 +
                         matrix(0.5,
                           nrow = length(responses),
                           ncol = length(responses)
@@ -79,7 +79,7 @@ mem_exact <- function(responses,
     p0 <- rep(p0, length(responses))
   }
 
-  prior_inclusion <- prior_inclusion
+  prior_inclusion <- priorB
   alp <- hpd_alpha
 
   xvec <- responses

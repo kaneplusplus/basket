@@ -2,16 +2,16 @@
 % Please edit documentation in R/accessors.r
 \name{basket_pep}
 \alias{basket_pep}
-\title{Get the Basketwise Posterior Exchangeability Matrix}
+\title{Return the Basketwise Posterior Exchangeability Matrix}
 \usage{
 basket_pep(x)
 }
 \arguments{
-\item{x}{either an exchangeability model or basket object.}
+\item{x}{either an MEM model or basket object.}
 }
 \description{
 MEM analyses include the posterior exachangeability 
-probability (PEP) of included arms giving the probability
+probabilities (PEP) of included subgroups describing the probability
 that any two arms are exchangeable. This function returns the matrix
 of those probabilities.
 }

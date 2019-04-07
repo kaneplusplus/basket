@@ -11,50 +11,49 @@ mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   seed = 1000, call = NULL)
 }
 \arguments{
-\item{responses}{the number of responses in each basket.}
+\item{responses}{the number of responses in each subgroup.}
 
-\item{size}{the size of each basket.}
+\item{size}{the size of each subgroup.}
 
-\item{name}{the name of each basket.}
+\item{name}{the name of each subgroup.}
 
 \item{p0}{the null response rate for the poster probability calculation
 (default 0.15).}
 
-\item{shape1}{the first shape parameter(s) for the prior of each basket
+\item{shape1}{the first beta shape parameter(s) for the prior distribution of the response probability for each basket
 (default 0.5).}
 
-\item{shape2}{the second shape parameter(s) for the prior of each basket
+\item{shape2}{the second beta shape parameter(s) for the prior distribution of the response probability for each basket
 (default 0.5).}
 
-\item{prior}{the matrix giving the prior inclusion probability
+\item{prior}{the symemtric matrix giving the prior exchangeability probabilities
 for each pair of baskets. The default is on on the main diagonal and 0.5
 elsewhere.}
 
-\item{hpd_alpha}{the highest posterior density trial significance.}
+\item{hpd_alpha}{the highest posterior density interval significance threshold.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
 \item{mcmc_iter}{the number of MCMC iterations.}
 
-\item{Initial}{the initial MEM matrix. TODO: WHAT DOES THIS MEAN.}
+\item{Initial}{the initial MEM matrix used to start MCMC sampling (default is the diagonal matrix).}
 
 \item{seed}{the random number seed.}
 
 \item{call}{the call of the function.}
 }
 \description{
-Fit the MEM model using Bayesian Metropolis-Hasting MCMC
-inference.
+Fit the MEM model using full Bayesian posterior inference using MCMC sampling using the Metropolis-Hastings algorithm.
 }
 \examples{
-# 3 baskets, each with enrollement size 5
+# 3 subgroups, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
-# The response rates for the baskets.
+# The response rates for the subgroups.
 resp_rate <- 0.15
 
-# The trials: a column of the number of responses and a column of the
-# the size of each trial.
+# The trial data: a column of the number of responses and a column of the
+# the size of each subgroup.
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
   size = trial_sizes,

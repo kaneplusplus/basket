@@ -17,25 +17,25 @@
 #'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
-#' # Get the arms in the clusters.
-#' cluster_arms(mem_analysis)
+#' # Get the baskets in the clusters.
+#' cluster_baskets(mem_analysis)
 #' @export
-cluster_arms <- function(x) {
-  UseMethod("cluster_arms", x)
+cluster_baskets <- function(x) {
+  UseMethod("cluster_baskets", x)
 }
 
-cluster_arms.default <- function(x) {
+cluster_baskets.default <- function(x) {
   stop(red(
     "Don't know how to arms from an object of type", 
     paste(class(x), collapse = ", "), "."))
 }
 
-cluster_arms.mem_cluster <- function(x) {
+cluster_baskets.mem_cluster <- function(x) {
   x$cluster
 }
 
-cluster_arms.exchangeability_model <- function(x) {
-  cluster_arms(x$cluster)
+cluster_baskets.exchangeability_model <- function(x) {
+  cluster_baskets(x$cluster)
 }
 
 #' @title Get the Basketwise Posterior Exchangeability Matrix

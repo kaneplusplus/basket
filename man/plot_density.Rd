@@ -2,17 +2,17 @@
 % Please edit documentation in R/plot.r
 \name{plot_density}
 \alias{plot_density}
-\title{Plot the Densities of Baskets in a Trial}
+\title{Plot the Posterior Distributions of Response Probabilities for each Subgroup}
 \usage{
 plot_density(x, ...)
 }
 \arguments{
-\item{x}{the exchangeability model.}
+\item{x}{the MEM model.}
 
 \item{...}{other options. See Details for more information.}
 }
 \description{
-TODO: WRITE THIS
+Plot the density of MEM model.
 }
 \details{
 TODO WRITE THIS TALK ABOUT ... OPTIONS

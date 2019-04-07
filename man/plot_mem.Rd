@@ -2,23 +2,23 @@
 % Please edit documentation in R/plot.r
 \name{plot_mem}
 \alias{plot_mem}
-\title{Plot the Prior, MAP, and PEP of a Basket Trial}
+\title{Plot the Prior, MAP, and PEP Matrices`}
 \usage{
 plot_mem(x, type = c("prior", "map", "pep"), ...)
 }
 \arguments{
-\item{x}{the exchangeability model.}
+\item{x}{the MEM model.}
 
 \item{type}{the plot type that will be plotted.}
 
 \item{...}{other options. See Details for more information.}
 }
 \description{
-Plot multiple sub-plot of the exchangeability model, including "prior", "map", and "pep".
+Plot multiple sub-plots of the MEM model, including "prior", "map", and "pep".
 }
 \examples{
 \dontrun{
-# Create an MEM analysisthe Vemurafenib trial data.
+# Create an MEM analysisthe of Vemurafenib trial data.
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders,

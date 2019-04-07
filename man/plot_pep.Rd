@@ -2,26 +2,26 @@
 % Please edit documentation in R/plot.r
 \name{plot_pep}
 \alias{plot_pep}
-\title{Plot the Posterior Exchangeability of a Basket Trial}
+\title{Plot the Posterior Exchangeability Probability Matrix}
 \usage{
 plot_pep(x, ...)
 }
 \arguments{
-\item{x}{the exchangeability model.}
+\item{x}{the MEM model.}
 
 \item{...}{Other options passed to ggplot2 to alter the visual 
 characteristics of the plot. See Details for more information.}
 }
 \description{
-The posterior exchangeability of the baskets in an an 
-MEM analysis can be visualized via an exchangeogram using this function.
+The posterior exchangeability probability matrix resulting from MEM 
+MEM analysis. This can be visualized via an exchangeogram using this function.
 }
 \details{
 TODO finish this
 }
 \examples{
 \dontrun{
-# Create an MEM analysisthe Vemurafenib trial data.
+# Create an MEM analysisthe of Vemurafenib trial data.
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders,
