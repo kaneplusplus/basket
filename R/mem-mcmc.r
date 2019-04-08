@@ -18,7 +18,7 @@
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param mcmc_iter the number of MCMC iterations.
-#' @param Initial the initial MEM matrix. TODO: WHAT DOES THIS MEAN.
+#' @param Initial the initial MEM matrix. 
 #' @param seed the random number seed.
 #' @param call the call of the function.
 #' @importFrom stats rbinom

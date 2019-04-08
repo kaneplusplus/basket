@@ -42,7 +42,7 @@ logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
 }
 
 
-
+# TODO: This can be optimized.
 logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
   marg.vec <- rep(NA, dim(M)[1])
 
@@ -57,8 +57,6 @@ logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
   }
   sum(log(marg.vec))
 }
-
-
 
 
 ESS <- function(X, N, Omega, a, b) {
