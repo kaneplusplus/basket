@@ -132,6 +132,12 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
   mweights <- mweights + models.Count(Samp = mem.Samp[[1]], models = models)
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
+  oldDens <<- NA
+  xvec <- responses
+  nvec <- size
+  betaV <<- beta(shape1, shape2)  
+  prod.vec <<- beta(xvec + shape1, nvec + shape2 - xvec) / beta(shape1, shape2)  
+  
   mem.Samp[[2]] <-
     update.MH(MOld, M, responses, size, shape1, shape2, mod_mat, prior)
   mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
@@ -154,6 +160,7 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
       mem.Samp[[2]]
     MAP.count <- c(MAP.count, 1)
   }
+
   for (KK in seq_len(mcmc_iter)[-(1:2)]) {
     # print(KK)
     mem.Samp[[KK]] <- update.MH(

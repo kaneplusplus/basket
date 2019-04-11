@@ -42,18 +42,33 @@ logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
 }
 
 
-# TODO: This can be optimized.
-logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
+# 
+# logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
+#   marg.vec <- rep(NA, dim(M)[1])
+# 
+#   # calculate the product portion of integrated marginal likelihood
+#   prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec)
+# 
+#   for (i in 1:dim(M)[1]) {
+#     p.vec <- prod(prod.vec^(1 - M[i, ]))
+#     marg.vec[i] <-
+#       (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
+#         beta(avec[i], bvec[i])) * p.vec
+#   }
+#   sum(log(marg.vec))
+# }
+
+logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec) {
   marg.vec <- rep(NA, dim(M)[1])
-
+  
   # calculate the product portion of integrated marginal likelihood
-  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec)
 
+  
   for (i in 1:dim(M)[1]) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
     marg.vec[i] <-
       (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
-        beta(avec[i], bvec[i])) * p.vec
+         betaV[i]) * p.vec
   }
   sum(log(marg.vec))
 }
@@ -220,6 +235,8 @@ mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
   return(prod(s.in^(mem) * s.ex^(1 - mem)))
 }
 
+
+
 update.MH <-
   function(MOld,
              M,
@@ -244,19 +261,24 @@ update.MH <-
       }
     }
 
-    rho <-
-      exp(
-        logMarg.DensSA(MProp, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP)) -
-          (
-            logMarg.DensSA(MOld, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
-          )
-      )
+    if (is.na(oldDens))
+    {
+      oldDens <<- logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
+    }
+    newDens <-logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP)) 
+      
+        
+    rho <- exp( newDens - oldDens)
+          
+      
     # cat(rho, rho1, xvec,nvec, avec, bvec)
     if (rho >= 1) {
+      oldDens <<- newDens
       out <-
         MProp
     } else {
       if (rbinom(1, 1, rho) == 1) {
+        oldDens <<- newDens
         out <- MProp
       } else {
         out <- MOld
