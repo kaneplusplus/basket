@@ -6,19 +6,23 @@ context("Fit MCMC models")
 data(vemu_wide)
 
 baskets <- c(1, 2, 3)
+baskets <- 1:6
 
 vemu_wide1 <- vemu_wide[baskets, ]
 
 mcmc_ref1 <- readRDS("reference_data/mem-mcmc1.rds")
 
 mcmc_ref2 <- mcmc_ref1$basketwise
-
+start.time <- Sys.time()
 mcmc_res1 <- mem_mcmc(
   responses = vemu_wide1$responders,
   size = vemu_wide1$evaluable,
   name = vemu_wide1$baskets,
   p0 = 0.15
 )
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+cat ("Time used: ", time.taken, "\n")
 
 summary(mcmc_res1$basket)
 summary(mcmc_res1$cluster)

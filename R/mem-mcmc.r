@@ -48,8 +48,10 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
                          nrow = length(responses),
                          ncol = length(responses)
                        ), hpd_alpha = 0.05, alternative = "greater",
-                     mcmc_iter = 10000, Initial = NA, seed = 1000, call = NULL) {
+                     mcmc_iter = 10000, Initial = round(prior - 0.001), seed = 1000, call = NULL) {
+  
   set.seed(seed)
+  
   if (is.null(getDoParName())) {
     registerDoSEQ()
   }
@@ -72,7 +74,9 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     p0 <- rep(p0, length(responses))
   }
 
-  # TODO: How is this the sample space?
+  # Force diagonal elements to 1
+  diag(Initial) <- 1
+  diag(prior) <- 1
   ### Produce sample space of MEM ###
   mod_mat <- foreach(k = rev(seq_len(length(responses)-1))) %do% {
     mem_sample_space <- as.matrix(expand.grid(rep(list(c(0, 1)), k)))
