@@ -22,8 +22,8 @@ sample_posterior.default <- function(model, num_samples = 10000) {
 }
 
 #' @export
-sample_posterior.exchangeability_model <- function(model, num_samples = 10000) {
-  return(sample_posterior_model(model$basket))
+sample_posterior.mem <- function(model, num_samples = 10000) {
+  return(sample_posterior_model(model))
 }
 
 

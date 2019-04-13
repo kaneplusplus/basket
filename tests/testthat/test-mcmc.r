@@ -23,14 +23,14 @@ mcmc_res1 <- mem_mcmc(
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 cat ("Time used: ", time.taken, "\n")
-#t<-sample_posterior(mcmc_res1)
+t<-sample_posterior(mcmc_res1$basket)
 
 summary(mcmc_res1$basket)
 summary(mcmc_res1$cluster)
 summary(mcmc_res1)
-print(mcmc_res1)
-plot_density(mcmc_res1)
-plot_mem(mcmc_res1, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
+#print(mcmc_res1)
+plot_density(mcmc_res1$basket)
+plot_mem(mcmc_res1$basket,  type=c("pep", "map"))
 plot_pep(mcmc_res1$basket)
 plot_map(mcmc_res1$basket)
 expect_equal(mcmc_res1$basket$PEP, mcmc_ref2$PEP)
@@ -38,7 +38,7 @@ expect_equal(mcmc_res1$basket$HPD, mcmc_ref2$HPD, tolerance = 5e-2)
 expect_equal(mcmc_res1$basket$post.prob, mcmc_ref2$post.prob)
 expect_equal(mcmc_res1$basket$ESS, mcmc_ref2$ESS, tolerance = 5e-2)
 
-browser()
+
 mcmc_lower <- mem_mcmc(
   responses = vemu_wide1$responders,
   size = vemu_wide1$evaluable,
@@ -48,7 +48,7 @@ mcmc_lower <- mem_mcmc(
 )
 summary(mcmc_lower)
 mcmc_res2 <- update_p0(mcmc_res1, p0=0.18)
-print(mcmc_res2$basket)
+#print(mcmc_res2$basket)
 #cluster_arms(mcmc_res2)
 cluster_map(mcmc_res2)
 cluster_pep(mcmc_res2)

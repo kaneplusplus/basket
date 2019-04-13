@@ -17,8 +17,8 @@ The posterior exchangeability probability matrix resulting from MEM
 MEM analysis. This can be visualized via an exchangeogram using this function.
 }
 \details{
-TODO finish this
-}
+Plot the posterior exchangeability probability matrix resulting from MEM 
+MEM analysis.}
 \examples{
 \dontrun{
 # Create an MEM analysisthe of Vemurafenib trial data.
@@ -28,5 +28,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_pep(mem_analysis)
+plot_pep(mem_analysis$basket)
 }}

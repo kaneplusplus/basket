@@ -2,7 +2,7 @@
 % Please edit documentation in R/accessors.r
 \name{basket_map}
 \alias{basket_map}
-\title{Return the Basketwise Maximum A Posteriori Probability Matrix}
+\title{Return the Basketwise Maximum Posteriori Probability Matrix}
 \usage{
 basket_map(x)
 }
@@ -13,6 +13,7 @@ basket_map(x)
 Analyses compute the maximum a posterior (MAP) MEM matrix which describes the single set of pairwise exchangeability relationships best supported by the posterior. This function returns returns a symmetric matrix of zeros and ones describing the MAP MEM.
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
 
 data(vemu_wide)
@@ -23,4 +24,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Get basket MAPs.
 basket_map(mem_analysis)
-}
+}}

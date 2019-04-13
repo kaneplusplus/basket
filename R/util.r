@@ -58,20 +58,7 @@ logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
 #   sum(log(marg.vec))
 # }
 
-logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec) {
-  marg.vec <- rep(NA, dim(M)[1])
-  
-  # calculate the product portion of integrated marginal likelihood
 
-  
-  for (i in 1:dim(M)[1]) {
-    p.vec <- prod(prod.vec^(1 - M[i, ]))
-    marg.vec[i] <-
-      (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
-         betaV[i]) * p.vec
-  }
-  sum(log(marg.vec))
-}
 
 
 ESS <- function(X, N, Omega, a, b) {
@@ -237,56 +224,6 @@ mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
 
 
 
-update.MH <-
-  function(MOld,
-             M,
-             xvec,
-             nvec,
-             avec,
-             bvec,
-             mod.mat,
-             Prior.EP) {
-    K <- max(M, na.rm = TRUE) + 1
-    v <-
-      sample(1:(K - 1), (1:(K - 1))[which(rmultinom(1, 1, (((
-        K - 1
-      ):1)^3) / sum(((
-        K - 1
-      ):1)^3)) == 1)])
-
-    MProp <- flip.MEM(v[1], MOld, M)
-    if (length(v) > 1) {
-      for (ii in 2:length(v)) {
-        MProp <- flip.MEM(v[ii], MProp, M)
-      }
-    }
-
-    if (is.na(oldDens))
-    {
-      oldDens <<- logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
-    }
-    newDens <-logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP)) 
-      
-        
-    rho <- exp( newDens - oldDens)
-          
-      
-    # cat(rho, rho1, xvec,nvec, avec, bvec)
-    if (rho >= 1) {
-      oldDens <<- newDens
-      out <-
-        MProp
-    } else {
-      if (rbinom(1, 1, rho) == 1) {
-        oldDens <<- newDens
-        out <- MProp
-      } else {
-        out <- MOld
-      }
-    }
-
-    return(out)
-  }
 
 I.models <- function(hh, models, Samp) {
   K <- length(models[1, ])
@@ -583,4 +520,74 @@ clusterComp <- function(basketRet) {
   # ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("mem_exact", "exchangeability_model")
   ret
+}
+
+
+update.MH <- function(MOld,
+                      M,
+                      xvec,
+                      nvec,
+                      avec,
+                      bvec,
+                      mod.mat,
+                      Prior.EP,
+                      betaV, oldDens, prod.vec)
+{
+  K <- max(M, na.rm = TRUE) + 1
+  v <-
+    sample(1:(K - 1), (1:(K - 1))[which(rmultinom(1, 1, (((
+      K - 1
+    ):1) ^ 3) / sum(((
+      K - 1
+    ):1) ^ 3)) == 1)])
+  
+  MProp <- flip.MEM(v[1], MOld, M)
+  if (length(v) > 1) {
+    for (ii in 2:length(v)) {
+      MProp <- flip.MEM(v[ii], MProp, M)
+    }
+  }
+  
+  if (is.na(oldDens))
+  {
+    oldDens <-
+      logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
+  }
+  newDens <-
+    logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP))
+  
+  
+  rho <- exp(newDens - oldDens)
+  
+  
+  # cat(rho, rho1, xvec,nvec, avec, bvec)
+  if (rho >= 1) {
+    oldDens <- newDens
+    out <-
+      MProp
+  } else {
+    if (rbinom(1, 1, rho) == 1) {
+      oldDens <- newDens
+      out <- MProp
+    } else {
+      out <- MOld
+    }
+  }
+  
+  return(list(out, oldDens))
+}
+
+logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) {
+  marg.vec <- rep(NA, dim(M)[1])
+  
+  # calculate the product portion of integrated marginal likelihood
+  
+  
+  for (i in 1:dim(M)[1]) {
+    p.vec <- prod(prod.vec^(1 - M[i, ]))
+    marg.vec[i] <-
+      (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
+         betaV[i]) * p.vec
+  }
+  sum(log(marg.vec))
 }
