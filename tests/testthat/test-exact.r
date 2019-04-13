@@ -17,6 +17,7 @@ exact_res <- mem_exact(
   name = c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"),
   p0 = 0.25
 )
+#t<-sample_posterior(exact_res)
 
 fb <- exact_res$basket
 

@@ -255,13 +255,13 @@ mem_mcmc <- function(responses, size, name, p0 = 0.15, shape1 = 0.5,
     )
   ret$mod_mat <- mod_mat
   ret$Inital <-
-    M.init
+    
   rownames(ret$Inital) <- colnames(ret$Inital) <- MODEL$name
   ret$models <- models
   ret$pweights <- pweights
   # Ret doesn't have class information yet so, we'll call
   # sample_posterior.exchangeability_model directly.
-  ret$samples <- sample_posterior.exchangeability_model(MODEL)
+  ret$samples <- sample_posterior_model(MODEL)
   ret$accept.rate <- (n.chg) / mcmc_iter
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)

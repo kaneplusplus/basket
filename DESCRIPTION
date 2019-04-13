@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.39
+Version: 0.42
 Authors@R: c(
   person("Nan", "Chen",
          email = "nchen2@mdanderson.org",

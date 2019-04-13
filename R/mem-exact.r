@@ -79,7 +79,7 @@ mem_exact <- function(responses,
     p0 <- rep(p0, length(responses))
   }
 
-  prior_inclusion <- priorB
+  prior_inclusion <- prior
   alp <- hpd_alpha
 
   xvec <- responses
@@ -276,7 +276,7 @@ mem_exact <- function(responses,
       call = call
     )
 
-  ret$samples <- sample_posterior.exchangeability_model(ret)
+  ret$samples <- sample_posterior_model(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   class(ret) <- c("mem_basket", "mem")

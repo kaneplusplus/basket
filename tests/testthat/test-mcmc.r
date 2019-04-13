@@ -23,6 +23,7 @@ mcmc_res1 <- mem_mcmc(
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 cat ("Time used: ", time.taken, "\n")
+#t<-sample_posterior(mcmc_res1)
 
 summary(mcmc_res1$basket)
 summary(mcmc_res1$cluster)
