@@ -49,7 +49,7 @@ mcmc_lower <- mem_mcmc(
 summary(mcmc_lower)
 mcmc_res2 <- update_p0(mcmc_res1, p0=0.18)
 #print(mcmc_res2$basket)
-#cluster_arms(mcmc_res2)
+cluster_baskets(mcmc_res2)
 cluster_map(mcmc_res2)
 cluster_pep(mcmc_res2)
 basket_map(mcmc_res2)

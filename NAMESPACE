@@ -3,6 +3,8 @@
 S3method(basket_map,exchangeability_model)
 S3method(basket_name,default)
 S3method(basket_name,exchangeability_model)
+S3method(cluster_baskets, default)
+S3method(cluster_baskets, exchangeability_model)
 S3method(basket_pep,exchangeability_model)
 S3method(cluster_map,exchangeability_model)
 S3method(cluster_pep,exchangeability_model)
