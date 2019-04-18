@@ -147,6 +147,10 @@ mem_mcmc <- function(responses,
     mweights + models.Count(Samp = mem.Samp[[1]], models = models)
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
+  
+  mapHash<-new.env()
+  mapHash[[toString(MOld)]] <- 1
+  
   oldDens <- NA
   xvec <- responses
   nvec <- size
@@ -162,24 +166,25 @@ mem_mcmc <- function(responses,
   #   update.MH(MOld, M, responses, size, shape1, shape2, mod_mat, prior)
   mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
   Samp.Sum <- mem.Samp[[1]] + mem.Samp[[2]]
+  
+  
   if (sum(mem.Samp[[2]] == mem.Samp[[1]]) < length(mem.Samp[[2]])) {
     n.chg <- n.chg + 1
   }
-  i.Map <-
-    which(unlist(lapply(
-      MAP.list,
-      FUN = function(old, new) {
-        return(sum(new == old) == length(new))
-      },
-      new = mem.Samp[[2]]
-    )))
-  if (length(i.Map) > 0) {
-    MAP.count[i.Map] <- MAP.count[i.Map] + 1
+  
+  new = mem.Samp[[2]]
+  key <- toString(new)
+  if (!is.null(mapHash[[key]]))
+  {
+    index <- mapHash[[key]]
+    MAP.count[index] <- MAP.count[index] + 1
   } else {
     MAP.list[[length(MAP.list) + 1]] <-
       mem.Samp[[2]]
     MAP.count <- c(MAP.count, 1)
+    mapHash[[key]] <- length(MAP.list) 
   }
+  
   
   for (KK in seq_len(mcmc_iter)[-(1:2)]) {
     # print(KK)
@@ -208,21 +213,38 @@ mem_mcmc <- function(responses,
         length(mem.Samp[[KK - 1]])) {
       n.chg <- n.chg + 1
     }
-    i.Map <-
-      which(unlist(lapply(
-        MAP.list,
-        FUN = function(old, new) {
-          return(sum(new == old) == length(new))
-        },
-        new = mem.Samp[[KK]]
-      )))
-    if (length(i.Map) > 0) {
-      MAP.count[i.Map] <- MAP.count[i.Map] + 1
+    
+    new = mem.Samp[[KK]]
+    key <- toString(new)
+    if (!is.null(mapHash[[key]]))
+    {
+      index <- mapHash[[key]]
+      MAP.count[index] <- MAP.count[index] + 1
     } else {
       MAP.list[[length(MAP.list) + 1]] <-
         mem.Samp[[KK]]
       MAP.count <- c(MAP.count, 1)
-    }
+      mapHash[[key]] <- length(MAP.list) 
+    }    
+    
+    
+    # 
+    # 
+    # i.Map <-
+    #   which(unlist(lapply(
+    #     MAP.list,
+    #     FUN = function(old, new) {
+    #       return(sum(new == old) == length(new))
+    #     },
+    #     new = mem.Samp[[KK]]
+    #   )))
+    # if (length(i.Map) > 0) {
+    #   MAP.count[i.Map] <- MAP.count[i.Map] + 1
+    # } else {
+    #   MAP.list[[length(MAP.list) + 1]] <-
+    #     mem.Samp[[KK]]
+    #   MAP.count <- c(MAP.count, 1)
+    # }
   }
   
   ### Compute Posterior Model Weights ###
