@@ -5,14 +5,14 @@ context("Fit MCMC models")
 
 data(vemu_wide)
 
-baskets <- c(1, 2, 3)
+baskets <- c(1, 5, 6)
 #baskets <- 1:6
 
 vemu_wide1 <- vemu_wide[baskets, ]
 
-mcmc_ref1 <- readRDS("reference_data/mem-mcmc1.rds")
-
-mcmc_ref2 <- mcmc_ref1$basketwise
+mcmc_ref1 <- readRDS("reference_data/mem-mcmc2.rds")
+mcmc_ref2 <- mcmc_ref1$basket
+#mcmc_ref2 <- mcmc_ref1$basketwise
 start.time <- Sys.time()
 mcmc_res1 <- mem_mcmc(
   responses = vemu_wide1$responders,
