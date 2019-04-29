@@ -7,7 +7,7 @@
 mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", mcmc_iter = 10000, Initial = NA,
+  alternative = "greater", mcmc_iter = 10000, Initial = round(prior - 0.001),
   seed = 1000, call = NULL)
 }
 \arguments{

@@ -15,9 +15,10 @@ plot_density(x, ...)
 Plot the density of MEM model.
 }
 \details{
-TODO WRITE THIS TALK ABOUT ... OPTIONS
+Plot the density of MEM model.
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
 
 data(vemu_wide)
@@ -26,5 +27,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_density(mem_analysis)
-}
+plot_density(mem_analysis$basket)
+}}

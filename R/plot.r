@@ -213,9 +213,9 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
 
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
 #' 
-#' @description: TODO: WRITE THIS
+#' @description: Plot the Prior, MAP, and PEP Matrices
 #' @param x the exchangeability model.
-#' @param type TODO: WHAT IS THIS?
+#' @param type the plot type that will be plotted.
 #' @param ... other options. See Details for more information.
 #' @export
 plot_mem <- function(x, type = c("prior", "map", "pep"), ...) {

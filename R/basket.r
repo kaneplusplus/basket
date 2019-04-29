@@ -1,4 +1,6 @@
 
+
+
 #' @title Sample Posterior Samples from a Basket Trial
 #'
 #' @description Sample Posterior Samples from a Basket Trial
@@ -10,6 +12,20 @@
 sample_posterior <- function(model, num_samples = 10000) {
   UseMethod("sample_posterior", model)
 }
+
+#' @importFrom crayon red
+#' @export
+sample_posterior.default <- function(model, num_samples = 10000) {
+  stop(red(
+    "Don't know how to sample posterior from an object of type",
+    paste(class(model), collapse = ", "), "."))
+}
+
+#' @export
+sample_posterior.mem <- function(model, num_samples = 10000) {
+  return(sample_posterior_model(model))
+}
+
 
 #' @title The Names of the Baskets
 #'

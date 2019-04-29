@@ -21,6 +21,7 @@ provides updating of both the null response rate along with the
 alternative rerunning relevant computations.
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
 
 data(vemu_wide)
@@ -31,4 +32,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Update the null from p0 = 0.15 the default, to p0 = 0.25.
 update_p0(mem_analysis, 0.20)
+}
 }

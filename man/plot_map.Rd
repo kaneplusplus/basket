@@ -15,7 +15,7 @@ plot_map(x, ...)
 Plot the MAP MEM matrix.
 }
 \details{
-TODO: WRITE THIS
+Plot the MAP MEM matrix.
 }
 \examples{
 \dontrun{
@@ -26,5 +26,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_map(mem_analysis)
+plot_map(mem_analysis$basket)
 }}

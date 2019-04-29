@@ -14,6 +14,7 @@ Analyses compute the maximum a posterior (MAP) MEM matrix which describes the si
 of those relationships after clustering.
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
 
 data(vemu_wide)
@@ -24,4 +25,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Get the cluster MAPs.
 cluster_map(mem_analysis)
-}
+}}

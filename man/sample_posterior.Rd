@@ -12,7 +12,7 @@ sample_posterior(model, num_samples = 10000)
 \item{num_samples}{the number of samples to draw. Default 10000}
 }
 \description{
-Sample Posterior Samples from an MEM analysis.
+Sample posterior samples from an MEM analysis.
 }
 \examples{
 \dontrun{
@@ -23,5 +23,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-samp_posterior(mem_analysis)
+samp_posterior(mem_analysis$basket)
 }}
