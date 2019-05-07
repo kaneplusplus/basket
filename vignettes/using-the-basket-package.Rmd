@@ -52,7 +52,14 @@ An MEM analysis is performed in the `basket` package using the either the `mem_e
 
 ```{r}
 # Load the basket library.
-library(basket) 
+library(basket)
+
+# Use parallel capabilities if available.
+if (require(doParallel)) {
+  registerDoParallel()
+} else {
+  foreach::registerDoSEQ()
+}
 
 # Load the vemurafenib data.
 data(vemu_wide) 

@@ -158,7 +158,8 @@ mem_exact <- function(responses,
     .combine = list,
     .multicombine = TRUE
   ) %dopar% {
-    post.Weights(j, length(xvec), Mod.I, mod.mat, prior_inclusion, log.Marg, PRIOR)
+    post.Weights(j, length(xvec), Mod.I, mod.mat, prior_inclusion,
+                 log.Marg, PRIOR)
   }
 
   pESS <- post.prob <- rep(NA, length(xvec))
@@ -206,33 +207,21 @@ mem_exact <- function(responses,
     pESS[j] <-
       pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
     HPD[, j] <- boa.hpd(
-      replicate(
-        10000,
-        samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])
-      ),
-      alp
-    )
+      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
+                                 shape1[j], shape2[j])),
+      alp)
   }
   j <- j + 1
   Ii <- c(j, 1:(j - 1))
-  post.prob[j] <-
-    eval.Post(
-      p0[j],
-      xvec[Ii],
-      nvec[Ii],
-      models,
-      pweights[[j]],
-      shape1[j],
-      shape2[j],
-      alternative
-    )
-  pESS[j] <-
-    pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  post.prob[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
+                            shape1[j], shape2[j], alternative)
+
+  pESS[j] <- pweights[[j]] %*%
+    ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+
   HPD[, j] <- boa.hpd(
-    replicate(
-      10000,
-      samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], shape1[j], shape2[j])
-    ),
+    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], 
+                               shape1[j], shape2[j])),
     alp
   )
 

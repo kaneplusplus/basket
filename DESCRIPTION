@@ -14,22 +14,8 @@ Authors@R: c(
   person("Michael", "Kane",
          email = "michael.kane@yale.edu",
          role = c("aut", "cre"),
-         comment = ORCID = "http://orcid.org/0000-0003-1899-6662"))
-Description: Implemention of multisource exchangeability models for Bayesian 
-analyses of prespecified subgroups arising in the context of basket trial 
-design and monitoring.  The R `basket` package facilitates implementation of 
-the binary, symmetric multi-source exchangeability model (MEM) with posterior 
-inference arising from both exact computation and Markov chain Monte Carlo 
-sampling. Analysis output includes full posterior samples as well as posterior 
-probabilities, highest posterior density (HPD) interval boundaries, effective 
-sample sizes (ESS), mean and median estimations, posterior exchangeability 
-probability matrices, and maximum a posteriori MEMs. In addition to providing 
-"basketwise" analyses, the package includes similar calculations for 
-"clusterwise" analyses for which subgroups are combined into meta-baskets, or 
-clusters, using graphical clustering algorithms that treat the posterior 
-exchangeability probabilities as edge weights. In addition plotting tools are 
-provided to visualize basket and cluster densities as well as their 
-exchangeability. 
+         comment = c(ORCID = "http://orcid.org/0000-0003-1899-6662")))
+Description: Implemention of multisource exchangeability models for Bayesian analyses of prespecified subgroups arising in the context of basket trial design and monitoring.  The R `basket` package facilitates implementation of the binary, symmetric multi-source exchangeability model (MEM) with posterior inference arising from both exact computation and Markov chain Monte Carlo sampling. Analysis output includes full posterior samples as well as posterior probabilities, highest posterior density (HPD) interval boundaries, effective sample sizes (ESS), mean and median estimations, posterior exchangeability probability matrices, and maximum a posteriori MEMs. In addition to providing "basketwise" analyses, the package includes similar calculations for "clusterwise" analyses for which subgroups are combined into meta-baskets, or clusters, using graphical clustering algorithms that treat the posterior exchangeability probabilities as edge weights. In addition plotting tools are provided to visualize basket and cluster densities as well as their exchangeability. 
 Depends: R (>= 3.4.0)
 License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
@@ -66,6 +52,7 @@ RoxygenNote: 6.1.1
 Suggests: 
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    doParallel
 VignetteBuilder: 
     knitr

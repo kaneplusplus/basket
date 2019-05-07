@@ -24,21 +24,24 @@ cluster_baskets <- function(x) {
   UseMethod("cluster_baskets", x)
 }
 
+#' @export
 cluster_baskets.default <- function(x) {
   stop(red(
-    "Don't know how to arms from an object of type", 
+    "Don't know how to arms from an object of type",
     paste(class(x), collapse = ", "), "."))
 }
 
+#' @export
 cluster_baskets.mem_cluster <- function(x) {
   x$cluster
 }
 
+#' @export
 cluster_baskets.exchangeability_model <- function(x) {
   cluster_baskets(x$cluster)
 }
 
-#' @title Get the Basketwise Posterior Exchangeability Matrix
+#' @title The Basketwise Posterior Exchangeability Probability Matrix
 #'
 #' @description MEM analyses include the posterior exachangeability 
 #' probability (PEP) of included arms giving the probability
@@ -61,16 +64,19 @@ basket_pep <- function(x) {
 }
 
 #' @importFrom crayon red
+#' @export
 basket_pep.default <- function(x) {
   stop(red(
     "Don't know how to extract posterior probability matrix from",
-    "an object of type", 
+    "an object of type",
     paste(class(x), collapse = ", "), "."))
 }
 
+#' @export
 basket_pep.mem_basket <- function(x) {
   x$PEP
 }
+
 #' @export
 basket_pep.exchangeability_model <- function(x) {
   basket_pep(x$basket)
@@ -99,12 +105,14 @@ basket_map <- function(x) {
 }
 
 #' @importFrom crayon red
+#' @export
 basket_map.default <- function(x) {
   stop(red(
     "Don't know how to extract maximum a posteriori probability",
     "matrix from an object of type", paste(class(x), collapse = ", "), "."))
 }
 
+#' @export
 basket_map.mem_basket <- function(x) {
   x$MAP
 }
@@ -137,13 +145,15 @@ cluster_pep <- function(x) {
 }
 
 #' @importFrom crayon red
+#' @export
 cluster_pep.default <- function(x) {
   stop(red(
     "Don't know how to extract posterior probability matrix from",
-    "an object of type", 
+    "an object of type",
     paste(class(x), collapse = ", "), "."))
 }
 
+#' @export
 cluster_pep.mem_basket <- function(x) {
   x$PEP
 }
@@ -176,14 +186,16 @@ cluster_map <- function(x) {
 }
 
 #' @importFrom crayon red
+#' @export
 cluster_map.default <- function(x) {
   stop(red(
     "Don't know how to extract maximum a posteriori probability",
-    "matrix from an object of type", 
+    "matrix from an object of type",
     paste(class(x), collapse = ", "), "."
   ))
 }
 
+#' @export
 cluster_map.mem_basket <- function(x) {
   x$MAP
 }

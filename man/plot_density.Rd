@@ -2,30 +2,35 @@
 % Please edit documentation in R/plot.r
 \name{plot_density}
 \alias{plot_density}
-\title{Plot the Posterior Distributions of Response Probabilities for each Subgroup}
+\title{Plot the Response Densities in Basket Trials}
 \usage{
 plot_density(x, ...)
 }
 \arguments{
-\item{x}{the MEM model.}
+\item{x}{the exchangeability model.}
 
 \item{...}{other options. See Details for more information.}
 }
 \description{
-Plot the density of MEM model.
+The MEM analysis calculates the probability of exchangeability
+of baskets and clusters in a basket trial. This function creates density 
+plots of the response rates of each basket or each cluster under the MEM 
+design taking into acount the extent to which power can be borrowed from
+similar trials.
 }
 \details{
-Plot the density of MEM model.
+The ... options can be used to specify the colors of the response
+density plot or, when plotting an object of class `exchangeability_model`
+the type can be specified. In this case, the default is
+`type = c("both", "basket", "cluster")`.
 }
 \examples{
-\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
-
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_density(mem_analysis$basket)
-}}
+plot_density(mem_analysis)
+}

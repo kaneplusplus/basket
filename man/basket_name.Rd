@@ -10,7 +10,7 @@ basket_name(model)
 \item{model}{the model to retrieve the basket names of}
 }
 \description{
-Retrieve the subgroup names in an MEM model.
+Retrieve the basket names in an exchangeability model.
 }
 \examples{
 # 3 baskets, each with enrollement size 5

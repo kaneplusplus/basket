@@ -2,26 +2,30 @@
 % Please edit documentation in R/basket.r
 \name{sample_posterior}
 \alias{sample_posterior}
-\title{Sample Posterior Samples from an MEM analysis.}
+\title{Sample Posterior Samples from a Basket Trial}
 \usage{
 sample_posterior(model, num_samples = 10000)
 }
 \arguments{
-\item{model}{the MEM model}
+\item{model}{the exchangeability model}
 
 \item{num_samples}{the number of samples to draw. Default 10000}
 }
 \description{
-Sample posterior samples from an MEM analysis.
+Sample Posterior Samples from a Basket Trial
 }
 \examples{
-\dontrun{
-# Create an MEM analysisthe of Vemurafenib trial data.
-data(vemu_wide)
+# 3 baskets, each with enrollement size 5
+trial_sizes <- rep(5, 3)
 
-mem_analysis <- mem_exact(vemu_wide$responders,
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+# The response rates for the baskets.
+resp_rate <- 0.15
 
-samp_posterior(mem_analysis$basket)
-}}
+# The trials: a column of the number of responses and a column of the
+# the size of each trial.
+trials <- data.frame(
+  responses = rbinom(trial_sizes, trial_sizes, resp_rate),
+  size = trial_sizes,
+  name = paste("Basket", seq_len(3))
+)
+}

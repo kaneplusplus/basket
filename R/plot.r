@@ -1,10 +1,17 @@
 
-#' @title Plot the Densities of Baskets in a Trial
+#' @title Plot the Response Densities in Basket Trials
 #'
-#' @description TODO: WRITE THIS
-#' @details TODO WRITE THIS TALK ABOUT ... OPTIONS
+#' @description The MEM analysis calculates the probability of exchangeability
+#' of baskets and clusters in a basket trial. This function creates density 
+#' plots of the response rates of each basket or each cluster under the MEM 
+#' design taking into acount the extent to which power can be borrowed from
+#' similar trials.
 #' @param x the exchangeability model.
 #' @param ... other options. See Details for more information.
+#' @details The ... options can be used to specify the colors of the response
+#' density plot or, when plotting an object of class `exchangeability_model`
+#' the type can be specified. In this case, the default is
+#' `type = c("both", "basket", "cluster")`.
 #' @examples
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
@@ -88,9 +95,30 @@ plot_density.mem <- function(x, ...) {
 #' @description The posterior exchangeability of the baskets in an an 
 #' MEM analysis can be visualized via an exchangeogram using this function.
 #' @param x the exchangeability model.
-#' @param ... Other options passed to ggplot2 to alter the visual 
+#' @param ... other options passed to ggplot2 to alter the visual 
 #' characteristics of the plot. See Details for more information.
-#' @details TODO finish this 
+#' @details The `plot_pep` attempts to place the basket names to the
+#' left of the main diagonal in a way that makes it easy to read. However,
+#' for especially long basket names options are provided to ``fine tune''
+#' the visualizations. These auxiliary options include:
+#' \itemize{
+#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
+#'  (Default "black")}
+#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
+#'  (Default "red")}
+#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
+#'  (Default "orange")}
+#'  \item{[expand] }{The proportion to expand the viewport
+#'  (Default expand = c(0.3, 0.3))}
+#'  \item{[text_size] }{The text size. (Default 4)}
+#'  \item{[legend_position] }{The legend position. 
+#'    (Default legend_position = c(0.25, 0.8)}
+#'  \item{[draw_legend] }{Should the legend be drawn? (Default TRUE)}
+#'  \item{[basket_name_hoffset] }{The horizontal offset of the basket names..
+#'  (Default 0)}
+#'  \item{[basket_name_hjust] }{The basket name justification..
+#'  (Default 1 - right justified)}
+#' }
 #' @examples
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
@@ -106,7 +134,6 @@ plot_pep <- function(x, ...) {
 }
 
 #' @importFrom crayon red
-#' @export
 plot_pep.default <- function(x, ...) {
   stop(red(
     "Don't know how to make a posterior exchangeability plot",
@@ -124,7 +151,7 @@ plot_pep.default <- function(x, ...) {
 #' geom_text labs guides element_blank guide_colorbar
 exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
                           expand = c(0.3, 0.3), text_size = 4,
-                          legend_position = c(0.25, 0.8), drawLegend = TRUE,
+                          legend_position = c(0.25, 0.8), draw_legend = TRUE,
                           basket_name_hoffset = 0, basket_name_hjust = 1) {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop(red("The matrix supplied must be symmetric in the",
@@ -184,7 +211,7 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
       inherit.aes = FALSE, size = text_size, hjust = basket_name_hjust
     ) +
     labs(x = "", y = "")
-  if (drawLegend) {
+  if (draw_legend) {
     tG <- tG +
       theme(
         panel.grid.major = element_blank(), panel.border = element_blank(),
@@ -200,8 +227,8 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
       theme(
         panel.grid.major = element_blank(), panel.border = element_blank(),
         panel.background = element_blank(), axis.ticks = element_blank(),
-        legend.position = legend_position + c(-110, -100), legend.direction = "horizontal"
-      ) +
+        legend.position = legend_position + c(-110, -100), 
+        legend.direction = "horizontal") +
       guides(fill = guide_colorbar(
         barwidth = 7, barheight = 1,
         title.position = "top", title.hjust = 0.5
@@ -248,7 +275,7 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot1 <- (exchangeogram(mat, drawLegend = FALSE, ...) +
+    plot1 <- (exchangeogram(mat, draw_legend = FALSE, ...) +
       ggtitle("Prior") +
       theme(
         plot.title = element_text(
@@ -295,11 +322,10 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
       dn <- paste("Basket", seq_len(nrow(mat)))
       dimnames(mat) <- list(dn, dn)
     }
-    plot3 <- exchangeogram(mat, drawLegend = FALSE, ...) +
+    plot3 <- exchangeogram(mat, draw_legend = FALSE, ...) +
       ggtitle("Posterior Prob.") +
       theme(
         plot.title = element_text(
-          # family = "Trebuchet MS",
           color = "#666666",
           face = "bold",
           size = 20,
@@ -327,7 +353,6 @@ plot_pep.mem <- function(x, ...) {
   exchangeogram(mat, ...) +
     ggtitle("Posterior Exchangeability Probability") +
     theme(plot.title = element_text(
-      # family = "Trebuchet MS",
       color = "#666666",
       face = "bold", size = 20, hjust = 0.35
     ))
@@ -335,12 +360,42 @@ plot_pep.mem <- function(x, ...) {
 
 #' @title Plot the Map Exchangeability of a Basket Trial
 #'
-#' @description TODO: WRITE THIS
+#' @description The Maximum Aposteriori Probability (MAP) of an MEM is the
+#' estimate of the exchangeability structure of a basket trial. This function
+#' visualizes this matrix as an exchangeogram.
 #' @param x the exchangeability model.
-#' @param ... other options. See Details for more information.
-#' @details TODO: WRITE THIS
+#' @param ... other options passed to ggplot2 to alter the visual 
+#' @details The `plot_pep` attempts to place the basket names to the
+#' left of the main diagonal in a way that makes it easy to read. However,
+#' for especially long basket names options are provided to ``fine tune''
+#' the visualizations. These auxiliary options include:
+#' \itemize{
+#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
+#'  (Default "black")}
+#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
+#'  (Default "red")}
+#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
+#'  (Default "orange")}
+#'  \item{[expand] }{The proportion to expand the viewport
+#'  (Default expand = c(0.3, 0.3))}
+#'  \item{[text_size] }{The text size. (Default 4)}
+#'  \item{[legend_position] }{The legend position. 
+#'    (Default legend_position = c(0.25, 0.8)}
+#'  \item{[draw_legend] }{Should the legend be drawn? (Default TRUE)}
+#'  \item{[basket_name_hoffset] }{The horizontal offset of the basket names..
+#'  (Default 0)}
+#'  \item{[basket_name_hjust] }{The basket name justification..
+#'  (Default 1 - right justified)}
+#' }
 #' @examples
-#' # WRITE THIS
+#' # Create an MEM analysis of the Vemurafenib trial data.
+#' data(vemu_wide)
+#'
+#' mem_analysis <- mem_exact(vemu_wide$responders,
+#'                           vemu_wide$evaluable,
+#'                           vemu_wide$baskets)
+#'
+#' plot_map(mem_analysis)
 #' @export
 plot_map <- function(x, ...) {
   UseMethod("plot_map")

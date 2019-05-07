@@ -2,29 +2,51 @@
 % Please edit documentation in R/plot.r
 \name{plot_map}
 \alias{plot_map}
-\title{Plot the MAP MEM matrix}
+\title{Plot the Map Exchangeability of a Basket Trial}
 \usage{
 plot_map(x, ...)
 }
 \arguments{
-\item{x}{the MEM model.}
+\item{x}{the exchangeability model.}
 
-\item{...}{other options. See Details for more information.}
+\item{...}{other options passed to ggplot2 to alter the visual}
 }
 \description{
-Plot the MAP MEM matrix.
+The Maximum Aposteriori Probability (MAP) of an MEM is the
+estimate of the exchangeability structure of a basket trial. This function
+visualizes this matrix as an exchangeogram.
 }
 \details{
-Plot the MAP MEM matrix.
+The `plot_pep` attempts to place the basket names to the
+left of the main diagonal in a way that makes it easy to read. However,
+for especially long basket names options are provided to ``fine tune''
+the visualizations. These auxiliary options include:
+\itemize{
+ \item{[low] }{The color corresponding to a low degree of exchangeability.
+ (Default "black")}
+ \item{[high] }{The color corresponding to a high degree of exchangeability.
+ (Default "red")}
+ \item{[mid] }{The color corresponding to 50\% exchangeability.
+ (Default "orange")}
+ \item{[expand] }{The proportion to expand the viewport
+ (Default expand = c(0.3, 0.3))}
+ \item{[text_size] }{The text size. (Default 4)}
+ \item{[legend_position] }{The legend position. 
+   (Default legend_position = c(0.25, 0.8)}
+ \item{[draw_legend] }{Should the legend be drawn? (Default TRUE)}
+ \item{[basket_name_hoffset] }{The horizontal offset of the basket names..
+ (Default 0)}
+ \item{[basket_name_hjust] }{The basket name justification..
+ (Default 1 - right justified)}
+}
 }
 \examples{
-\dontrun{
-# Create an MEM analysisthe of Vemurafenib trial data.
+# Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_map(mem_analysis$basket)
-}}
+plot_map(mem_analysis)
+}

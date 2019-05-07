@@ -1,5 +1,12 @@
 library(testthat)
 library(basket)
+
+if (require(doParallel)) {
+  registerDoParallel()
+} else {
+  registerDoSEQ()
+}
+
 context("Fit exact models")
 
 data(vemu_wide)
@@ -18,7 +25,8 @@ exact_res <- mem_exact(
   name = vemu_wide1$baskets,
   p0 = 0.25
 )
-t<-sample_posterior(exact_res$basket)
+
+t <- sample_posterior(exact_res$basket)
 
 fb <- exact_res$basket
 
@@ -30,5 +38,6 @@ expect_equal(fb$ESS, fb_reference$basketwise$ESS)
 #print(exact_res)
 
 res1 <- update(exact_res, p0=0.15)
+expect_true(inherits(res1, "mem_exact"))
 
-basket_name(res1)
+expect_equal(basket_name(res1), c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"))

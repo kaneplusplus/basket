@@ -19,6 +19,7 @@
 #' # Update the null from p0 = 0.15 the default, to p = 0.25.
 #' update_p0(mem_analysis, 0.20)
 #' @importFrom stats median
+#' @importFrom crayon red
 #' @export
 update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   if (length(p0) == 1) {
@@ -29,8 +30,7 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   ret$basket$p0 <- p0
   ret$basket$alternative <- alternative
 
-  # TODO dispatch on the mem type *not* grepping the call.
-  if (grepl("exact", res$call[1])) {
+  if (inherits(res, "mem_exact")) {
     xvec <- res$basket$responses
     nvec <- res$basket$size
     name <- res$basket$name
@@ -40,14 +40,13 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
     shape1 <- res$basket$shape1
     shape2 <- res$basket$shape2
     names(CDF) <- name
-  # TODO: THIS IS THE SECOND TIME I'VE SEEN THIS PATTERN. MAKE IT A FUNCTION.
+    # This pattern appears in at least one other place. Should it be a function?
     CDF[1] <- eval.Post(
       p0[1], xvec, nvec, models, pweights[[1]],
       shape1[1], shape2[1], alternative
     )
 
     K <- length(xvec)
-    # TODO: This can be made faster.
     for (j in 2:(K - 1)) {
       Ii <- c(j, 1:(j - 1), (j + 1):K)
       CDF[j] <- eval.Post(
@@ -62,13 +61,16 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
       shape1[j], shape2[j], alternative
     )
     ret$basket$post.prob <- CDF
-  } else {
+  } else if (inherits(res, "mem_mcmc")) {
     MODEL <- ret$basket
     ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
+  } else {
+    stop(
+      red("Argument `res` should be of either type `mem_mcmc` or `mem_exact`."))
   }
 
   # cluster
-  # TODO: THIS IS THE SECOND TIME I'VE SEEN THIS PATTERN. MAKE IT A FUNCTION.
+  # This pattern appears in at least one other place. Should it be a function?
   retB <- ret$basket
   sampleC <- ret$cluster$samples
   numClusters <- length(ret$cluster$name)
@@ -77,7 +79,16 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   for (kk in 1:length(p0Test)) {
     if (retB$alternative == "greater") {
       res1 <- unlist(lapply(
-        1:numClusters,
+        seq_len(numClusters),
+        FUN = function(j, x, t) {
+          return(sum(x[[j]] > t) / length(x[[j]]))
+        },
+        x = sampleC,
+        t = p0Test[kk]
+      ))
+    } else if (retB$alternative == "less") {
+      res1 <- unlist(lapply(
+        seq_len(numClusters),
         FUN = function(j, x, t) {
           return(sum(x[[j]] > t) / length(x[[j]]))
         },
@@ -85,14 +96,7 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
         t = p0Test[kk]
       ))
     } else {
-      res1 <- unlist(lapply(
-        1:numClusters,
-        FUN = function(j, x, t) {
-          return(sum(x[[j]] > t) / length(x[[j]]))
-        },
-        x = sampleC,
-        t = p0Test[kk]
-      ))
+      stop(red("Alternative must be either \"greater\" or \"less\"."))
     }
     allCDF <- rbind(allCDF, res1)
   }

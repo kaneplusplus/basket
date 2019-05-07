@@ -15,51 +15,31 @@ boa.hpd <- function(x, alpha) {
   structure(c(a[i], b[i]), names = c("Lower Bound", "Upper Bound"))
 }
 
-
-
 MEM.mat <- function(Indices, mod.mat, H) {
   M <- matrix(NA, H, H)
   diag(M) <- rep(1, dim(M)[1])
   for (i in 1:(length(Indices) - 1)) {
-    M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <- mod.mat[[i]][Indices[i], ]
+    M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <- 
+      mod.mat[[i]][Indices[i], ]
   }
-  M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <- (0:1)[ Indices[length(Indices)] ]
+  M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <- 
+    (0:1)[ Indices[length(Indices)] ]
   M
 }
-
 
 logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
   M <- MEM.mat(I, mod.mat, length(xvec))
   marg.vec <- rep(NA, dim(M)[1])
-  prod.vec <-
-    beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) # calculate the product portion of integrated marginal likelihood
+  # calculate the product portion of integrated marginal likelihood
+  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) 
   for (i in 1:dim(M)[1]) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
-    marg.vec[i] <-
-      (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) / beta(avec[i], bvec[i])) * p.vec
-  } # return( list(mod = M, marg = prod(marg.vec)) )
-  return(sum(log(marg.vec)))
+    marg.vec[i] <- (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% 
+      (nvec - xvec)) / beta(avec[i], bvec[i])) * 
+      p.vec
+  } 
+  sum(log(marg.vec))
 }
-
-
-# 
-# logMarg.DensSA <- function(M, mod.mat, xvec, nvec, avec, bvec) {
-#   marg.vec <- rep(NA, dim(M)[1])
-# 
-#   # calculate the product portion of integrated marginal likelihood
-#   prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec)
-# 
-#   for (i in 1:dim(M)[1]) {
-#     p.vec <- prod(prod.vec^(1 - M[i, ]))
-#     marg.vec[i] <-
-#       (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
-#         beta(avec[i], bvec[i])) * p.vec
-#   }
-#   sum(log(marg.vec))
-# }
-
-
-
 
 ESS <- function(X, N, Omega, a, b) {
   # a <- b <- 0.5
@@ -122,39 +102,31 @@ j.weight.J <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
 
 post.Weights <- function(j, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
   if (j == 1) {
-    out <- sapply(1:nrow(mod.mat[[1]]),
-      FUN = j.weight.1, Mod.I, mod.mat,
-      pr.Inclus, j, log.Marg, PRIOR
+    out <- vapply(seq_len(nrow(mod.mat[[1]])),
+      FUN = j.weight.1, FUN.VALUE = NA_real_,
+      Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
     )
   } else if (j == J) {
-    out <- sapply(1:nrow(mod.mat[[1]]),
-      FUN = j.weight.J, Mod.I, mod.mat,
-      pr.Inclus, j, log.Marg, PRIOR
+    out <- vapply(seq_len(nrow(mod.mat[[1]])),
+      FUN = j.weight.J, FUN.VALUE = NA_real_,
+      Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
     )
   } else {
-    out <- sapply(1:nrow(mod.mat[[1]]),
-      FUN = j.weight.j, Mod.I, mod.mat,
-      pr.Inclus, j, log.Marg, PRIOR
+    out <- vapply(seq_len(nrow(mod.mat[[1]])),
+      FUN = j.weight.j, FUN.VALUE = NA_real_,
+      Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
     )
   }
   out
 }
 
-####################################################################
-#### Alternative Computation of ESS using HPD interval matching ####
-####################################################################
-# fit <- mem_exact(responses = Data$X, size = Data$N, name = Data$Basket, p0 = 0.25, shape1 = 0.5, shape2 = 0.5, alpha = 0.05, call = NULL)
-
-
 euc.dist <- function(x1, x2, w = c(1, 1)) {
   if (sum(is.na(x1)) > 1) {
-    out <- Inf
+    Inf
   } else {
-    out <- sqrt(sum(w * ((x1 - x2)^2)))
+    sqrt(sum(w * ((x1 - x2)^2)))
   }
-  return(out)
 }
-
 
 #' @importFrom stats qbeta
 dist.beta.HPD <- function(ess, fit, alpha, jj) {
@@ -162,16 +134,17 @@ dist.beta.HPD <- function(ess, fit, alpha, jj) {
   al <- max(1e-2, al)
   be <- ess - al
   be <- max(1e-2, be)
-  return(euc.dist(fit$HPD[, jj], qbeta(
+  euc.dist(fit$HPD[, jj], qbeta(
     c(alpha / 2, 1 - alpha / 2),
     al, be
-  )))
+  ))
 }
 
+#' @importFrom GenSA GenSA
 ESS.from.HPD.i <- function(jj, fit, alpha) {
   # library(GenSA)
   opt <-
-    GenSA::GenSA(
+    GenSA(
       par = 1,
       fn = dist.beta.HPD,
       lower = 0,
@@ -181,21 +154,16 @@ ESS.from.HPD.i <- function(jj, fit, alpha) {
       alpha = alpha,
       jj = jj
     )
-  return(opt$par)
+  opt$par
 }
 
+#' @importFrom foreach %dopar%
 calc.ESS.from.HPD <- function(fit, alpha) {
   ## fit is list with median vec and HPD vec ##
   i <- NULL
   foreach(i = seq_along(fit$mean_est), .combine = c) %dopar% {
     ESS.from.HPD.i(i, fit, alpha)
   }
-#  return(sapply(
-#    1:length(fit$mean_est),
-#    FUN = ESS.from.HPD.i,
-#    fit = fit,
-#    alpha = alpha
-#  ))
 }
 
 ####################################################################
@@ -209,9 +177,8 @@ flip.MEM <- function(v, MOld, M) {
   } else {
     out[ which(M == v) ] <- 1
   }
-  return(out)
+  out
 }
-
 
 mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
   # M <- MEM.mat(I, mod.mat, nrow(pr.Inclus));
@@ -219,11 +186,8 @@ mem.Prior.Mat <- function(M, mod.mat, pr.Inclus) {
   source.vec <- pr.Inclus[upper.tri(pr.Inclus)]
   s.in <- source.vec # source inclusion probability
   s.ex <- 1 - source.vec # source exclusion probability
-  return(prod(s.in^(mem) * s.ex^(1 - mem)))
+  prod(s.in^(mem) * s.ex^(1 - mem))
 }
-
-
-
 
 I.models <- function(hh, models, Samp) {
   K <- length(models[1, ])
@@ -234,36 +198,27 @@ I.models <- function(hh, models, Samp) {
   } else {
     Ii <- c(hh, 1:(hh - 1), (hh + 1):K)
   }
-  return(which(apply(
-    models,
-    MARGIN = 1,
-    FUN = function(x, t) {
-      sum(x == t)
-    },
-    t = Samp[hh, Ii]
-  ) == K))
+  which(apply(models, MARGIN = 1,
+              FUN = function(x, t) {
+                sum(x == t)
+              },
+              t = Samp[hh, Ii]) == K)
 }
 
 models.Count <- function(Samp, models) {
   out <- matrix(0, nrow(models), ncol(models))
-#  u <- sapply(1:length(models[1, ]),
-#              FUN = I.models,
-#              models = models,
-#              Samp = Samp
-#       )
   u <- vapply(seq_len(ncol(models)),
               FUN = I.models,
-              FUN.VALUE = as.integer(NA),
+              FUN.VALUE = NA_integer_,
               models = models,
               Samp = Samp)
-  for (i in 1:length(u)) {
+  for (i in seq_along(u)) {
     out[u[i], i] <- 1
   }
   return(out)
 }
 
-
-
+#' @importFrom crayon red
 mem.PostProb <- function(model, method = "samples", fit) {
   ## Incorporate direction ##
   if (method == "mixture") {
@@ -323,7 +278,7 @@ mem.PostProb <- function(model, method = "samples", fit) {
           x = fit$samples,
           t = model$p0
         )
-    } else {
+    } else if (model$alternative == "less") {
       out <-
         sapply(
           1:ncol(fit$samples),
@@ -334,13 +289,13 @@ mem.PostProb <- function(model, method = "samples", fit) {
           t = model$p0
         )
     }
+    else {
+      stop(red("Alternative must be either \"greater\" or \"less\"."))
+    }
   }
   names(out) <- model$name
   return(out)
 }
-
-
-
 
 
 #############################################################
@@ -388,8 +343,7 @@ sample_posterior_model <- function(model, num_samples = 10000){
     )
   )
   K <- length(model$responses)
-  if (K > 2)
-  {
+  if (K > 2) {
     ret <- rbind(ret,
                  foreach(j = 2:(K - 1), .combine = rbind) %do% {
                    Ii <- c(j, 1:(j - 1), (j + 1):K)
@@ -427,7 +381,6 @@ sample_posterior_model <- function(model, num_samples = 10000){
   ret
 }
 
-
 clusterComp <- function(basketRet) {
   PEP <- basketRet$PEP
   name <- basketRet$name
@@ -450,9 +403,6 @@ clusterComp <- function(basketRet) {
 
     cBasket <- name[rank]
     clusterElement[[k]] <- cBasket
-    #    print(paste0("#### Cluster Assignment: ", k))
-    #    print(rank)
-    #    print(name[rank])
     cName <- c(cName, paste0("Cluster ", k))
 
     sampV <- as.vector(allSamp[, rank])
@@ -464,8 +414,6 @@ clusterComp <- function(basketRet) {
   ret$p0<-unique(ret$p0)
   ret$name <- cName
   ret$cluster <- clusterElement
-  # ret$models <- models
-  # ret$pweights <- pweights
   ret$samples <- sampleC
 
   p0Test <- unique(ret$p0)
@@ -514,10 +462,6 @@ clusterComp <- function(basketRet) {
   ret$ESS <-
     calc.ESS.from.HPD(fit = ret, alpha = ret$alpha)
   names(ret$ESS) <- cName
-  # ret$ESS2 <-
-  #  calc.ESS.from.HPDwid(fit = ret, alpha = ret$alpha)
-  # names(ret$ESS2) <- cName
-  # ret$PostProb <- mem.PostProb(MODEL, method = "samples", fit = ret)
   class(ret) <- c("mem_exact", "exchangeability_model")
   ret
 }
@@ -531,15 +475,11 @@ update.MH <- function(MOld,
                       bvec,
                       mod.mat,
                       Prior.EP,
-                      betaV, oldDens, prod.vec)
-{
+                      betaV, oldDens, prod.vec) {
   K <- max(M, na.rm = TRUE) + 1
-  v <-
-    sample(1:(K - 1), (1:(K - 1))[which(rmultinom(1, 1, (((
-      K - 1
-    ):1) ^ 3) / sum(((
-      K - 1
-    ):1) ^ 3)) == 1)])
+  v <- sample(seq_len(K-1), 
+    seq_len(K-1)[which(rmultinom(1, 1, 
+      (rev(seq_len(K-1)) ^ 3) / sum(rev(seq_len(K-1)) ^ 3)) == 1)])
   
   MProp <- flip.MEM(v[1], MOld, M)
   if (length(v) > 1) {
@@ -548,23 +488,21 @@ update.MH <- function(MOld,
     }
   }
   
-  if (is.na(oldDens))
-  {
-    oldDens <-
-      logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
+  if (is.na(oldDens)) {
+    oldDens <- 
+      logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec)+ 
+      log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
   }
   newDens <-
-    logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + log(mem.Prior.Mat(MProp, mod.mat, Prior.EP))
-  
+    logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + 
+    log(mem.Prior.Mat(MProp, mod.mat, Prior.EP))
   
   rho <- exp(newDens - oldDens)
-  
   
   # cat(rho, rho1, xvec,nvec, avec, bvec)
   if (rho >= 1) {
     oldDens <- newDens
-    out <-
-      MProp
+    out <- MProp
   } else {
     if (rbinom(1, 1, rho) == 1) {
       oldDens <- newDens
@@ -573,16 +511,15 @@ update.MH <- function(MOld,
       out <- MOld
     }
   }
-  
-  return(list(out, oldDens))
+  list(out, oldDens)
 }
 
-logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) {
+logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV, 
+                             prod.vec) {
+
   marg.vec <- rep(NA, dim(M)[1])
   
   # calculate the product portion of integrated marginal likelihood
-  
-  
   for (i in 1:dim(M)[1]) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
     marg.vec[i] <-
@@ -591,3 +528,4 @@ logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec
   }
   sum(log(marg.vec))
 }
+

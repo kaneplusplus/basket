@@ -2,23 +2,21 @@
 % Please edit documentation in R/accessors.r
 \name{basket_pep}
 \alias{basket_pep}
-\title{Return the Basketwise Posterior Exchangeability Matrix}
+\title{The Basketwise Posterior Exchangeability Probability Matrix}
 \usage{
 basket_pep(x)
 }
 \arguments{
-\item{x}{either an MEM model or basket object.}
+\item{x}{either an exchangeability model or basket object.}
 }
 \description{
 MEM analyses include the posterior exachangeability 
-probabilities (PEP) of included subgroups describing the probability
+probability (PEP) of included arms giving the probability
 that any two arms are exchangeable. This function returns the matrix
 of those probabilities.
 }
 \examples{
-\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
-
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -27,4 +25,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Get the PEP for baskets.
 basket_pep(mem_analysis)
-}}
+}

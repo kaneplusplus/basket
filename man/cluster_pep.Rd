@@ -2,23 +2,21 @@
 % Please edit documentation in R/accessors.r
 \name{cluster_pep}
 \alias{cluster_pep}
-\title{Return the Clusterwise Posterior Exchangeability Matrix}
+\title{Get the Clusterwise Posterior Exchangeability Matrix}
 \usage{
 cluster_pep(x)
 }
 \arguments{
-\item{x}{either an MEM model or basket object.}
+\item{x}{either an exchangeability model or basket object.}
 }
 \description{
 MEM analyses include the posterior exachangeability 
-probability (PEP) of clusters describing the probability
-that any two clusters are exchangeable. This function returns the matrix
+probability (PEP) of clusters of arms giving the probability
+that any two arms are exchangeable. This function returns the matrix
 of those probabilities.
 }
 \examples{
-\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
-
 data(vemu_wide)
 
 mem_analysis <- mem_exact(vemu_wide$responders, 
@@ -27,5 +25,4 @@ mem_analysis <- mem_exact(vemu_wide$responders,
 
 # Get cluster PEPs.
 basket_pep(mem_analysis)
-}
 }

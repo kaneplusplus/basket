@@ -7,53 +7,54 @@
 mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", mcmc_iter = 10000, Initial = round(prior - 0.001),
-  seed = 1000, call = NULL)
+  alternative = "greater", mcmc_iter = 10000,
+  initial_mem = round(prior - 0.001), seed = 1000, call = NULL)
 }
 \arguments{
-\item{responses}{the number of responses in each subgroup.}
+\item{responses}{the number of responses in each basket.}
 
-\item{size}{the size of each subgroup.}
+\item{size}{the size of each basket.}
 
-\item{name}{the name of each subgroup.}
+\item{name}{the name of each basket.}
 
 \item{p0}{the null response rate for the poster probability calculation
 (default 0.15).}
 
-\item{shape1}{the first beta shape parameter(s) for the prior distribution of the response probability for each basket
+\item{shape1}{the first shape parameter(s) for the prior of each basket
 (default 0.5).}
 
-\item{shape2}{the second beta shape parameter(s) for the prior distribution of the response probability for each basket
+\item{shape2}{the second shape parameter(s) for the prior of each basket
 (default 0.5).}
 
-\item{prior}{the symemtric matrix giving the prior exchangeability probabilities
+\item{prior}{the matrix giving the prior inclusion probability
 for each pair of baskets. The default is on on the main diagonal and 0.5
 elsewhere.}
 
-\item{hpd_alpha}{the highest posterior density interval significance threshold.}
+\item{hpd_alpha}{the highest posterior density trial significance.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
 \item{mcmc_iter}{the number of MCMC iterations.}
 
-\item{Initial}{the initial MEM matrix used to start MCMC sampling (default is the diagonal matrix).}
+\item{initial_mem}{the initial MEM matrix.}
 
 \item{seed}{the random number seed.}
 
 \item{call}{the call of the function.}
 }
 \description{
-Fit the MEM model using full Bayesian posterior inference using MCMC sampling using the Metropolis-Hastings algorithm.
+Fit the MEM model using Bayesian Metropolis-Hasting MCMC
+inference.
 }
 \examples{
-# 3 subgroups, each with enrollement size 5
+# 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
-# The response rates for the subgroups.
+# The response rates for the baskets.
 resp_rate <- 0.15
 
-# The trial data: a column of the number of responses and a column of the
-# the size of each subgroup.
+# The trials: a column of the number of responses and a column of the
+# the size of each trial.
 trials <- data.frame(
   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
   size = trial_sizes,
