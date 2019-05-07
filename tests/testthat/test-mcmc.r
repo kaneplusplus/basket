@@ -28,7 +28,7 @@ time_taken <- system.time({
   )
 })
 #cat("Seconds used: ", time_taken[3], "\n")
-t <- sample_posterior(mcmc_res1$basket)
+#t <- sample_posterior(mcmc_res1$basket)
 
 expect_equal(class(summary(mcmc_res1$basket)), "mem_basket_summary")
 expect_equal(class(summary(mcmc_res1$cluster)), "mem_cluster_summary")

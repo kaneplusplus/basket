@@ -219,80 +219,33 @@ models.Count <- function(Samp, models) {
 }
 
 #' @importFrom crayon red
-mem.PostProb <- function(model, method = "samples", fit) {
-  ## Incorporate direction ##
-  if (method == "mixture") {
-    # out <-
-    #   eval.Post(
-    #     model$p0[1],
-    #     model$responses,
-    #     model$size,
-    #     model$models,
-    #     model$pweights[[1]],
-    #     model$shape1[1],
-    #     model$shape2[1],
-    #     alternative = model$alternative
-    #   )
-    # K <- length(model$responses)
-    # for (j in 2:(K - 1)) {
-    #   Ii <- c(j, 1:(j - 1), (j + 1):K)
-    #   out <-
-    #     c(
-    #       out,
-    #       eval.Post(
-    #         model$p0[j],
-    #         model$responses[Ii],
-    #         model$size[Ii],
-    #         model$models,
-    #         model$pweights[[j]],
-    #         model$shape1[j],
-    #         model$shape2[j],
-    #         alternative = model$alternative
-    #       )
-    #     )
-    # }
-    # j <- j + 1
-    # Ii <- c(j, 1:(j - 1))
-    # out <-
-    #   c(
-    #     out,
-    #     eval.Post(
-    #       model$p0[j],
-    #       model$responses[Ii],
-    #       model$size[Ii],
-    #       model$models,
-    #       model$pweights[[j]],
-    #       model$shape1[j],
-    #       model$shape2[j],
-    #       alternative = model$alternative
-    #     )
-    #   )
-  } else {
-    if (model$alternative == "greater") {
-      out <-
-        sapply(
-          1:ncol(fit$samples),
-          FUN = function(j, x, t) {
-            return(sum(x[, j] > t[j]) / length(x[, j]))
-          },
-          x = fit$samples,
-          t = model$p0
-        )
-    } else if (model$alternative == "less") {
-      out <-
-        sapply(
-          1:ncol(fit$samples),
-          FUN = function(j, x, t) {
-            return(sum(x[, j] < t[j]) / length(x[, j]))
-          },
-          x = fit$samples,
-          t = model$p0
-        )
-    }
-    else {
-      stop(red("Alternative must be either \"greater\" or \"less\"."))
-    }
+mem.PostProb <- function(model, fit) {
+  
+  if (model$alternative == "greater") {
+    out <-
+      sapply(
+        1:ncol(fit$samples),
+        FUN = function(j, x, t) {
+          return(sum(x[, j] > t[j]) / length(x[, j]))
+        },
+        x = fit$samples,
+        t = model$p0
+      )
+  } else if (model$alternative == "less") {
+    out <-
+      sapply(
+        1:ncol(fit$samples),
+        FUN = function(j, x, t) {
+          return(sum(x[, j] < t[j]) / length(x[, j]))
+        },
+        x = fit$samples,
+        t = model$p0
+      )
   }
+  else {
+    stop(red("Alternative must be either \"greater\" or \"less\"."))
+  }
+  
   names(out) <- model$name
   return(out)
 }
