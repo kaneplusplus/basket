@@ -36,10 +36,11 @@ expect_true(inherits(plot_mem(mcmc_res1$basket, type = c("pep", "map")),
 expect_true(inherits(plot_pep(mcmc_res1$basket), "ggplot"))
 expect_true(inherits(plot_map(mcmc_res1$basket), "ggplot"))
 
-expect_equal(mcmc_res1$basket$PEP, mcmc_ref2$PEP)
-expect_equal(mcmc_res1$basket$HPD, mcmc_ref2$HPD, tolerance = 5e-2)
-expect_equal(mcmc_res1$basket$post.prob, mcmc_ref2$post.prob)
-expect_equal(mcmc_res1$basket$ESS, mcmc_ref2$ESS, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$PEP, mcmc_ref2$PEP, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$HPD, mcmc_ref2$HPD, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$post.prob, mcmc_ref2$post.prob, 
+                  tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$ESS, mcmc_ref2$ESS, tolerance = 5e-2)
 
 mcmc_lower <- mem_mcmc(
   responses = vemu_wide1$responders,
