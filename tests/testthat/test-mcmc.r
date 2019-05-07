@@ -1,12 +1,6 @@
 library(testthat)
 library(basket)
 
-if (require(doParallel)) {
-  registerDoParallel()
-} else {
-  registerDoSEQ()
-}
-
 context("Fit MCMC models")
 
 data(vemu_wide)
@@ -29,6 +23,8 @@ time_taken <- system.time({
 })
 #cat("Seconds used: ", time_taken[3], "\n")
 #t <- sample_posterior(mcmc_res1$basket)
+
+expect_true(is.matrix(cluster_map(mcmc_res1)))
 
 expect_equal(class(summary(mcmc_res1$basket)), "mem_basket_summary")
 expect_equal(class(summary(mcmc_res1$cluster)), "mem_cluster_summary")

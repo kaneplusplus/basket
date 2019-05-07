@@ -9,7 +9,7 @@ boa.hpd <- function(x, alpha) {
   n <- length(x)
   m <- max(1, ceiling(alpha * n))
   y <- sort(x)
-  a <- y[1:m]
+  a <- y[seq_len(m)]
   b <- y[(n - m + 1):n]
   i <- order(b - a)[1]
   structure(c(a[i], b[i]), names = c("Lower Bound", "Upper Bound"))
@@ -18,12 +18,12 @@ boa.hpd <- function(x, alpha) {
 MEM.mat <- function(Indices, mod.mat, H) {
   M <- matrix(NA, H, H)
   diag(M) <- rep(1, dim(M)[1])
-  for (i in 1:(length(Indices) - 1)) {
+  for (i in seq_len(length(Indices) - 1)) {
     M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <- 
       mod.mat[[i]][Indices[i], ]
   }
   M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <- 
-    (0:1)[ Indices[length(Indices)] ]
+    c(0, 1)[ Indices[length(Indices)] ]
   M
 }
 
@@ -67,7 +67,8 @@ ij.pep <- function(j, Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR) {
 }
 
 compPEP <- function(i, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
-  sapply((i + 1):J, FUN = ij.pep, Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR)
+  vapply((i + 1):J, FUN = ij.pep, FUN.VALUE = NA_real_,
+         Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR)
 }
 
 mem.j <- function(I, mod.mat, pr.Inclus, j, m) {
@@ -223,21 +224,23 @@ mem.PostProb <- function(model, fit) {
   
   if (model$alternative == "greater") {
     out <-
-      sapply(
-        1:ncol(fit$samples),
+      vapply(
+        seq_len(ncol(fit$samples)),
         FUN = function(j, x, t) {
           return(sum(x[, j] > t[j]) / length(x[, j]))
         },
+        FUN.VALUE = NA_real_,
         x = fit$samples,
         t = model$p0
       )
   } else if (model$alternative == "less") {
     out <-
-      sapply(
-        1:ncol(fit$samples),
+      vapply(
+        seq_len(ncol(fit$samples)),
         FUN = function(j, x, t) {
           return(sum(x[, j] < t[j]) / length(x[, j]))
         },
+        FUN.VALUE = NA_real_,
         x = fit$samples,
         t = model$p0
       )
@@ -298,8 +301,8 @@ sample_posterior_model <- function(model, num_samples = 10000){
   K <- length(model$responses)
   if (K > 2) {
     ret <- rbind(ret,
-                 foreach(j = 2:(K - 1), .combine = rbind) %do% {
-                   Ii <- c(j, 1:(j - 1), (j + 1):K)
+                 foreach(j = seq_len(K - 1)[-1], .combine = rbind) %do% {
+                   Ii <- c(j, seq_len(j-1), (j + 1):K)
                    replicate(
                      num_samples,
                      samp.Post(
@@ -371,8 +374,7 @@ clusterComp <- function(basketRet) {
 
   p0Test <- unique(ret$p0)
   allCDF <- matrix(0, 0, numClusters)
-  for (kk in 1:length(p0Test))
-  {
+  for (kk in seq_along(p0Test)) {
     if (ret$alternative == "greater") {
       res <- unlist(lapply(
         1:numClusters,
@@ -436,7 +438,7 @@ update.MH <- function(MOld,
   
   MProp <- flip.MEM(v[1], MOld, M)
   if (length(v) > 1) {
-    for (ii in 2:length(v)) {
+    for (ii in seq_along(v)[-1]) {
       MProp <- flip.MEM(v[ii], MProp, M)
     }
   }
@@ -473,7 +475,7 @@ logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV,
   marg.vec <- rep(NA, dim(M)[1])
   
   # calculate the product portion of integrated marginal likelihood
-  for (i in 1:dim(M)[1]) {
+  for (i in seq_len(dim(M)[1])) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
     marg.vec[i] <-
       (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /

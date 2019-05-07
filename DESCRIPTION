@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.7
+Version: 0.7.0
 Authors@R: c(
   person("Nan", "Chen",
          email = "nchen2@mdanderson.org",
@@ -49,6 +49,8 @@ Imports:
 LazyData: true
 Encoding: UTF-8
 RoxygenNote: 6.1.1
+URL: https://github.com/kaneplusplus/basket
+BugReports: https://github.com/kaneplusplus/basket/issues
 Suggests: 
     knitr,
     rmarkdown,

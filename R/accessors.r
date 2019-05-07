@@ -10,6 +10,7 @@
 #' each element of the list is comprise do a character vector of the 
 #' baskets in each cluster.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -19,6 +20,7 @@
 #'
 #' # Get the baskets in the clusters.
 #' cluster_baskets(mem_analysis)
+#' }
 #' @export
 cluster_baskets <- function(x) {
   UseMethod("cluster_baskets", x)
@@ -49,6 +51,7 @@ cluster_baskets.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -58,6 +61,7 @@ cluster_baskets.exchangeability_model <- function(x) {
 #'
 #' # Get the PEP for baskets.
 #' basket_pep(mem_analysis)
+#' }
 #' @export
 basket_pep <- function(x) {
   UseMethod("basket_pep", x)
@@ -90,6 +94,7 @@ basket_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -99,6 +104,7 @@ basket_pep.exchangeability_model <- function(x) {
 #'
 #' # Get basket MAPs.
 #' basket_map(mem_analysis)
+#' }
 #' @export
 basket_map <- function(x) {
   UseMethod("basket_map", x)
@@ -130,6 +136,7 @@ basket_map.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -139,6 +146,7 @@ basket_map.exchangeability_model <- function(x) {
 #'
 #' # Get cluster PEPs.
 #' basket_pep(mem_analysis)
+#' }
 #' @export
 cluster_pep <- function(x) {
   UseMethod("cluster_pep", x)
@@ -171,6 +179,7 @@ cluster_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -180,6 +189,7 @@ cluster_pep.exchangeability_model <- function(x) {
 #'
 #' # Get the cluster MAPs.
 #' cluster_map(mem_analysis)
+#' }
 #' @export
 cluster_map <- function(x) {
   UseMethod("cluster_map", x)

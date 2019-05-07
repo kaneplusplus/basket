@@ -25,6 +25,7 @@ the type can be specified. In this case, the default is
 `type = c("both", "basket", "cluster")`.
 }
 \examples{
+\dontrun{
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
@@ -33,4 +34,5 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$baskets)
 
 plot_density(mem_analysis)
+}
 }

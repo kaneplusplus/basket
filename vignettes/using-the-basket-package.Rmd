@@ -21,19 +21,19 @@ knitr::opts_chunk$set(
 
 The R `basket` package provides for the designs and analysis of basket trials for [multi-source exchangeability models (MEM)](https://academic.oup.com/biostatistics/article-abstract/19/2/169/3930935), which allows arms to "share" power with similar arms in a trial. The package is intended to perform the exact or MCMC computation of the operating characteristics of different scenarios. Calculations derived from these analyses include the posterior probabilities, HPD boundaries, effective sample sizes (ESS), mean and median estimations can be calculated with this package using the MEM method. Along with providing "basketwise" analyses, the package includes similar calculations for "clusterwise" analyses where a cluster a set of similar baskets. In addition plotting tools are provided to visualize basket and cluster density as well as their exchangeability. The package includes the following main functions: 
 
-- basket_name - Get the basket names in an analysis
-- basket_pep - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
-- basket_map - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
-- cluster_pep - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
-- cluster_map - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
-- sample_posterior - Sample from the posterior distribution of the arms in the trial.
-- mem_exact - Create a basket analysis using the exact method.
-- mem_mcmc - Create a basket analysis using the exact method.
-- summary - Summarize the results of an analysis.
-- update_p0 - Update the null that a basket response rate is above a specified value.
-- plot_density - Plot the estimated densities of arms or clusters.
-- plot_pep - Show the exchangeogram of the PEP matrix.
-- plot_mem - Plot the arm prior, MAP, and PEP of a basket trial.
+- basket_name() - Get the basket names in an analysis
+- basket_pep() - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
+- basket_map() - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
+- cluster_pep() - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
+- cluster_map() - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
+- sample_posterior() - Sample from the posterior distribution of the arms in the trial.
+- mem_exact() - Create a basket analysis using the exact method.
+- mem_mcmc() - Create a basket analysis using the exact method.
+- summary() - Summarize the results of an analysis.
+- update_p0() - Update the null that a basket response rate is above a specified value.
+- plot_density() - Plot the estimated densities of arms or clusters.
+- plot_pep() - Show the exchangeogram of the PEP matrix.
+- plot_mem() - Plot the arm prior, MAP, and PEP of a basket trial.
 
 ## The Vemurafenib Study under Multi-source Exchangeability
 
@@ -53,13 +53,6 @@ An MEM analysis is performed in the `basket` package using the either the `mem_e
 ```{r}
 # Load the basket library.
 library(basket)
-
-# Use parallel capabilities if available.
-if (require(doParallel)) {
-  registerDoParallel()
-} else {
-  foreach::registerDoSEQ()
-}
 
 # Load the vemurafenib data.
 data(vemu_wide) 

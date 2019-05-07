@@ -9,6 +9,7 @@
 #' (default 0.15).
 #' @param alternative the alternative case defination (default greater)
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -18,6 +19,7 @@
 #'
 #' # Update the null from p0 = 0.15 the default, to p = 0.25.
 #' update_p0(mem_analysis, 0.20)
+#' }
 #' @importFrom stats median
 #' @importFrom crayon red
 #' @export
@@ -76,7 +78,7 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
   numClusters <- length(ret$cluster$name)
   p0Test <- unique(retB$p0)
   allCDF <- matrix(0, 0, numClusters)
-  for (kk in 1:length(p0Test)) {
+  for (kk in seq_along(p0Test)) {
     if (retB$alternative == "greater") {
       res1 <- unlist(lapply(
         seq_len(numClusters),

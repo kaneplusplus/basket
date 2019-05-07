@@ -13,6 +13,7 @@
 #' the type can be specified. In this case, the default is
 #' `type = c("both", "basket", "cluster")`.
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -21,6 +22,7 @@
 #'                           vemu_wide$baskets)
 #'
 #' plot_density(mem_analysis)
+#' }
 #' @importFrom tidyr gather
 #' @importFrom tibble as_tibble
 #' @importFrom gridExtra grid.arrange
@@ -120,6 +122,7 @@ plot_density.mem <- function(x, ...) {
 #'  (Default 1 - right justified)}
 #' }
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -128,6 +131,7 @@ plot_density.mem <- function(x, ...) {
 #'                           vemu_wide$baskets)
 #'
 #' plot_pep(mem_analysis)
+#' }
 #' @export
 plot_pep <- function(x, ...) {
   UseMethod("plot_pep")
@@ -158,19 +162,19 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
              "values and names."))
   }
 
-  for (i in 1:dim(mat)[1])
-    for (j in 1:dim(mat)[2])
-    {
+  for (i in 1:dim(mat)[1]) {
+    for (j in 1:dim(mat)[2]) {
       if (i <= j) {
         next
       }
       mat[i, j] <- NA
     }
+  }
 
   V2 <- value <- V1 <- x <- y <- label <- NULL
 
   baskets <- unique(colnames(mat))
-  mg <- as_tibble(mat) %>%
+  mg <- as_tibble(mat, .name_repair = "minimal") %>%
     mutate(V1 = rownames(mat)) %>%
     gather(key = V2, value = value, -V1) %>%
     na.omit() %>%
@@ -388,6 +392,7 @@ plot_pep.mem <- function(x, ...) {
 #'  (Default 1 - right justified)}
 #' }
 #' @examples
+#' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -396,6 +401,7 @@ plot_pep.mem <- function(x, ...) {
 #'                           vemu_wide$baskets)
 #'
 #' plot_map(mem_analysis)
+#' }
 #' @export
 plot_map <- function(x, ...) {
   UseMethod("plot_map")

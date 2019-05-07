@@ -19,6 +19,7 @@
 #' @param call the call of the function (default NULL).
 #' @importFrom stats rbinom
 #' @examples
+#' \dontrun{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #' 
@@ -34,6 +35,7 @@
 #' )
 #' 
 #' summary(mem_exact(trials$responses, trials$size, trials$name))
+#' }
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median
@@ -154,7 +156,7 @@ mem_exact <- function(responses,
   ## Marginal CDF and ESS ##
   # Here's where all of the compute goes.
   pweights <- foreach(
-    j = 1:length(xvec),
+    j = seq_along(xvec),
     .combine = list,
     .multicombine = TRUE
   ) %dopar% {

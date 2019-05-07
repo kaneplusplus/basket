@@ -5,6 +5,7 @@
 #' @param model the exchangeability model
 #' @param num_samples the number of samples to draw. Default 10000
 #' @examples
+#' \dontrun{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #' 
@@ -18,6 +19,7 @@
 #'   size = trial_sizes,
 #'   name = paste("Basket", seq_len(3))
 #' )
+#' }
 #' @export
 sample_posterior <- function(model, num_samples = 10000) {
   UseMethod("sample_posterior", model)
@@ -40,6 +42,7 @@ sample_posterior.mem <- function(model, num_samples = 10000) {
 #' @param model the model to retrieve the basket names of
 #' @importFrom stats rbinom
 #' @examples
+#' \dontrun{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #' 
@@ -55,6 +58,7 @@ sample_posterior.mem <- function(model, num_samples = 10000) {
 #' )
 #' 
 #' basket_name(mem_mcmc(trials$responses, trials$size, trials$basket))
+#' }
 #' @export
 basket_name <- function(model) {
   UseMethod("basket_name", model)

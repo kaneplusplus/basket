@@ -39,6 +39,7 @@ elsewhere.}
 Fit the MEM model using full Bayesian inference.
 }
 \examples{
+\dontrun{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
@@ -54,4 +55,5 @@ trials <- data.frame(
 )
 
 summary(mem_exact(trials$responses, trials$size, trials$name))
+}
 }

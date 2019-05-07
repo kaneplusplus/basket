@@ -1,12 +1,6 @@
 library(testthat)
 library(basket)
 
-if (require(doParallel)) {
-  registerDoParallel()
-} else {
-  registerDoSEQ()
-}
-
 context("Fit exact models")
 
 data(vemu_wide)
@@ -26,6 +20,15 @@ exact_res <- mem_exact(
   p0 = 0.25
 )
 
+expect_true(class(summary(exact_res)) == "mem_summary")
+expect_true(class(print(summary(exact_res))) == "mem_summary")
+
+expect_true(class(summary(exact_res$basket)) == "mem_basket_summary")
+expect_true(class(print(summary(exact_res$basket))) == "mem_basket_summary")
+
+expect_true(class(summary(exact_res$cluster)) == "mem_cluster_summary")
+expect_true(class(print(summary(exact_res$cluster))) == "mem_cluster_summary")
+
 t <- sample_posterior(exact_res$basket)
 
 fb <- exact_res$basket
@@ -41,3 +44,6 @@ res1 <- update(exact_res, p0=0.15)
 expect_true(inherits(res1, "mem_exact"))
 
 expect_equal(basket_name(res1), c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"))
+
+expect_true(inherits(exact_res_up <- update_p0(exact_res, alternative = "less"),
+                     "exchangeability_model"))

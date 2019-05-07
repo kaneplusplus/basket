@@ -47,6 +47,7 @@ Fit the MEM model using Bayesian Metropolis-Hasting MCMC
 inference.
 }
 \examples{
+\dontrun{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
@@ -61,4 +62,5 @@ trials <- data.frame(
   name = letters[1:3]
 )
 res <- mem_mcmc(trials$responses, trials$size)
+}
 }

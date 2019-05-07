@@ -1,27 +1,4 @@
 
-summary.mem_exact <- function(object, ...) {
-  # object <- MHResult1$cluster
-  if (class(object$post.prob) == "matrix") {
-    cdfS <- c()
-    for (i in 1:dim(object$post.prob)[1]) {
-      ss <- paste("Post.Prob ", rownames(object$post.prob)[i])
-      cdfS <- c(cdfS, ss)
-    }
-  } else {
-    cdfS <- "Post.Prob"
-  }
-  oct <- rbind(object$post.prob, object$HPD, object$ESS, object$mean_est, 
-               object$median_est)
-  rownames(oct) <- c(cdfS, "HPD LB", "HPD HB", "ESS", "Mean", "Median")
-  return(oct)
-}
-
-make_em_summary <- function(x) {
-  ret <- list(basket = summary(x$basket), cluster = summary(x$cluster))
-  class(ret) <- "mem_summary"
-  ret
-}
-
 #' @export
 summary.exchangeability_model <- function(object, ...) {
   ret <- list(

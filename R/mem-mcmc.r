@@ -23,6 +23,7 @@
 #' @param call the call of the function.
 #' @importFrom stats rbinom
 #' @examples
+#' \dontrun{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #'
@@ -37,6 +38,7 @@
 #'   name = letters[1:3]
 #' )
 #' res <- mem_mcmc(trials$responses, trials$size)
+#' }
 #' @importFrom stats median
 #' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @importFrom crayon red

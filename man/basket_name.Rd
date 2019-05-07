@@ -13,6 +13,7 @@ basket_name(model)
 Retrieve the basket names in an exchangeability model.
 }
 \examples{
+\dontrun{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 
@@ -28,4 +29,5 @@ trials <- data.frame(
 )
 
 basket_name(mem_mcmc(trials$responses, trials$size, trials$basket))
+}
 }
