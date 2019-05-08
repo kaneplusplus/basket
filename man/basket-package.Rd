@@ -8,7 +8,7 @@
 \description{
 The R basket package provides for the designs and analysis of 
 basket trials for multi-source exchangeability models (MEM) 
-(\url{https://academic.oup.com/biostatistics/article/19/2/169/3930935}) 
+(\url{https://doi.org/10.1093/biostatistics/kxx031})
 allowing arms to "share" power with similar arms in a trial. The package 
 is intended to perform the exact or MCMC computation of the operating 
 characteristics of different scenarios. Calculations derived from these 
