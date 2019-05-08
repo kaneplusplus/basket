@@ -10,7 +10,7 @@ basket_map(x)
 \item{x}{either an exchangeability model or basket object.}
 }
 \description{
-MEM analyses include the maximum a posterior exachangeability 
+MEM analyses include the maximum a posterior exchangeability 
 probability (MAP) of included arms indicating whether 
 two arms in the trial are exchangeable. This function returns the matrix
 of those relationships.

@@ -12,11 +12,11 @@ update_p0(res, p0 = 0.15, alternative = "greater")
 \item{p0}{the null response rate for the poster probability calculation
 (default 0.15).}
 
-\item{alternative}{the alternative case defination (default greater)}
+\item{alternative}{the alternative case definition (default greater)}
 }
 \description{
 After running either `mem_mcmc` or `mem_exact`, the
-test can be updated without rerunning the entire analyis. This function
+test can be updated without rerunning the entire analysis. This function
 provides updating of both the null response rate along with the
 alternative rerunning relevant test.
 }

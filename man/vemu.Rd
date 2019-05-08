@@ -4,10 +4,10 @@
 \name{vemu}
 \alias{vemu}
 \alias{vemu_wide}
-\title{Summary Data from the Vemurafinib Study}
+\title{Summary Data from the Vemurafenib Study}
 \description{
 The `vemu` and `vemu_wide` data sets provides response information taken
-from the ``Vemurafenib in multiple nonmelanoma cancers with braf v600
+from the ``Vemurafenib in multiple nonmelanoma cancers with BRAF v600
 mutations'' study where, in total, 18 responders were observed among the
 84 patients contributing evaluable outcomes for statistical estimation.
 Observed response rates varied from $42\%$ and $43\%$ for baskets of NSCLC
@@ -25,7 +25,7 @@ nosology.
 Later, in the ``Statistical challenges posed by basket trials: sensitivity
 analysis of the Vemurafenib study'' it was shown that patient-enrollment
 types we likely drove the negative results for several targets, rather
-than Vemurafinib itself.
+than Vemurafenib itself.
 }
 \references{
 Hyman DM, Puzanov I, Subbiah V, Faris JE, Chau I, Blay JY,

@@ -15,7 +15,7 @@ plot_density(x, ...)
 The MEM analysis calculates the probability of exchangeability
 of baskets and clusters in a basket trial. This function creates density 
 plots of the response rates of each basket or each cluster under the MEM 
-design taking into acount the extent to which power can be borrowed from
+design taking into account the extent to which power can be borrowed from
 similar trials.
 }
 \details{

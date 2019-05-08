@@ -1,13 +1,13 @@
 #' @title Update Full Bayes results with different p0 values
 #'
 #' @description After running either `mem_mcmc` or `mem_exact`, the
-#' test can be updated without rerunning the entire analyis. This function
+#' test can be updated without rerunning the entire analysis. This function
 #' provides updating of both the null response rate along with the
 #' alternative rerunning relevant test.
 #' @param res the result of an mem analysis.
 #' @param p0 the null response rate for the poster probability calculation
 #' (default 0.15).
-#' @param alternative the alternative case defination (default greater)
+#' @param alternative the alternative case definition (default greater)
 #' @examples
 #' \dontrun{
 #' # Create an MEM analysis of the Vemurafenib trial data.

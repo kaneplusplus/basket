@@ -12,7 +12,7 @@ plot_map(x, ...)
 \item{...}{other options passed to ggplot2 to alter the visual}
 }
 \description{
-The Maximum Aposteriori Probability (MAP) of an MEM is the
+The Maximum A Posteriori Probability (MAP) of an MEM is the
 estimate of the exchangeability structure of a basket trial. This function
 visualizes this matrix as an exchangeogram.
 }

@@ -45,7 +45,7 @@ cluster_baskets.exchangeability_model <- function(x) {
 
 #' @title The Basketwise Posterior Exchangeability Probability Matrix
 #'
-#' @description MEM analyses include the posterior exachangeability 
+#' @description MEM analyses include the posterior exchangeability 
 #' probability (PEP) of included arms giving the probability
 #' that any two arms are exchangeable. This function returns the matrix
 #' of those probabilities.
@@ -88,7 +88,7 @@ basket_pep.exchangeability_model <- function(x) {
 
 #' @title Get the Basketwise Maximum A Posteriori Probability Matrix
 #' 
-#' @description MEM analyses include the maximum a posterior exachangeability 
+#' @description MEM analyses include the maximum a posterior exchangeability 
 #' probability (MAP) of included arms indicating whether 
 #' two arms in the trial are exchangeable. This function returns the matrix
 #' of those relationships.
@@ -130,7 +130,7 @@ basket_map.exchangeability_model <- function(x) {
 
 #' @title Get the Clusterwise Posterior Exchangeability Matrix
 #'
-#' @description MEM analyses include the posterior exachangeability 
+#' @description MEM analyses include the posterior exchangeability 
 #' probability (PEP) of clusters of arms giving the probability
 #' that any two arms are exchangeable. This function returns the matrix
 #' of those probabilities.
@@ -173,7 +173,7 @@ cluster_pep.exchangeability_model <- function(x) {
 
 #' @title Get the Clusterwise Maximum A Posteriori Probability Matrix
 #' 
-#' @description MEM analyses include the maximum a posterior exachangeability 
+#' @description MEM analyses include the maximum a posterior exchangeability 
 #' probability (MAP) of included arms indicating whether 
 #' two arms in the trial are exchangeable. This function returns the matrix
 #' of those relationships.

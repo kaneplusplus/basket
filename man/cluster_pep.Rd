@@ -10,7 +10,7 @@ cluster_pep(x)
 \item{x}{either an exchangeability model or basket object.}
 }
 \description{
-MEM analyses include the posterior exachangeability 
+MEM analyses include the posterior exchangeability 
 probability (PEP) of clusters of arms giving the probability
 that any two arms are exchangeable. This function returns the matrix
 of those probabilities.

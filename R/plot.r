@@ -4,7 +4,7 @@
 #' @description The MEM analysis calculates the probability of exchangeability
 #' of baskets and clusters in a basket trial. This function creates density 
 #' plots of the response rates of each basket or each cluster under the MEM 
-#' design taking into acount the extent to which power can be borrowed from
+#' design taking into account the extent to which power can be borrowed from
 #' similar trials.
 #' @param x the exchangeability model.
 #' @param ... other options. See Details for more information.
@@ -364,7 +364,7 @@ plot_pep.mem <- function(x, ...) {
 
 #' @title Plot the Map Exchangeability of a Basket Trial
 #'
-#' @description The Maximum Aposteriori Probability (MAP) of an MEM is the
+#' @description The Maximum A Posteriori Probability (MAP) of an MEM is the
 #' estimate of the exchangeability structure of a basket trial. This function
 #' visualizes this matrix as an exchangeogram.
 #' @param x the exchangeability model.
