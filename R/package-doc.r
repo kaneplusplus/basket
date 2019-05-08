@@ -3,7 +3,17 @@
 #' @name basket-package
 #' @aliases basket-package basket
 #' @docType package
-#' @references \url{https://github.com/kaneplusplus/basket}
+#' @references Vemurafenib in multiple nonmelanoma cancers with braf v600 
+#' mutations Hyman DM, Puzanov I, Subbiah V, Faris JE, Chau I, Blay JY, 
+#' Wolf J, Raje NS, Diamond EL, Hollebecque A, et al.
+#' New England Journal of Medicine 2015; 373(8):726–736.
+#' @references Bayesian basket trial design with exchangeability monitoring
+#' BP Hobbs, R Landin Statistics in medicine 37 (25), 3557-357.
+#' @references Statistical challenges posed by uncontrolled master protocols: 
+#' sensitivity analysis of the vemurafenib study BP Hobbs, MJ Kane, DS Hong, 
+#' R Landin Annals of Oncology 29 (12), 2296-2301.
+#' Bayesian hierarchical modeling based on multisource exchangeability
+#' AM Kaizer, JS Koopmeiners, BP Hobbs Biostatistics 19 (2), 169-184.
 #' @description The R basket package provides for the designs and analysis of 
 #' basket trials for multi-source exchangeability models (MEM) 
 #' (\url{https://academic.oup.com/biostatistics/article/19/2/169/3930935}) 
