@@ -8,3 +8,6 @@
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+* The analyses implemented in this package are compute-intensive for the data 
+size. Examples can take 4 - 8 seconds depending on the harware on which they 
+are run. As a result example are wrapped in \dontrun{}
