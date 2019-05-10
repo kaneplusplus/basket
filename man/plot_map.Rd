@@ -41,7 +41,7 @@ the visualizations. These auxiliary options include:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 

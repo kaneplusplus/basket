@@ -21,7 +21,7 @@ composed of sets of similar arms. This function returns the name
 of each arm in a cluster.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 

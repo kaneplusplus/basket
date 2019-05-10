@@ -47,7 +47,7 @@ Fit the MEM model using Bayesian Metropolis-Hasting MCMC
 inference.
 }
 \examples{
-\dontrun{
+\donttest{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 

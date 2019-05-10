@@ -15,7 +15,7 @@ sample_posterior(model, num_samples = 10000)
 Sample Posterior Samples from a Basket Trial
 }
 \examples{
-\dontrun{
+\donttest{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 

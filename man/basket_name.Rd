@@ -13,7 +13,7 @@ basket_name(model)
 Retrieve the basket names in an exchangeability model.
 }
 \examples{
-\dontrun{
+\donttest{
 # 3 baskets, each with enrollement size 5
 trial_sizes <- rep(5, 3)
 

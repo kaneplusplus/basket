@@ -16,7 +16,7 @@ that any two arms are exchangeable. This function returns the matrix
 of those probabilities.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
