@@ -5,7 +5,7 @@
 #' @param model the exchangeability model
 #' @param num_samples the number of samples to draw. Default 10000
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #' 
@@ -42,7 +42,7 @@ sample_posterior.mem <- function(model, num_samples = 10000) {
 #' @param model the model to retrieve the basket names of
 #' @importFrom stats rbinom
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #' 

@@ -23,7 +23,7 @@
 #' @param call the call of the function.
 #' @importFrom stats rbinom
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #'

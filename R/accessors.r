@@ -10,7 +10,7 @@
 #' each element of the list is comprise do a character vector of the 
 #' baskets in each cluster.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -51,7 +51,7 @@ cluster_baskets.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -94,7 +94,7 @@ basket_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -136,7 +136,7 @@ basket_map.exchangeability_model <- function(x) {
 #' of those probabilities.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 
@@ -179,7 +179,7 @@ cluster_pep.exchangeability_model <- function(x) {
 #' of those relationships.
 #' @param x either an exchangeability model or basket object.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #' 

@@ -13,7 +13,7 @@
 #' the type can be specified. In this case, the default is
 #' `type = c("both", "basket", "cluster")`.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -122,7 +122,7 @@ plot_density.mem <- function(x, ...) {
 #'  (Default 1 - right justified)}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
@@ -392,7 +392,7 @@ plot_pep.mem <- function(x, ...) {
 #'  (Default 1 - right justified)}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
