@@ -5,3 +5,8 @@
 # basket 0.9.1
 
 * Updated DESCRIPTION file to include DOI's.
+
+# basket 0.9.2
+
+* Description now end with period.
+* \dontrun{} is now \donttest{}
