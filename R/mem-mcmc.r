@@ -56,7 +56,7 @@ mem_mcmc <- function(responses,
                               ncol = length(responses)),
                      hpd_alpha = 0.05,
                      alternative = "greater",
-                     mcmc_iter = 10000,
+                     mcmc_iter = 200000,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
                      call = NULL) {
