@@ -36,6 +36,8 @@ elsewhere.}
 
 \item{mcmc_iter}{the number of MCMC iterations.}
 
+\item{mcmc_burnin}{the number of MCMC Burn_in iterations.}
+
 \item{initial_mem}{the initial MEM matrix.}
 
 \item{seed}{the random number seed.}

@@ -182,8 +182,8 @@ mem_exact <- function(responses,
       shape2[1],
       alternative
     )
-  pESS[1] <-
-    pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
+  # pESS[1] <-
+  #   pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
   HPD[, 1] <- boa.hpd(
     replicate(
       10000,
@@ -206,8 +206,8 @@ mem_exact <- function(responses,
         shape2[j],
         alternative
       )
-    pESS[j] <-
-      pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+    # pESS[j] <-
+    #   pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
     HPD[, j] <- boa.hpd(
       replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
                                  shape1[j], shape2[j])),
@@ -218,8 +218,8 @@ mem_exact <- function(responses,
   post.prob[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
                             shape1[j], shape2[j], alternative)
 
-  pESS[j] <- pweights[[j]] %*%
-    ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  # pESS[j] <- pweights[[j]] %*%
+  #   ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
 
   HPD[, j] <- boa.hpd(
     replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], 
@@ -252,7 +252,7 @@ mem_exact <- function(responses,
       MAP = MAP,
       PEP = PEP,
       post.prob = post.prob,
-      ESS = pESS,
+      #ESS = pESS,
       HPD = HPD,
       responses = responses,
       size = size,
@@ -270,6 +270,7 @@ mem_exact <- function(responses,
   ret$samples <- sample_posterior_model(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
+  ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = hpd_alpha)
   class(ret) <- c("mem_basket", "mem")
   clusterRet <- clusterComp(ret)
   class(clusterRet) <- c("mem_cluster", "mem")

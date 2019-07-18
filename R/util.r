@@ -286,7 +286,7 @@ samp.Post <- function(X, N, Omega, w, a, b) {
   return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
 }
 
-sample_posterior_model <- function(model, num_samples = 10000){   
+sample_posterior_model <- function(model, num_samples = 100000){   
   ret <- replicate(
     num_samples,
     samp.Post(

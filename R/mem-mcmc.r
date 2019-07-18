@@ -18,6 +18,7 @@
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param mcmc_iter the number of MCMC iterations.
+#' @param mcmc_burnin the number of MCMC Burn_in iterations.
 #' @param initial_mem the initial MEM matrix.
 #' @param seed the random number seed.
 #' @param call the call of the function.
@@ -223,25 +224,25 @@ mem_mcmc <- function(responses,
     pweights[[KK]] <- mweights[, KK] / mcmc_iter
   }
   
-  pESS <- rep(NA, length(xvec))
-  
-  pESS[1] <-
-    pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
-
-  
-  K <- length(xvec)
-  for (j in 2:(K - 1)) {
-    Ii <- c(j, 1:(j - 1), (j + 1):K)
-    pESS[j] <-
-      pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
-
-  }
-  j <- j + 1
-  Ii <- c(j, 1:(j - 1))
-
-  
-  pESS[j] <- pweights[[j]] %*%
-    ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  # pESS <- rep(NA, length(xvec))
+  # 
+  # pESS[1] <-
+  #   pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
+  # 
+  # 
+  # K <- length(xvec)
+  # for (j in 2:(K - 1)) {
+  #   Ii <- c(j, 1:(j - 1), (j + 1):K)
+  #   pESS[j] <-
+  #     pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  # 
+  # }
+  # j <- j + 1
+  # Ii <- c(j, 1:(j - 1))
+  # 
+  # 
+  # pESS[j] <- pweights[[j]] %*%
+  #   ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
   
 
   ### List for post-processing ###
@@ -299,7 +300,7 @@ mem_mcmc <- function(responses,
   ret$MAP <- MAP
   ret$HPD <- apply(ret$samples, MARGIN = 2, FUN = boa.hpd, alpha = MODEL$alpha)
   ret$post.prob <- mem.PostProb(MODEL, fit = ret)
-  ret$ESS <- pESS # calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
+  ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
   class(ret) <- c("mem_basket", "mem")
  
