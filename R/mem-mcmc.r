@@ -57,8 +57,9 @@ mem_mcmc <- function(responses,
                      hpd_alpha = 0.05,
                      alternative = "greater",
                      mcmc_iter = 200000,
+                     mcmc_burnin = 50000,
                      initial_mem = round(prior - 0.001),
-                     seed = 1000,
+                     seed = 2000,
                      call = NULL) {
   set.seed(seed)
   k <- NULL
@@ -133,6 +134,7 @@ mem_mcmc <- function(responses,
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
   
+  
   mapHash <- new.env()
   mapHash[[toString(MOld)]] <- 1
   
@@ -142,6 +144,17 @@ mem_mcmc <- function(responses,
   betaV <- beta(shape1, shape2)
   prod.vec <- beta(xvec + shape1, nvec + shape2 - xvec) / beta(shape1, shape2)
 
+  
+  for (i in 1:mcmc_burnin) {
+    t <- update.MH(MOld, M, responses, size,
+                   shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec)
+    MOld <- t[[1]]
+    oldDens <- t[[2]]
+  }
+  
+  print("After the MCMC burn_in step, the initial MEM for the MCMC step is:")
+  print(MOld)
+  
   t <- update.MH(MOld, M, responses, size,
                 shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec)
   mem.Samp[[2]] <- t[[1]]
@@ -210,6 +223,27 @@ mem_mcmc <- function(responses,
     pweights[[KK]] <- mweights[, KK] / mcmc_iter
   }
   
+  pESS <- rep(NA, length(xvec))
+  
+  pESS[1] <-
+    pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
+
+  
+  K <- length(xvec)
+  for (j in 2:(K - 1)) {
+    Ii <- c(j, 1:(j - 1), (j + 1):K)
+    pESS[j] <-
+      pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+
+  }
+  j <- j + 1
+  Ii <- c(j, 1:(j - 1))
+
+  
+  pESS[j] <- pweights[[j]] %*%
+    ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  
+
   ### List for post-processing ###
   MODEL <-
     list(
@@ -265,10 +299,10 @@ mem_mcmc <- function(responses,
   ret$MAP <- MAP
   ret$HPD <- apply(ret$samples, MARGIN = 2, FUN = boa.hpd, alpha = MODEL$alpha)
   ret$post.prob <- mem.PostProb(MODEL, fit = ret)
-  ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
+  ret$ESS <- pESS # calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
   class(ret) <- c("mem_basket", "mem")
-  
+ 
   clusterRet <- clusterComp(ret)
   class(clusterRet) <- c("mem_cluster", "mem")
   result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
