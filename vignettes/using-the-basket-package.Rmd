@@ -21,14 +21,13 @@ knitr::opts_chunk$set(
 
 The R `basket` package provides for the designs and analysis of basket trials for [multi-source exchangeability models (MEM)](https://academic.oup.com/biostatistics/article-abstract/19/2/169/3930935), which allows arms to "share" power with similar arms in a trial. The package is intended to perform the exact or MCMC computation of the operating characteristics of different scenarios. Calculations derived from these analyses include the posterior probabilities, HPD boundaries, effective sample sizes (ESS), mean and median estimations can be calculated with this package using the MEM method. Along with providing "basketwise" analyses, the package includes similar calculations for "clusterwise" analyses where a cluster a set of similar baskets. In addition plotting tools are provided to visualize basket and cluster density as well as their exchangeability. The package includes the following main functions: 
 
+- basket() - Create a basket analysis.
 - basket_name() - Get the basket names in an analysis
 - basket_pep() - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
 - basket_map() - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
 - cluster_pep() - Get the Posterior Exchangeability Probability (PEP) matrix for the arms in the trial.
 - cluster_map() - Get the Maximum A Posteriori (MAP) matrix for the arms in a trial.
 - sample_posterior() - Sample from the posterior distribution of the arms in the trial.
-- mem_exact() - Create a basket analysis using the exact method.
-- mem_mcmc() - Create a basket analysis using the exact method.
 - summary() - Summarize the results of an analysis.
 - update_p0() - Update the null that a basket response rate is above a specified value.
 - plot_density() - Plot the estimated densities of arms or clusters.
@@ -48,7 +47,7 @@ knitr::kable(vw)
 
 The table indicates an association between the number of prior therapies and the success of an arm, which suggests heterogeneity in the population of arms. That is some baskets have many enrollees with many prior therapies and others do not. As a result, the response rates arms with favorable enrollment (NSCLC, ECD or LCH, and ATC) are better than those with unfavorable enrollment (CRC (vemu), CRC (vemu+cetu), and Bile Duct). In light of this we may want to allow a favorable-enrollment arm to borrow power from another favorable-enrollment arm depending on how similar they are. This essentially allow arms that are smaller, but similar to other arms to increase their sample size. This combination of actual and borrowed samples is termed the effective sample size (ESS) and is included in the analysis.
 
-An MEM analysis is performed in the `basket` package using the either the `mem_exact()` or `mem_mcmc()` functions. The exact variation provides results up to numerical precision and is appropriate for trials with few arms. The Markov-chain Monte Carlo (MCMC) variation scales to larger trials with results that are generally within 2-3 significant digits of the exact version (under the default number of iterations). Both the exact and MCMC analyses are performed by specifying the size, number of responders, and null response rate. In the following example we include the optional basket names. 
+An MEM analysis is performed in the `basket` package using the either the `basket()` function. The exact variation provides results up to numerical precision and is appropriate for trials with few arms. The Markov-chain Monte Carlo (MCMC) variation scales to larger trials with results that are generally within 2-3 significant digits of the exact version (under the default number of iterations). Both the exact and MCMC analyses are performed by specifying the size, number of responders, and null response rate. 
 
 ```{r}
 # Load the basket library.
@@ -58,10 +57,10 @@ library(basket)
 data(vemu_wide) 
 
 # Perform the analysis.
-vemu_basket <- mem_mcmc(responses = vemu_wide$responders,
-                        size = vemu_wide$evaluable,
-                        name = vemu_wide$baskets,
-                        p0 = 0.15)
+vemu_basket <- basket(responses = vemu_wide$responders,
+                      size = vemu_wide$evaluable,
+                      name = vemu_wide$baskets,
+                      p0 = 0.15)
 
 # Show the trial diagnostics.
 summary(vemu_basket)

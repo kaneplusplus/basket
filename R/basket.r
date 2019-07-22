@@ -1,6 +1,7 @@
 
 #' @title Create a Basket Trial Analysis
 #'
+#' @aliases mem_mcmc mem_exact
 #' @description This function creates an analysis modeling the exchangeability
 #' and distribution characteristics of cohorts in a basket trial, where
 #' a single therapy is given to multiple cohorts. The model is based on the
@@ -20,13 +21,16 @@
 #' for each pair of baskets. The default is on on the main diagonal and 0.5
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
-#' @param alternative the alternative case definition (default greater).
+#' (default 0.05)
+#' @param alternative the alternative case definition (default "greater").
 #' @param call the call of the function. (default NULL)
 #' @param cluster_function a function to cluster baskets.
 #' @param method "mcmc" or "exact". See details for an explanation. 
 #' (default "mcmc")
 #' @param mcmc_iter if the method is "mcmc" then this spcifies the number of 
-#' MCMC iterations. Otherwise, it is ignored.
+#' MCMC iterations. Otherwise, it is ignored. (default 200000)
+#' @param if the method is "mcmc" then this specifies the number of
+#' burn-in iterations. (default 50000)
 #' @param initial_mem if the method is "mcmc" then this spcifies the initial 
 #' MEM matrix. Otherwise, it is ignored.
 #' @param seed if the method is "mcmc" then this the random number seed. 
@@ -58,7 +62,52 @@
 #'
 #' summary(basket(trials$responses, trials$size, trials$name))
 #' }
-basket
+#' @importFrom crayon red
+#' @export
+basket <- function(responses, 
+                   size, 
+                   name, 
+                   p0 = 0.15, 
+                   shape1 = 0.5, 
+                   shape2 = 0.5, 
+                   prior = diag(length(responses)) / 2 +
+                     matrix(0.5,
+                            nrow = length(responses),
+                            ncol = length(responses)),
+                   hpd_alpha = 0.05,
+                   alternative = "greater",
+                   call = NULL,
+                   cluster_function = cluster_pep_membership,
+                   method = "mcmc",
+                   mcmc_iter = 200000,
+                   mcmc_burnin = 50000,
+                   initial_mem = round(prior - 0.001),
+                   seed = 1000) {
+
+  if (isTRUE(method %in% c("exact", "mcmc"))) {
+    if (method == "exact") {
+      mem_exact(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
+                prior = diag(length(responses)) / 2 +
+                        matrix(0.5,
+                               nrow = length(responses),
+                               ncol = length(responses)),
+                hpd_alpha = 0.05, alternative = "greater",
+                call = NULL, cluster_function = cluster_pep_membership)
+    } else {
+      mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
+               prior = diag(length(responses)) / 2 +
+                       matrix(0.5,
+                              nrow = length(responses),
+                              ncol = length(responses)),
+               hpd_alpha = 0.05, alternative = "greater", mcmc_iter = 200000,
+               mcmc_burnin = 50000, initial_mem = round(prior - 0.001),
+               seed = 1000, call = NULL,
+               cluster_function = cluster_pep_membership)
+    }
+  } else {
+    stop(red("Unsupported method."))
+  }
+}
 
 #' @title Sample Posterior Samples from a Basket Trial
 #'

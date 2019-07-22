@@ -1,45 +1,4 @@
 
-#' @title Fit the MEM Model using MCMC
-#'
-#' @description Fit the MEM model using Bayesian Metropolis-Hasting MCMC
-#' inference.
-#' @param responses the number of responses in each basket.
-#' @param size the size of each basket.
-#' @param name the name of each basket.
-#' @param p0 the null response rate for the poster probability calculation
-#' (default 0.15).
-#' @param shape1 the first shape parameter(s) for the prior of each basket
-#' (default 0.5).
-#' @param shape2 the second shape parameter(s) for the prior of each basket
-#' (default 0.5).
-#' @param prior the matrix giving the prior inclusion probability
-#' for each pair of baskets. The default is on on the main diagonal and 0.5
-#' elsewhere.
-#' @param hpd_alpha the highest posterior density trial significance.
-#' @param alternative the alternative case definition (default greater)
-#' @param mcmc_iter the number of MCMC iterations.
-#' @param mcmc_burnin the number of MCMC Burn_in iterations.
-#' @param initial_mem the initial MEM matrix.
-#' @param seed the random number seed.
-#' @param call the call of the function.
-#' @importFrom stats rbinom
-#' @examples
-#' \donttest{
-#' # 3 baskets, each with enrollement size 5
-#' trial_sizes <- rep(5, 3)
-#'
-#' # The response rates for the baskets.
-#' resp_rate <- 0.15
-#'
-#' # The trials: a column of the number of responses and a column of the
-#' # the size of each trial.
-#' trials <- data.frame(
-#'   responses = rbinom(trial_sizes, trial_sizes, resp_rate),
-#'   size = trial_sizes,
-#'   name = letters[1:3]
-#' )
-#' res <- mem_mcmc(trials$responses, trials$size)
-#' }
 #' @importFrom stats median
 #' @importFrom crayon red
 #' @importFrom itertools isplitVector
@@ -152,9 +111,6 @@ mem_mcmc <- function(responses,
     MOld <- t[[1]]
     oldDens <- t[[2]]
   }
-  
-  print("After the MCMC burn_in step, the initial MEM for the MCMC step is:")
-  print(MOld)
   
   t <- update.MH(MOld, M, responses, size,
                 shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec)
