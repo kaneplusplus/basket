@@ -18,6 +18,7 @@
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param mcmc_iter the number of MCMC iterations.
+#' @param mcmc_burnin the number of MCMC Burn_in iterations.
 #' @param initial_mem the initial MEM matrix.
 #' @param seed the random number seed.
 #' @param call the call of the function.
@@ -55,7 +56,8 @@ mem_mcmc <- function(responses,
                               ncol = length(responses)),
                      hpd_alpha = 0.05,
                      alternative = "greater",
-                     mcmc_iter = 10000,
+                     mcmc_iter = 200000,
+                     mcmc_burnin = 50000,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
                      call = NULL,
@@ -133,6 +135,7 @@ mem_mcmc <- function(responses,
   MAP.list <- list(mem.Samp[[1]])
   MAP.count <- c(1)
   
+  
   mapHash <- new.env()
   mapHash[[toString(MOld)]] <- 1
   
@@ -142,6 +145,17 @@ mem_mcmc <- function(responses,
   betaV <- beta(shape1, shape2)
   prod.vec <- beta(xvec + shape1, nvec + shape2 - xvec) / beta(shape1, shape2)
 
+  
+  for (i in 1:mcmc_burnin) {
+    t <- update.MH(MOld, M, responses, size,
+                   shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec)
+    MOld <- t[[1]]
+    oldDens <- t[[2]]
+  }
+  
+  print("After the MCMC burn_in step, the initial MEM for the MCMC step is:")
+  print(MOld)
+  
   t <- update.MH(MOld, M, responses, size,
                 shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec)
   mem.Samp[[2]] <- t[[1]]
@@ -210,6 +224,27 @@ mem_mcmc <- function(responses,
     pweights[[KK]] <- mweights[, KK] / mcmc_iter
   }
   
+  # pESS <- rep(NA, length(xvec))
+  # 
+  # pESS[1] <-
+  #   pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
+  # 
+  # 
+  # K <- length(xvec)
+  # for (j in 2:(K - 1)) {
+  #   Ii <- c(j, 1:(j - 1), (j + 1):K)
+  #   pESS[j] <-
+  #     pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  # 
+  # }
+  # j <- j + 1
+  # Ii <- c(j, 1:(j - 1))
+  # 
+  # 
+  # pESS[j] <- pweights[[j]] %*%
+  #   ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+  
+
   ### List for post-processing ###
   MODEL <-
     list(
