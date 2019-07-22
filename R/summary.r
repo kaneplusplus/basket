@@ -61,7 +61,7 @@ print.mem_basket_summary <- function(x, ...) {
   print(round(x$mm_resp, 3))
 
   # The Highest Posterior Density Interval
-  cat_line("\nHigest Posterior Density Interval with Significance of ",
+  cat_line("\nHighest Posterior Density Interval with Significance of ",
     x$hpd_signif, ":")
   print(round(x$hpd, 3))
 

@@ -17,6 +17,8 @@
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param call the call of the function (default NULL).
+#' @param cluster_function a function to cluster baskets 
+#' @seealso cluster_pep_membership
 #' @importFrom stats rbinom
 #' @examples
 #' \donttest{
@@ -39,7 +41,6 @@
 #' @importFrom foreach foreach %dopar% getDoParName getDoSeqName registerDoSEQ
 #' %do%
 #' @importFrom stats median
-#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @importFrom crayon red
 #' @importFrom itertools isplitRows
 #' @export
@@ -56,7 +57,8 @@ mem_exact <- function(responses,
                         ),
                       hpd_alpha = 0.05,
                       alternative = "greater",
-                      call = NULL) {
+                      call = NULL,
+                      cluster_function = cluster_pep_membership) {
   h <- mod_i <- NULL
   if (is.null(getDoParName())) {
     registerDoSEQ()
@@ -271,7 +273,7 @@ mem_exact <- function(responses,
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   class(ret) <- c("mem_basket", "mem")
-  clusterRet <- clusterComp(ret)
+  clusterRet <- clusterComp(ret, cluster_function)
   class(clusterRet) <- c("mem_cluster", "mem")
   result <-
     list(

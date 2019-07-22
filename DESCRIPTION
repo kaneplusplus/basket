@@ -2,16 +2,20 @@ Package: basket
 Title: Basket Trial Analysis 
 Version: 0.9.2
 Authors@R: c(
-  person("Nan", "Chen",
+  person(given = "Nan", 
+         family = "Chen",
          email = "nchen2@mdanderson.org",
          role = c("aut")),
-  person("Brian", "Hobbs",
+  person(given = "Brian", 
+         family = "Hobbs",
          email = "HobbsB@ccf.org",
          role = c("aut")),
-  person("Alex", "Kaizer",
+  person(given = "Alex", 
+         family = "Kaizer",
          email = "alex.kaizer@ucdenver.edu",
          role = c("aut")),
-  person("Michael J.", "Kane",
+  person(given = "Michael J.", 
+         family = "Kane",
          email = "michael.kane@yale.edu",
          role = c("aut", "cre"),
          comment = c(ORCID = "http://orcid.org/0000-0003-1899-6662")))

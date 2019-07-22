@@ -40,7 +40,6 @@
 #' res <- mem_mcmc(trials$responses, trials$size)
 #' }
 #' @importFrom stats median
-#' @importFrom igraph graph_from_adjacency_matrix cluster_louvain E
 #' @importFrom crayon red
 #' @importFrom itertools isplitVector
 #' @export
@@ -59,7 +58,8 @@ mem_mcmc <- function(responses,
                      mcmc_iter = 10000,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
-                     call = NULL) {
+                     call = NULL,
+                     cluster_function = cluster_pep_membership) {
   set.seed(seed)
   k <- NULL
   if (is.null(getDoParName())) {
@@ -269,7 +269,7 @@ mem_mcmc <- function(responses,
   names(ret$ESS) <- MODEL$name
   class(ret) <- c("mem_basket", "mem")
   
-  clusterRet <- clusterComp(ret)
+  clusterRet <- clusterComp(ret, cluster_function)
   class(clusterRet) <- c("mem_cluster", "mem")
   result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
   class(result) <- c("mem_mcmc", "exchangeability_model")

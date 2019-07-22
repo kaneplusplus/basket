@@ -8,7 +8,8 @@ mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
   alternative = "greater", mcmc_iter = 10000,
-  initial_mem = round(prior - 0.001), seed = 1000, call = NULL)
+  initial_mem = round(prior - 0.001), seed = 1000, call = NULL,
+  cluster_function = cluster_pep_membership)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
