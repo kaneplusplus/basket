@@ -18,8 +18,10 @@ mem_exact <- function(responses,
                         ),
                       hpd_alpha = 0.05,
                       alternative = "greater",
+                      seed = 1000,
                       call = NULL,
                       cluster_function = cluster_pep_membership) {
+  set.seed(seed)
   h <- mod_i <- NULL
   if (is.null(getDoParName())) {
     registerDoSEQ()

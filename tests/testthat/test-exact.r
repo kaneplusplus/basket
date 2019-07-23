@@ -7,6 +7,7 @@ data(vemu_wide)
 
 fb_reference <- readRDS("reference_data/mem-exact.rds")
 
+
 baskets <- c(1, 2, 3)
 # baskets <- 1:6
 
