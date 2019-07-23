@@ -1,7 +1,7 @@
 
 #' @title Basket Trial Analysis
 #' @name basket-package
-#' @aliases basket-package basket
+#' @aliases basket-package
 #' @docType package
 #' @references Vemurafenib in multiple nonmelanoma cancers with braf v600 
 #' mutations Hyman DM, Puzanov I, Subbiah V, Faris JE, Chau I, Blay JY, 

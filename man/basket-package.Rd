@@ -3,7 +3,6 @@
 \docType{package}
 \name{basket-package}
 \alias{basket-package}
-\alias{basket}
 \title{Basket Trial Analysis}
 \description{
 The R basket package provides for the designs and analysis of 

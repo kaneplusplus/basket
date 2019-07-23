@@ -49,13 +49,14 @@ elsewhere.}
 \item{mcmc_iter}{if the method is "mcmc" then this spcifies the number of 
 MCMC iterations. Otherwise, it is ignored. (default 200000)}
 
+\item{mcmc_burnin}{if the method is "mcmc" then this specifies the number of
+burn-in iterations. (default 50000)}
+
 \item{initial_mem}{if the method is "mcmc" then this spcifies the initial 
 MEM matrix. Otherwise, it is ignored.}
 
-\item{seed}{the random number seed.}
-
-\item{if}{the method is "mcmc" then this specifies the number of
-burn-in iterations. (default 50000)}
+\item{seed}{if the method is "mcmc" then this the random number seed. 
+Otherwise, it is ignored.}
 }
 \description{
 This function creates an analysis modeling the exchangeability

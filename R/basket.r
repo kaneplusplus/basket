@@ -29,7 +29,7 @@
 #' (default "mcmc")
 #' @param mcmc_iter if the method is "mcmc" then this spcifies the number of 
 #' MCMC iterations. Otherwise, it is ignored. (default 200000)
-#' @param if the method is "mcmc" then this specifies the number of
+#' @param mcmc_burnin if the method is "mcmc" then this specifies the number of
 #' burn-in iterations. (default 50000)
 #' @param initial_mem if the method is "mcmc" then this spcifies the initial 
 #' MEM matrix. Otherwise, it is ignored.
@@ -86,14 +86,14 @@ basket <- function(responses,
 
   if (isTRUE(method %in% c("exact", "mcmc"))) {
     if (method == "exact") {
-      mem_exact(responses, size, name, p0 = p0, shape1 = shape1, shape2 = shape2,
-                prior = prior,
+      mem_exact(responses, size, name, p0 = p0, shape1 = shape1, 
+                shape2 = shape2, prior = prior,
                 hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
                 call = call, cluster_function = cluster_function)
     } else {
-      mem_mcmc(responses, size, name, p0 = p0, shape1 = shape1, shape2 = shap2,
-               prior = prior,
-               hpd_alpha = hpd_alpha, alternative = alternative, mcmc_iter = mcmc_iter,
+      mem_mcmc(responses, size, name, p0 = p0, shape1 = shape1, shape2 = shape2,
+               prior = prior, hpd_alpha = hpd_alpha, 
+               alternative = alternative, mcmc_iter = mcmc_iter,
                mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
                seed = seed, call = call,
                cluster_function = cluster_function)

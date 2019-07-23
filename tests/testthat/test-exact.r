@@ -37,7 +37,7 @@ fb <- exact_res$basket
 expect_equal(fb$PEP, fb_reference$basketwise$PEP)
 expect_equal(fb$HPD, fb_reference$basketwise$HPD, tolerance = 5e-2)
 expect_equal(fb$post.prob, fb_reference$basketwise$post.prob)
-expect_equal(fb$ESS, fb_reference$basketwise$ESS)
+expect_equal(fb$ESS, fb_reference$basketwise$ESS, tolerance = 5e-4)
 #summary(exact_res)
 #print(exact_res)
 
