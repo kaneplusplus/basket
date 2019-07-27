@@ -30,7 +30,6 @@ expect_true(class(print(summary(exact_res$basket))) == "mem_basket_summary")
 expect_true(class(summary(exact_res$cluster)) == "mem_cluster_summary")
 expect_true(class(print(summary(exact_res$cluster))) == "mem_cluster_summary")
 
-t <- sample_posterior(exact_res$basket)
 
 fb <- exact_res$basket
 
