@@ -73,7 +73,7 @@ mem_exact <- function(responses,
       "The length of the responses and size parameters",
       "must be equal."
     ))
-  }s
+  }
 
   if (length(shape1) == 1) {
     shape1 <- rep(shape1, length(responses))
