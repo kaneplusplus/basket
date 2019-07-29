@@ -343,13 +343,13 @@ sample_posterior_model <- function(model, num_samples = 100000){
 #' The approach creates a graph where each vertex is a cohort and the
 #' weight between two cohorts is determined by their posterior exchangeability
 #' probability. The graph is then clustered using \pkg{igraph}'s 
-#' \code{spinglass} function, which determines the number of clusters and
+#' \code{louvain} function, which determines the number of clusters and
 #' the cluster memberships, and has been shown to perform well with 
 #' real clinical data.
 #' @param PEP the posterior probability matrix.
 #' @return A factor variable with cluster memberships for each cohort in 
 #' the study.
-#' @importFrom igraph graph_from_adjacency_matrix E cluster_spinglass
+#' @importFrom igraph graph_from_adjacency_matrix E cluster_louvain
 #' @seealso basket mem_mcmc mem_exact
 #' @export
 cluster_pep_membership <- function(PEP) {
@@ -359,7 +359,7 @@ cluster_pep_membership <- function(PEP) {
       weighted = TRUE,
       diag = FALSE
     )
-  factor(cluster_spinglass(graph, weights = E(graph)$weight)$membership)
+  factor(cluster_louvain(graph, weights = E(graph)$weight)$membership)
 }
 
 clusterComp <- function(basketRet, cluster_function) {

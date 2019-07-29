@@ -19,7 +19,7 @@ This is the default function used to cluster cohorts in the
 The approach creates a graph where each vertex is a cohort and the
 weight between two cohorts is determined by their posterior exchangeability
 probability. The graph is then clustered using \pkg{igraph}'s 
-\code{spinglass} function, which determines the number of clusters and
+\code{louvain} function, which determines the number of clusters and
 the cluster memberships, and has been shown to perform well with 
 real clinical data.
 }
