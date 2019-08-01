@@ -57,16 +57,16 @@ print.mem_basket_summary <- function(x, ...) {
   print(a)
 
   # The Mean and Median Response Rates
-  cat_line("\nMean and Median Response Rates:")
+  cat_line("\nPosterior Mean and Median Response Rates:")
   print(round(x$mm_resp, 3))
 
   # The Highest Posterior Density Interval
-  cat_line("\nHighest Posterior Density Interval with Significance of ",
-    x$hpd_signif, ":")
+  cat_line("\nHighest Posterior Density Interval with Coverage Probability ",
+    1 - x$hpd_signif, ":")
   print(round(x$hpd, 3))
 
   # The Effective Sample Size
-  cat_line("\nThe Effective Sample Size:")
+  cat_line("\nPosterior Effective Sample Size:")
   em <- matrix(x$ess, nrow = 1, dimnames = list("", names(x$ess)))
   print(round(em, 3))
   cat_line("")
