@@ -1,5 +1,6 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
+install: travis_wait 30 mvn install
 language: R
 sudo: false
 cache: packages
@@ -8,3 +9,4 @@ r_packages:
   - testthat
 after_success:
   - Rscript -e 'covr::codecov()'
+
