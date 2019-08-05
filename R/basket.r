@@ -45,7 +45,6 @@
 #' burn-in period (see mcmc_burnin), which are discarded from the analysis.
 #' @examples
 #' \donttest{
-#' 
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
 #'
