@@ -1,9 +1,11 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-install: travis_wait 30 mvn install
 language: R
 sudo: false
 cache: packages
+script: -|
+  R CMD build .
+  travis_wait 30 R CMD check basket*tar.gz
 r_packages:
   - covr
   - testthat
