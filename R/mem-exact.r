@@ -45,7 +45,6 @@
 #' @importFrom crayon red
 #' @importFrom itertools isplitRows
 #' @export
-
 mem_exact <- function(responses,
                       size,
                       name,

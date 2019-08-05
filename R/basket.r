@@ -1,7 +1,6 @@
 
 #' @title Create a Basket Trial Analysis
 #'
-#' @aliases mem_mcmc mem_exact
 #' @description This function creates an analysis modeling the exchangeability
 #' and distribution characteristics of cohorts in a basket trial, where
 #' a single therapy is given to multiple cohorts. The model is based on the
