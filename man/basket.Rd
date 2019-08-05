@@ -2,8 +2,6 @@
 % Please edit documentation in R/basket.r
 \name{basket}
 \alias{basket}
-\alias{mem_mcmc}
-\alias{mem_exact}
 \title{Create a Basket Trial Analysis}
 \usage{
 basket(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
