@@ -3,7 +3,7 @@
 language: R
 sudo: false
 cache: packages
-script: -|
+script: - | 
   R CMD build .
   travis_wait 30 R CMD check basket*tar.gz
 r_packages:
