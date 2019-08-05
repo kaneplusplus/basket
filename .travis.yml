@@ -5,7 +5,8 @@ sudo: false
 cache: packages
 script: 
   - |
-    travis_wait 30 R CMD check --no--vignettes basket*tar.gz
+    travis_wait 30 R CMD build .
+    travis_wait 30 R CMD check basket*tar.gz
 r_packages:
   - covr
   - testthat
