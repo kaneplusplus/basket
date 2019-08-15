@@ -160,6 +160,7 @@ mem_exact <- function(responses,
 
   ## Marginal CDF and ESS ##
   # Here's where all of the compute goes.
+
   pweights <- foreach(
     j = seq_along(xvec),
     .combine = list,
@@ -174,7 +175,14 @@ mem_exact <- function(responses,
   HPD <- matrix(NA, 2, length(xvec))
   rownames(HPD) <- c("lower", "upper")
   colnames(HPD) <- name
-  models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])
+ 
+  if (length(xvec) == 2)
+  {
+    models <- cbind(rep(1, 2), mod.mat[[1]])
+  }else{
+    models <- cbind(rep(1, dim(mod.mat[[1]])[1]), mod.mat[[1]])    
+  }
+  
 
   post.prob[1] <-
     eval.Post(
@@ -198,40 +206,64 @@ mem_exact <- function(responses,
   )
 
   K <- length(xvec)
-  for (j in 2:(K - 1)) {
-    Ii <- c(j, 1:(j - 1), (j + 1):K)
-    post.prob[j] <-
-      eval.Post(
-        p0[j],
-        xvec[Ii],
-        nvec[Ii],
-        models,
-        pweights[[j]],
-        shape1[j],
-        shape2[j],
-        alternative
-      )
-    # pESS[j] <-
-    #   pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
-    HPD[, j] <- boa.hpd(
-      replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
-                                 shape1[j], shape2[j])),
+  if (K > 2)
+  {
+    for (j in 2:(K - 1)) {
+      Ii <- c(j, 1:(j - 1), (j + 1):K)
+      post.prob[j] <-
+        eval.Post(p0[j],
+                  xvec[Ii],
+                  nvec[Ii],
+                  models,
+                  pweights[[j]],
+                  shape1[j],
+                  shape2[j],
+                  alternative)
+      # pESS[j] <-
+      #   pweights[[j]] %*% ESSi(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+      HPD[, j] <- boa.hpd(replicate(
+        10000,
+        samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
+                  shape1[j], shape2[j])
+      ),
       alp)
+    }
+    
+    j <- j + 1
+    Ii <- c(j, 1:(j - 1))
+    post.prob[j] <-
+      eval.Post(p0[j],
+                xvec[Ii],
+                nvec[Ii],
+                models,
+                pweights[[j]],
+                shape1[j],
+                shape2[j],
+                alternative)
+  } else{
+    j <- 2
+    Ii <- c(2, 1)
+    post.prob[j] <-
+      eval.Post(p0[j],
+                xvec[Ii],
+                nvec[Ii],
+                models,
+                pweights[[j]],
+                shape1[j],
+                shape2[j],
+                alternative)
+    
   }
-  j <- j + 1
-  Ii <- c(j, 1:(j - 1))
-  post.prob[j] <- eval.Post(p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
-                            shape1[j], shape2[j], alternative)
-
   # pESS[j] <- pweights[[j]] %*%
   #   ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
-
-  HPD[, j] <- boa.hpd(
-    replicate(10000, samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]], 
-                               shape1[j], shape2[j])),
-    alp
-  )
-
+  
+  HPD[, j] <- boa.hpd(replicate(
+    10000,
+    samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
+              shape1[j], shape2[j])
+  ),
+  alp)
+  
   if (missing(name)) {
     name <- paste("basket", seq_along(size))
   } else {
@@ -239,19 +271,19 @@ mem_exact <- function(responses,
       name <- as.character(name)
     }
     if (!is.character(name) ||
-      length(name) != length(size)) {
+        length(name) != length(size)) {
       stop(red(
         "The basket name argument must be a character vector with",
-        "one name per basket."))
+        "one name per basket."
+      ))
     }
   }
-
+  
   if (is.null(call)) {
     call <- match.call()
   }
   ret <-
-    list(
-      mod.mat = mod.mat,
+    list(mod.mat = mod.mat,
       maximizer = MAX,
       PRIOR = prior_inclusion,
       MAP = MAP,

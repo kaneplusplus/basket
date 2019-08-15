@@ -15,8 +15,14 @@ boa.hpd <- function(x, alpha) {
 }
 
 MEM.mat <- function(Indices, mod.mat, H) {
+  #browser()
   M <- matrix(NA, H, H)
   diag(M) <- rep(1, dim(M)[1])
+  if(H == 2)
+  {
+    M[1, 2] <- M[2, 1] <- mod.mat[[1]][Indices[1]]
+    return(M)
+  }
   for (i in seq_len(length(Indices) - 1)) {
     M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <- 
       mod.mat[[i]][Indices[i], ]
@@ -76,10 +82,18 @@ mem.j <- function(I, mod.mat, pr.Inclus, j, m) {
 }
 
 j.weight.1 <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
+  if(length(log.Marg)== 2)
+  {
+    I.m <- apply(Mod.I,
+                 MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+                 c(1, mod.mat[[1]][i])
+    )
+  }else{
   I.m <- apply(Mod.I,
     MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
     c(1, mod.mat[[1]][i, ])
   )
+  }
   ((exp(log.Marg) * PRIOR) %*% I.m) / sum(exp(log.Marg) * PRIOR)
 }
 
@@ -93,14 +107,36 @@ j.weight.j <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
 }
 
 j.weight.J <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
+  if(length(log.Marg)== 2)
+  {
+    I.m <- apply(Mod.I,
+                 MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+                 c(mod.mat[[1]][i], 1))
+  }else{
   I.m <- apply(Mod.I,
     MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
     c(mod.mat[[1]][i, ], 1)
-  )
+  )}
   ((exp(log.Marg) * PRIOR) %*% I.m) / sum(exp(log.Marg) * PRIOR)
 }
 
 post.Weights <- function(j, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
+  if(length(log.Marg)== 2)
+  {
+    if (j == 1) {
+      out <- vapply(1:2,
+                    FUN = j.weight.1, FUN.VALUE = NA_real_,
+                    Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
+      )
+    } else if (j == J) {
+      out <- vapply(1:2,
+                    FUN = j.weight.J, FUN.VALUE = NA_real_,
+                    Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
+      )
+    }
+    return(out)
+  }
+    
   if (j == 1) {
     out <- vapply(seq_len(nrow(mod.mat[[1]])),
       FUN = j.weight.1, FUN.VALUE = NA_real_,
