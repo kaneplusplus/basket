@@ -321,6 +321,7 @@ samp.Post <- function(X, N, Omega, w, a, b) {
   return(gen.Post(X, N, Omega[which(rmultinom(1, 1, w) == 1), ], a, b))
 }
 
+
 sample_posterior_model <- function(model, num_samples = 100000){   
   ret <- replicate(
     num_samples,
@@ -372,6 +373,22 @@ sample_posterior_model <- function(model, num_samples = 100000){
   ret
 }
 
+#' @importFrom stats rbeta
+samp_one_group <- function(X, N, a, b, num_samples = 100000) {
+  return(rbeta(num_samples, X + a, N - X + b))
+}
+
+#' @importFrom stats pbeta
+eval_post_one_group <- function(p0, X, N, a, b, alternative = "greater") {
+  alph <- a + X
+  beta <- b + N - X
+  if (alternative == "greater") {
+    out <- 1 - pbeta(p0, alph, beta)
+  } else {
+    out <- pbeta(p0, alph, beta)
+  }
+  return(out)
+}
 #' Cluster Baskets Base on their PEP's
 #'
 #' This is the default function used to cluster cohorts in the 
@@ -399,6 +416,7 @@ cluster_pep_membership <- function(PEP) {
 }
 
 clusterComp <- function(basketRet, cluster_function) {
+  nVec <- length(basketRet$size)
   PEP <- basketRet$PEP
   name <- basketRet$name
   p0 <- unique(basketRet$p0)
@@ -416,8 +434,13 @@ clusterComp <- function(basketRet, cluster_function) {
     clusterElement[[k]] <- cBasket
     cName <- c(cName, paste0("Cluster ", k))
 
-    sampV <- as.vector(allSamp[, rank])
-    sampleC[[k]] <- sampV
+    if(nVec == 1)
+    {
+      sampV <- as.vector(allSamp)
+    }else{
+      sampV <- as.vector(allSamp[, rank])
+    }
+    sampleC[[k]] <- sampV 
   }
   names(sampleC) <- cName
 

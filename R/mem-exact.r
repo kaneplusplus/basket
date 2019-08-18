@@ -85,9 +85,108 @@ mem_exact <- function(responses,
     isP0Vector <- FALSE
     p0 <- rep(p0, length(responses))
   }
+  
+  
+  size1 <- size[size != 0]
+  alp <- hpd_alpha
+  if(length(size1) < 1){
+    stop(red(
+      "The length of the responses must be equal or greater than 1"
+    ))
+  }
+  if(length(size1) == 1)
+  {
+    ind <- which(size != 0)
+    nVec <- length(size)
+    prior_inclusion <- prior
+    tM <- matrix(1, nVec, nVec) #diag(nVec)
+    colnames(tM) <- rownames(tM) <- name
+    if(nVec > 1)
+    {
+      tM[, ind] <- 0
+      tM[ind, ] <- 0
+      tM[ind, ind] <- 1
+    }
+    MAX <- MAP <- PEP <- tM 
+    pweights <- rep(0, nVec)
+    pweights[ind] <- 1
+    HPD <- matrix(NA, 2, nVec)
+    pESS <- post.prob <- rep(NA, nVec)
+    names(pESS) <- names(post.prob) <- name
+    rownames(HPD) <- c("lower", "upper")
+    colnames(HPD) <- name    
+    a <- shape1
+    b <- shape2
+    samp <- samp_one_group(responses[1], size[1], a[1], b[1])
+    HPD[, 1] <- boa.hpd(samp,alp)
+    pESS[1] <- a[1] + b[1] + size[1]
+    t<-eval_post_one_group(p0[1], responses[1], size[1], a[1], b[1], alternative)
+    post.prob[1] <- t 
+
+
+    if (nVec > 1)
+    {
+      for(i in 2:nVec){
+        sampG <- samp_one_group(responses[i], size[i], a[i], b[i])
+        samp <-cbind(samp, sampG)
+        HPD[, i] <- boa.hpd(sampG,alp)
+        pESS[i] <- a[i] + b[i] + size[i]
+        post.prob[i] <- eval_post_one_group(p0[i], responses[i], size[i], a[i], b[i], alternative)
+      }
+    }
+    if (is.null(call)) {
+      call <- match.call()
+    }
+    ret <-
+      list(maximizer = MAX,
+           PRIOR = prior_inclusion,
+           MAP = MAP,
+           PEP = PEP,
+           post.prob = post.prob,
+           #ESS = pESS,
+           HPD = HPD,
+           responses = responses,
+           size = size,
+           name = name,
+           p0 = p0,
+           alpha = hpd_alpha,
+           alternative = alternative,
+           pweights = pweights,
+           shape1 = shape1,
+           shape2 = shape2,
+           call = call
+      )
+    
+    ret$samples <- samp
+    if(nVec > 1)
+    {
+      ret$mean_est <- colMeans(ret$samples)
+      ret$median_est <- apply(ret$samples, 2, median)
+    }else{
+      ret$mean_est <- mean(ret$samples)
+      ret$median_est <- median(ret$samples)
+    }
+
+    
+    ret$ESS <- pESS
+    
+    class(ret) <- c("mem_basket", "mem")
+    clusterRet <- clusterComp(ret, cluster_function)
+    class(clusterRet) <- c("mem_cluster", "mem")
+    result <-
+      list(
+        call = call,
+        basket = ret,
+        cluster = clusterRet
+      )
+    class(result) <- c("mem_exact", "exchangeability_model")
+    return(result)
+  }
+  
+
 
   prior_inclusion <- prior
-  alp <- hpd_alpha
+
 
   xvec <- responses
   nvec <- size
