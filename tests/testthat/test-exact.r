@@ -41,7 +41,7 @@ expect_equal(fb$ESS, fb_reference$basketwise$ESS, tolerance = 5e-4)
 #summary(exact_res)
 #print(exact_res)
 
-res1 <- update(exact_res, p0=0.15)
+res1 <- update(exact_res, p0 = 0.15)
 expect_true(inherits(res1, "mem_exact"))
 
 expect_equal(basket_name(res1), c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"))

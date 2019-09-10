@@ -8,7 +8,8 @@ data(vemu_wide)
 mh1 <- mem_mcmc(responses = vemu_wide$responders, 
                 size = vemu_wide$evaluable,
                 name= vemu_wide$baskets,
-                p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15))
+                p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15),
+                mcmc_iter = 10000)
 
 expect_true(inherits(plot_density(mh1), "ggplot"))
 expect_true(inherits(plot_density(mh1$basket), "ggplot"))
