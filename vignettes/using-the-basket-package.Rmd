@@ -49,7 +49,7 @@ The table indicates an association between the number of prior therapies and the
 
 An MEM analysis is performed in the `basket` package using the `basket()` function. The exact variation provides results up to numerical precision and is appropriate for trials with few arms. The Markov-chain Monte Carlo (MCMC) variation scales to larger trials with results that are generally within 2-3 significant digits of the exact version (under the default number of iterations). Both the exact and MCMC analyses are performed by specifying the size, number of responders, and null response rate. 
 
-```{r}
+```{r, eval = FALSE}
 # Load the basket library.
 library(basket)
 
@@ -61,6 +61,16 @@ vemu_basket <- basket(responses = vemu_wide$responders,
                       size = vemu_wide$evaluable,
                       name = vemu_wide$baskets,
                       p0 = 0.15)
+
+# Show the trial diagnostics.
+summary(vemu_basket)
+```
+
+```{r, eval = TRUE, echo = FALSE, message = FALSE, warning = FALSE}
+# Load the basket library.
+library(basket)
+
+vemu_basket <- readRDS("vemu_basket.rds")
 
 # Show the trial diagnostics.
 summary(vemu_basket)
