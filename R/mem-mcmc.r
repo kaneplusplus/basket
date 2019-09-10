@@ -134,6 +134,7 @@ mem_mcmc <- function(responses,
         pESS[i] <- a[i] + b[i] + size[i]
         post.prob[i] <- eval_post_one_group(p0[i], responses[i], size[i], a[i], b[i], alternative)
       }
+      colnames(samp)<-name
     }
     if (is.null(call)) {
       call <- match.call()
