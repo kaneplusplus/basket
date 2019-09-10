@@ -1,9 +1,5 @@
-library(testthat)
-library(basket)
 
 context("Fit exact models")
-
-skip_on_ci()
 
 data(vemu_wide)
 

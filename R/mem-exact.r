@@ -120,7 +120,8 @@ mem_exact <- function(responses,
     samp <- samp_one_group(responses[1], size[1], a[1], b[1])
     HPD[, 1] <- boa.hpd(samp,alp)
     pESS[1] <- a[1] + b[1] + size[1]
-    t<-eval_post_one_group(p0[1], responses[1], size[1], a[1], b[1], alternative)
+    t<-eval_post_one_group(p0[1], responses[1], size[1], a[1], b[1], 
+                           alternative)
     post.prob[1] <- t 
 
 
@@ -131,7 +132,8 @@ mem_exact <- function(responses,
         samp <-cbind(samp, sampG)
         HPD[, i] <- boa.hpd(sampG,alp)
         pESS[i] <- a[i] + b[i] + size[i]
-        post.prob[i] <- eval_post_one_group(p0[i], responses[i], size[i], a[i], b[i], alternative)
+        post.prob[i] <- eval_post_one_group(p0[i], responses[i], size[i], 
+                                            a[i], b[i], alternative)
       }
       colnames(samp)<-name
     }
@@ -320,7 +322,7 @@ mem_exact <- function(responses,
                   shape2[j],
                   alternative)
       # pESS[j] <-
-      #   pweights[[j]] %*% ESSi(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
+      # pweights[[j]] %*% ESSi(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
       HPD[, j] <- boa.hpd(replicate(
         10000,
         samp.Post(xvec[Ii], nvec[Ii], models, pweights[[j]],
