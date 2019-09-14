@@ -17,7 +17,10 @@ exact_res <- mem_exact(
   name = vemu_wide1$baskets,
   p0 = 0.25
 )
+#plot_mem(exact_res, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
+#plot_pep(exact_res$basket)
 
+#
 expect_true(class(summary(exact_res)) == "mem_summary")
 expect_true(class(print(summary(exact_res))) == "mem_summary")
 

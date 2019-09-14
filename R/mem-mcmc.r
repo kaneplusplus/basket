@@ -375,7 +375,7 @@ mem_mcmc <- function(responses,
       alternative = alternative,
       shape1 = shape1,
       shape2 = shape2,
-      prior = prior,
+      PRIOR = prior,
       call = call
     )
   ret$mod_mat <- mod_mat

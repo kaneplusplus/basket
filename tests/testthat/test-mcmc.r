@@ -20,6 +20,9 @@ time_taken <- system.time({
     mcmc_iter = 100
   )
 })
+
+#plot_pep(mcmc_res1$basket)
+#plot_mem(mcmc_res1, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
 #cat("Seconds used: ", time_taken[3], "\n")
 #t <- sample_posterior(mcmc_res1$basket)
 
@@ -66,6 +69,7 @@ time_taken <- system.time({
     size = c(1),
     name = "Basket 1",
     p0 = 0.15, 
-    mcmc_iter = 100
+    mcmc_iter = 100,
+    mcmc_burnin = 100
   )
 })

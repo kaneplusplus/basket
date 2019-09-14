@@ -272,7 +272,7 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
   numC <- 0
   allPlot <- list()
   if (any(type == "prior")) {
-    mat <- round(x$prior, 3)
+    mat <- round(x$PRIOR, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
