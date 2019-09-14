@@ -44,3 +44,12 @@ expect_equal(basket_name(res1), c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"))
 
 expect_true(inherits(exact_res_up <- update_p0(exact_res, alternative = "less"),
                      "exchangeability_model"))
+
+time_taken <- system.time({
+  exact_res1 <- mem_exact(
+    responses = c(0),
+    size = c(1),
+    name = "Basket 1",
+    p0 = 0.15
+  )
+})
