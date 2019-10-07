@@ -62,7 +62,7 @@ mem_mcmc <- function(responses,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
                      call = NULL,
-                     cluster_function = cluster_pep_membership) {
+                     cluster_function = cluster_membership) {
   set.seed(seed)
   k <- NULL
   if (is.null(getDoParName())) {
