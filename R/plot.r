@@ -153,13 +153,18 @@ plot_pep.default <- function(x, ...) {
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient2 theme_minimal
 #' theme element_text coord_fixed scale_x_discrete scale_y_discrete
 #' geom_text labs guides element_blank guide_colorbar
-exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
+#' @importFrom RColorBrewer brewer.pal
+exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
                           expand = c(0.3, 0.3), text_size = 4,
                           legend_position = c(0.25, 0.8), draw_legend = TRUE,
                           basket_name_hoffset = 0, basket_name_hjust = 1) {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop(red("The matrix supplied must be symmetric in the",
              "values and names."))
+  }
+
+  if (length(palette) != 3) {
+    stop(red("The color palette must have three colors."))
   }
 
   for (i in 1:dim(mat)[1]) {
@@ -191,7 +196,7 @@ exchangeogram <- function(mat, low = "black", high = "red", mid = "orange",
   tG <- ggplot(mg, aes(V2, V1, fill = value)) +
     geom_tile(color = "white") +
     scale_fill_gradient2(
-      low = low, high = high, mid = mid,
+      low = palette[1], high = palette[3], mid = palette[2],
       midpoint = 0.5, limit = c(0, 1), space = "Lab",
       name = "Probability"
     ) +
@@ -374,12 +379,9 @@ plot_pep.mem <- function(x, ...) {
 #' for especially long basket names options are provided to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
-#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
-#'  (Default "black")}
-#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
-#'  (Default "red")}
-#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
-#'  (Default "orange")}
+#'  \item{[palette] }{The color palette of the exchangeogram. The palett should
+#'                    be 3 colors with the values correponding to low, medium,
+#'                    and high exchangeability respectively.}
 #'  \item{[expand] }{The proportion to expand the viewport
 #'  (Default expand = c(0.3, 0.3))}
 #'  \item{[text_size] }{The text size. (Default 4)}
@@ -434,4 +436,9 @@ plot_map.mem <- function(x, ...) {
       color = "#666666",
       face = "bold", size = 25, hjust = 0.5
     ))
+}
+
+#' @export
+plot.exchangeability_model <- function(x, ...) {
+  plot_mem(x, ...)
 }

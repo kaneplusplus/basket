@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.9.8
+Version: 0.9.9
 Authors@R: c(
   person(given = "Nan", 
          family = "Chen",
@@ -35,7 +35,8 @@ Imports:
     gridExtra,
     itertools,
     crayon,
-    cli
+    cli,
+    RColorBrewer
 LazyData: true
 Encoding: UTF-8
 RoxygenNote: 6.1.1
