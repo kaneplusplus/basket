@@ -10,3 +10,9 @@
 
 * Description now end with period.
 * \dontrun{} is now \donttest{}
+
+# basket 0.9.9
+
+* Better burnin and mcmc iteration defaults.
+* A plot function was added.
+* Exchangeogram color palette can now be specified by users.
