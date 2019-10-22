@@ -247,6 +247,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
   return(tG)
 }
 
+
 #' @title Plot the Prior, MAP, and PEP of a Basket Trial
 #' 
 #' @description: Plot the Prior, MAP, and PEP Matrices
@@ -277,7 +278,7 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
   numC <- 0
   allPlot <- list()
   if (any(type == "prior")) {
-    mat <- round(x$prior, 3)
+    mat <- round(x$PRIOR, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
@@ -379,9 +380,12 @@ plot_pep.mem <- function(x, ...) {
 #' for especially long basket names options are provided to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
-#'  \item{[palette] }{The color palette of the exchangeogram. The palett should
-#'                    be 3 colors with the values correponding to low, medium,
-#'                    and high exchangeability respectively.}
+#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
+#'  (Default "black")}
+#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
+#'  (Default "red")}
+#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
+#'  (Default "orange")}
 #'  \item{[expand] }{The proportion to expand the viewport
 #'  (Default expand = c(0.3, 0.3))}
 #'  \item{[text_size] }{The text size. (Default 4)}

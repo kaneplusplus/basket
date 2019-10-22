@@ -20,6 +20,9 @@ time_taken <- system.time({
     mcmc_iter = 100
   )
 })
+
+#plot_pep(mcmc_res1$basket)
+#plot_mem(mcmc_res1, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
 #cat("Seconds used: ", time_taken[3], "\n")
 #t <- sample_posterior(mcmc_res1$basket)
 
@@ -58,3 +61,15 @@ expect_equivalent(cluster_map(mcmc_res2), matrix(1, nrow = 3, ncol = 3))
 expect_true(is.matrix(cluster_pep(mcmc_res2)))
 expect_equivalent(basket_map(mcmc_res2), matrix(1, nrow = 3, ncol = 3))
 expect_true(is.matrix(basket_pep(mcmc_res2)))
+
+# Single basket test
+time_taken <- system.time({
+  mcmc_res3 <- mem_mcmc(
+    responses = c(0),
+    size = c(1),
+    name = "Basket 1",
+    p0 = 0.15, 
+    mcmc_iter = 100,
+    mcmc_burnin = 100
+  )
+})

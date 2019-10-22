@@ -19,7 +19,7 @@
 #' @param seed the random number seed.
 #' @param call the call of the function (default NULL).
 #' @param cluster_function a function to cluster baskets 
-#' @seealso cluster_pep_membership
+#' @seealso cluster_membership
 #' @importFrom stats rbinom
 #' @examples
 #' \donttest{
@@ -60,7 +60,7 @@ mem_exact <- function(responses,
                       alternative = "greater",
                       seed = 1000,
                       call = NULL,
-                      cluster_function = cluster_pep_membership) {
+                      cluster_function = cluster_membership) {
   set.seed(seed)
   h <- mod_i <- NULL
   if (is.null(getDoParName())) {

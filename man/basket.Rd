@@ -8,7 +8,7 @@ basket(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
   prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
   alternative = "greater", call = NULL,
-  cluster_function = cluster_pep_membership, method = "mcmc",
+  cluster_function = cluster_membership, method = "mcmc",
   mcmc_iter = 2e+05, mcmc_burnin = 50000, initial_mem = round(prior -
   0.001), seed = 1000)
 }

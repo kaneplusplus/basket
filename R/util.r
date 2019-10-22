@@ -389,7 +389,7 @@ eval_post_one_group <- function(p0, X, N, a, b, alternative = "greater") {
   }
   return(out)
 }
-#' Cluster Baskets Base on their PEP's
+#' Cluster Baskets Base on the matrix's
 #'
 #' This is the default function used to cluster cohorts in the 
 #' \code{basket}, \code{mem_mcmc}, and \code{mem_exact} functions. 
@@ -399,15 +399,15 @@ eval_post_one_group <- function(p0, X, N, a, b, alternative = "greater") {
 #' \code{louvain} function, which determines the number of clusters and
 #' the cluster memberships, and has been shown to perform well with 
 #' real clinical data.
-#' @param PEP the posterior probability matrix.
+#' @param m the adjacency matrix.
 #' @return A factor variable with cluster memberships for each cohort in 
 #' the study.
 #' @importFrom igraph graph_from_adjacency_matrix E cluster_louvain
 #' @seealso basket mem_mcmc mem_exact
 #' @export
-cluster_pep_membership <- function(PEP) {
+cluster_membership <- function(m) {
   graph <-
-    graph_from_adjacency_matrix(PEP,
+    graph_from_adjacency_matrix(m,
       mode = "undirected",
       weighted = TRUE,
       diag = FALSE
@@ -418,10 +418,12 @@ cluster_pep_membership <- function(PEP) {
 clusterComp <- function(basketRet, cluster_function) {
   nVec <- length(basketRet$size)
   PEP <- basketRet$PEP
+  MAP <- basketRet$MAP
   name <- basketRet$name
   p0 <- unique(basketRet$p0)
   allSamp <- basketRet$samples
-  result <- cluster_function(PEP)
+  #result <- cluster_function(PEP)
+  result <- cluster_function(MAP)
   numClusters <- length(levels(result))
 
   sampleC <- list()
