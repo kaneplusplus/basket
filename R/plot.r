@@ -94,22 +94,29 @@ plot_density.mem <- function(x, ...) {
 
 #' @title Plot the Posterior Exchangeability of a Basket Trial
 #'
-#' @description The posterior exchangeability of the baskets in an an 
+#' @description The posterior exchangeability of the baskets in a 
 #' MEM analysis can be visualized via an exchangeogram using this function.
-#' @param x the exchangeability model.
+#' 
+#' @param x \code{basket} element of the exchangeability model.
 #' @param ... other options passed to ggplot2 to alter the visual 
 #' characteristics of the plot. See Details for more information.
-#' @details The `plot_pep` attempts to place the basket names to the
+#' 
+#' @details The \code{plot_pep} function attempts to place the basket names to the
 #' left of the main diagonal in a way that makes it easy to read. However,
-#' for especially long basket names options are provided to ``fine tune''
+#' for especially long basket names options are provided. Here is a list of all 
+#' options available to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
-#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
-#'  (Default "black")}
-#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
-#'  (Default "red")}
-#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
-#'  (Default "orange")}
+#'  \item{[palette] }{A color palette consisting of 3 colors: the first 
+#'  corresponds to a low degree of exchangeability, the second to 50% 
+#'  exchangeability, and the third to a high degree of exchangeability. 
+#'  Interpolation between these colors is performed for intermediary 
+#'  degrees of exchangeability. 
+#'  \item{[text_color]}{A text string setting the color of the exchangeability 
+#'  values printed on the plot. (Default "white")}
+#'  \item{[tile_color]}{A text string setting the color of the edges of the 
+#'  tiles. (Default "white")}
+#'  (Default \code{RColorBrewer::brewer.pal(3, "BuGn")})}
 #'  \item{[expand] }{The proportion to expand the viewport
 #'  (Default expand = c(0.3, 0.3))}
 #'  \item{[text_size] }{The text size. (Default 4)}
@@ -130,7 +137,7 @@ plot_density.mem <- function(x, ...) {
 #'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
-#' plot_pep(mem_analysis)
+#' plot_pep(mem_analysis$basket)
 #' }
 #' @export
 plot_pep <- function(x, ...) {
@@ -157,7 +164,9 @@ plot_pep.default <- function(x, ...) {
 exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
                           expand = c(0.3, 0.3), text_size = 4,
                           legend_position = c(0.25, 0.8), draw_legend = TRUE,
-                          basket_name_hoffset = 0, basket_name_hjust = 1) {
+                          basket_name_hoffset = 0, basket_name_hjust = 1, 
+                          text_color = "white", 
+                          tile_color = "white") {
   if (!is.null(mat) && any(rownames(mat) != colnames(mat))) {
     stop(red("The matrix supplied must be symmetric in the",
              "values and names."))
@@ -194,7 +203,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
     y = seq_len(nrow(mat)), label = colnames(mat)
   )
   tG <- ggplot(mg, aes(V2, V1, fill = value)) +
-    geom_tile(color = "white") +
+    geom_tile(color = tile_color) +
     scale_fill_gradient2(
       low = palette[1], high = palette[3], mid = palette[2],
       midpoint = 0.5, limit = c(0, 1), space = "Lab",
@@ -213,7 +222,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
     scale_x_discrete(labels = NULL, expand = expand) +
     scale_y_discrete(labels = NULL) +
     geom_text(aes(V2, V1, label = value),
-      data = mg, color = "white",
+      data = mg, color = text_color,
       size = text_size
     ) + geom_text(aes(x = x, y = y, label = label),
       data = label_pos,
@@ -373,19 +382,25 @@ plot_pep.mem <- function(x, ...) {
 #' @description The Maximum A Posteriori Probability (MAP) of an MEM is the
 #' estimate of the exchangeability structure of a basket trial. This function
 #' visualizes this matrix as an exchangeogram.
-#' @param x the exchangeability model.
+#' 
+#' @param x \code{basket} element of the exchangeability model.
 #' @param ... other options passed to ggplot2 to alter the visual 
-#' @details The `plot_pep` attempts to place the basket names to the
+#' 
+#' @details The \code{plot_pep} function attempts to place the basket names to the
 #' left of the main diagonal in a way that makes it easy to read. However,
-#' for especially long basket names options are provided to ``fine tune''
+#' for especially long basket names options are provided. Here is a list of all 
+#' options available to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
-#'  \item{[low] }{The color corresponding to a low degree of exchangeability.
-#'  (Default "black")}
-#'  \item{[high] }{The color corresponding to a high degree of exchangeability.
-#'  (Default "red")}
-#'  \item{[mid] }{The color corresponding to 50\% exchangeability.
-#'  (Default "orange")}
+#'  \item{[palette] }{A color palette consisting of 3 colors: the first 
+#'  corresponds to a low degree of exchangeability, the second to 50% 
+#'  exchangeability, and the third to a high degree of exchangeability. 
+#'  Interpolation between these colors is performed for intermediary 
+#'  degrees of exchangeability. 
+#'  \item{[text_color]}{A text string setting the color of the exchangeability 
+#'  values printed on the plot. (Default "white")}
+#'  \item{[tile_color]}{A text string setting the color of the edges of the 
+#'  tiles. (Default "white")}
 #'  \item{[expand] }{The proportion to expand the viewport
 #'  (Default expand = c(0.3, 0.3))}
 #'  \item{[text_size] }{The text size. (Default 4)}
@@ -406,7 +421,7 @@ plot_pep.mem <- function(x, ...) {
 #'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
-#' plot_map(mem_analysis)
+#' plot_map(mem_analysis$basket)
 #' }
 #' @export
 plot_map <- function(x, ...) {
@@ -438,8 +453,9 @@ plot_map.mem <- function(x, ...) {
     theme(plot.title = element_text(
       # family = "Trebuchet MS",
       color = "#666666",
-      face = "bold", size = 25, hjust = 0.5
-    ))
+      face = "bold", size = 20, hjust = 0.5
+    ),
+    legend.position = "none")
 }
 
 #' @export

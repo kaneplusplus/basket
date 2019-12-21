@@ -7,27 +7,32 @@
 plot_pep(x, ...)
 }
 \arguments{
-\item{x}{the exchangeability model.}
+\item{x}{\code{basket} element of the exchangeability model.}
 
 \item{...}{other options passed to ggplot2 to alter the visual 
 characteristics of the plot. See Details for more information.}
 }
 \description{
-The posterior exchangeability of the baskets in an an 
+The posterior exchangeability of the baskets in a 
 MEM analysis can be visualized via an exchangeogram using this function.
 }
 \details{
-The `plot_pep` attempts to place the basket names to the
+The \code{plot_pep} function attempts to place the basket names to the
 left of the main diagonal in a way that makes it easy to read. However,
-for especially long basket names options are provided to ``fine tune''
+for especially long basket names options are provided. Here is a list of all 
+options available to ``fine tune''
 the visualizations. These auxiliary options include:
 \itemize{
- \item{[low] }{The color corresponding to a low degree of exchangeability.
- (Default "black")}
- \item{[high] }{The color corresponding to a high degree of exchangeability.
- (Default "red")}
- \item{[mid] }{The color corresponding to 50\% exchangeability.
- (Default "orange")}
+ \item{[palette] }{A color palette consisting of 3 colors: the first 
+ corresponds to a low degree of exchangeability, the second to 50% 
+ exchangeability, and the third to a high degree of exchangeability. 
+ Interpolation between these colors is performed for intermediary 
+ degrees of exchangeability. 
+ \item{[text_color]}{A text string setting the color of the exchangeability 
+ values printed on the plot. (Default "white")}
+ \item{[tile_color]}{A text string setting the color of the edges of the 
+ tiles. (Default "white")}
+ (Default \code{RColorBrewer::brewer.pal(3, "BuGn")})}
  \item{[expand] }{The proportion to expand the viewport
  (Default expand = c(0.3, 0.3))}
  \item{[text_size] }{The text size. (Default 4)}
@@ -49,6 +54,6 @@ mem_analysis <- mem_exact(vemu_wide$responders,
                           vemu_wide$evaluable,
                           vemu_wide$baskets)
 
-plot_pep(mem_analysis)
+plot_pep(mem_analysis$basket)
 }
 }
