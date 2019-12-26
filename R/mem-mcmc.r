@@ -21,6 +21,7 @@
 #' @param mcmc_burnin the number of MCMC Burn_in iterations.
 #' @param initial_mem the initial MEM matrix.
 #' @param seed the random number seed.
+#' @param cluster_analysis if the cluster analysis is conducted.
 #' @param call the call of the function.
 #' @param cluster_function a function to cluster baskets 
 #' @importFrom stats rbinom
@@ -61,6 +62,7 @@ mem_mcmc <- function(responses,
                      mcmc_burnin = 50000,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
+                     cluster_analysis = FALSE,
                      call = NULL,
                      cluster_function = cluster_membership) {
   set.seed(seed)
@@ -173,6 +175,8 @@ mem_mcmc <- function(responses,
     ret$ESS <- pESS
     
     class(ret) <- c("mem_basket", "mem")
+    if(cluster_analysis)
+    {
     clusterRet <- clusterComp(ret, cluster_function)
     class(clusterRet) <- c("mem_cluster", "mem")
     result <-
@@ -181,6 +185,14 @@ mem_mcmc <- function(responses,
         basket = ret,
         cluster = clusterRet
       )
+    }else{
+      result <-
+        list(
+          call = call,
+          basket = ret,
+          cluster = NA
+        )
+    }
     class(result) <- c("mem_exact", "exchangeability_model")
     return(result)
   }
@@ -398,10 +410,31 @@ mem_mcmc <- function(responses,
   ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
   names(ret$ESS) <- MODEL$name
   class(ret) <- c("mem_basket", "mem")
+
+  if(cluster_analysis)
+  {
+    clusterRet <- clusterComp(ret, cluster_function)
+    class(clusterRet) <- c("mem_cluster", "mem")
+    result <-
+      list(
+        call = call,
+        basket = ret,
+        cluster = clusterRet,
+        seed = seed
+      )
+  }else{
+    result <-
+      list(
+        call = call,
+        basket = ret,
+        cluster = NA,
+        seed = seed
+      )
+  }
   
-  clusterRet <- clusterComp(ret, cluster_function)
-  class(clusterRet) <- c("mem_cluster", "mem")
-  result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
+  # clusterRet <- clusterComp(ret, cluster_function)
+  # class(clusterRet) <- c("mem_cluster", "mem")
+  # result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
   class(result) <- c("mem_mcmc", "exchangeability_model")
   result
 }

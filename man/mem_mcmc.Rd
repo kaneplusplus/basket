@@ -8,7 +8,8 @@ mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
   shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
   length(responses), ncol = length(responses)), hpd_alpha = 0.05,
   alternative = "greater", mcmc_iter = 2e+05, mcmc_burnin = 50000,
-  initial_mem = round(prior - 0.001), seed = 1000, call = NULL,
+  initial_mem = round(prior - 0.001), seed = 1000,
+  cluster_analysis = FALSE, call = NULL,
   cluster_function = cluster_membership)
 }
 \arguments{
@@ -42,6 +43,8 @@ elsewhere.}
 \item{initial_mem}{the initial MEM matrix.}
 
 \item{seed}{the random number seed.}
+
+\item{cluster_analysis}{if the cluster analysis is conducted.}
 
 \item{call}{the call of the function.}
 

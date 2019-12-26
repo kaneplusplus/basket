@@ -60,6 +60,7 @@ data(vemu_wide)
 vemu_basket <- basket(responses = vemu_wide$responders,
                       size = vemu_wide$evaluable,
                       name = vemu_wide$baskets,
+                      cluster_analysis = TRUE,
                       p0 = 0.15)
 
 # Show the trial diagnostics.

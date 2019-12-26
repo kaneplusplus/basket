@@ -10,7 +10,7 @@ basket(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
   alternative = "greater", call = NULL,
   cluster_function = cluster_membership, method = "mcmc",
   mcmc_iter = 2e+05, mcmc_burnin = 50000, initial_mem = round(prior -
-  0.001), seed = 1000)
+  0.001), cluster_analysis = FALSE, seed = 1000)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -53,8 +53,7 @@ burn-in iterations. (default 50000)}
 \item{initial_mem}{if the method is "mcmc" then this spcifies the initial 
 MEM matrix. Otherwise, it is ignored.}
 
-\item{seed}{if the method is "mcmc" then this the random number seed. 
-Otherwise, it is ignored.}
+\item{cluster_analysis}{if the cluster analysis is conducted.}
 }
 \description{
 This function creates an analysis modeling the exchangeability

@@ -32,8 +32,7 @@
 #' burn-in iterations. (default 50000)
 #' @param initial_mem if the method is "mcmc" then this spcifies the initial 
 #' MEM matrix. Otherwise, it is ignored.
-#' @param seed if the method is "mcmc" then this the random number seed. 
-#' Otherwise, it is ignored.
+#' @param cluster_analysis if the cluster analysis is conducted.
 #' @details The model may be fit using either an exact calculation or via
 #' mcmc. The former conducts posterior inference through the entire set of 
 #' exchangeability relationships in the sample domain. This approach is 
@@ -81,6 +80,7 @@ basket <- function(responses,
                    mcmc_iter = 200000,
                    mcmc_burnin = 50000,
                    initial_mem = round(prior - 0.001),
+                   cluster_analysis = FALSE,
                    seed = 1000) {
 
   if (isTRUE(method %in% c("exact", "mcmc"))) {
@@ -88,13 +88,16 @@ basket <- function(responses,
       mem_exact(responses, size, name, p0 = p0, shape1 = shape1, 
                 shape2 = shape2, prior = prior,
                 hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
+                cluster_analysis = cluster_analysis,
                 call = call, cluster_function = cluster_function)
     } else {
       mem_mcmc(responses, size, name, p0 = p0, shape1 = shape1, shape2 = shape2,
                prior = prior, hpd_alpha = hpd_alpha, 
                alternative = alternative, mcmc_iter = mcmc_iter,
                mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
-               seed = seed, call = call,
+               seed = seed,
+               cluster_analysis = cluster_analysis,
+               call = call,
                cluster_function = cluster_function)
     }
   } else {

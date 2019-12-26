@@ -1,11 +1,20 @@
 
 #' @export
 summary.exchangeability_model <- function(object, ...) {
-  ret <- list(
-    call = object$call,
-    basket = summary(object$basket),
-    cluster = summary(object$cluster)
-  )
+  if (!is.na(object$cluster)[1]) {
+    ret <- list(
+      call = object$call,
+      basket = summary(object$basket),
+      cluster = summary(object$cluster)
+    )
+  } else{
+    ret <- list(
+      call = object$call,
+      basket = summary(object$basket),
+      cluster = NA
+    )
+  }
+
   class(ret) <- "mem_summary"
   ret
 }
@@ -22,8 +31,11 @@ print.mem_summary <- function(x, ...) {
   cat("\n")
   cat_line(rule(left = "The Basket Summary", col = "bold"))
   print(x$basket)
-  cat_line(rule(left = "The Cluster Summary", col = "bold"))
-  print(x$cluster)
+
+  if (!is.na(x$cluster)[1]) {
+    cat_line(rule(left = "The Cluster Summary", col = "bold"))
+    print(x$cluster)
+  }
   invisible(x)
 }
 
@@ -55,22 +67,24 @@ print.mem_basket_summary <- function(x, ...) {
   a <- round(rbind(x$null, x$post_prob), 3)
   rownames(a) <- c("Null", "Posterior Prob")
   print(a)
-
+  
+  
   # The Mean and Median Response Rates
   cat_line("\nPosterior Mean and Median Response Rates:")
   print(round(x$mm_resp, 3))
-
+  
   # The Highest Posterior Density Interval
   cat_line("\nHighest Posterior Density Interval with Coverage Probability ",
-    1 - x$hpd_signif, ":")
+           1 - x$hpd_signif,
+           ":")
   print(round(x$hpd, 3))
-
+  
   # The Effective Sample Size
   cat_line("\nPosterior Effective Sample Size:")
   em <- matrix(x$ess, nrow = 1, dimnames = list("", names(x$ess)))
   print(round(em, 3))
   cat_line("")
-
+  
   invisible(x)
 }
 
@@ -78,13 +92,16 @@ make_cluster_summary <- function(object) {
   mm <- rbind(object$mean_est, object$median_est)
   rownames(mm) <- c("Mean", "Median")
   ret <- list(
-    null = object$p0, post_prob = object$post.prob,
-    mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD,
-    ess = object$ESS,
-    alternative = object$alternative,
-    name = object$name,
-    cluster = object$cluster
-  )
+    null = object$p0,
+    post_prob = object$post.prob,
+    mm_resp = mm,
+    hpd_signif = object$alpha,
+    hpd = object$HPD,
+      ess = object$ESS,
+      alternative = object$alternative,
+      name = object$name,
+      cluster = object$cluster
+    )
   class(ret) <- "mem_cluster_summary"
   ret
 }
@@ -99,6 +116,9 @@ summary.mem_cluster <- function(object, ...) {
 #' @importFrom cli cat_line cat_print
 #' @export
 print.mem_cluster_summary <- function(x, ...) {
+  # if (is.na(x)){
+  #   return()
+  # }
   cat("\n")
   for (i in seq_along(x$cluster)) {
     cat(x$name[i])

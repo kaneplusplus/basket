@@ -17,6 +17,7 @@
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
 #' @param seed the random number seed.
+#' @param cluster_analysis if the cluster analysis is conducted.
 #' @param call the call of the function (default NULL).
 #' @param cluster_function a function to cluster baskets 
 #' @seealso cluster_membership
@@ -59,6 +60,7 @@ mem_exact <- function(responses,
                       hpd_alpha = 0.05,
                       alternative = "greater",
                       seed = 1000,
+                      cluster_analysis = FALSE,
                       call = NULL,
                       cluster_function = cluster_membership) {
   set.seed(seed)
@@ -174,20 +176,41 @@ mem_exact <- function(responses,
     ret$ESS <- pESS
     
     class(ret) <- c("mem_basket", "mem")
-    clusterRet <- clusterComp(ret, cluster_function)
-    class(clusterRet) <- c("mem_cluster", "mem")
-    result <-
-      list(
-        call = call,
-        basket = ret,
-        cluster = clusterRet
-      )
+    
+    if(cluster_analysis)
+    {
+      clusterRet <- clusterComp(ret, cluster_function)
+      class(clusterRet) <- c("mem_cluster", "mem")
+      result <-
+        list(
+          call = call,
+          basket = ret,
+          cluster = clusterRet
+        )
+    }else{
+      result <-
+        list(
+          call = call,
+          basket = ret,
+          cluster = NA
+        )
+    }
     class(result) <- c("mem_exact", "exchangeability_model")
     return(result)
   }
+    
+  #   clusterRet <- clusterComp(ret, cluster_function)
+  #   class(clusterRet) <- c("mem_cluster", "mem")
+  #   result <-
+  #     list(
+  #       call = call,
+  #       basket = ret,
+  #       cluster = clusterRet
+  #     )
+  #   class(result) <- c("mem_exact", "exchangeability_model")
+  #   return(result)
+  # }
   
-
-
   prior_inclusion <- prior
 
 
@@ -411,14 +434,25 @@ mem_exact <- function(responses,
   ret$median_est <- apply(ret$samples, 2, median)
   ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = hpd_alpha)
   class(ret) <- c("mem_basket", "mem")
-  clusterRet <- clusterComp(ret, cluster_function)
-  class(clusterRet) <- c("mem_cluster", "mem")
-  result <-
-    list(
-      call = call,
-      basket = ret,
-      cluster = clusterRet
-    )
+  
+  if(cluster_analysis)
+  {
+    clusterRet <- clusterComp(ret, cluster_function)
+    class(clusterRet) <- c("mem_cluster", "mem")
+    result <-
+      list(
+        call = call,
+        basket = ret,
+        cluster = clusterRet
+      )
+  }else{
+    result <-
+      list(
+        call = call,
+        basket = ret,
+        cluster = NA
+      )
+  }
   class(result) <- c("mem_exact", "exchangeability_model")
   return(result)
 }

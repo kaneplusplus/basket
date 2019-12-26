@@ -385,18 +385,17 @@ plot_pep.mem <- function(x, ...) {
 #' 
 #' @param x \code{basket} element of the exchangeability model.
 #' @param ... other options passed to ggplot2 to alter the visual 
-#' 
-#' @details The \code{plot_pep} function attempts to place the basket names to the
+#' @details The \code{plot_map} function attempts to place the basket names to the
 #' left of the main diagonal in a way that makes it easy to read. However,
 #' for especially long basket names options are provided. Here is a list of all 
 #' options available to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
-#'  \item{[palette] }{A color palette consisting of 3 colors: the first 
+#'  \item{[palette]}{A color palette consisting of 3 colors: the first 
 #'  corresponds to a low degree of exchangeability, the second to 50% 
 #'  exchangeability, and the third to a high degree of exchangeability. 
 #'  Interpolation between these colors is performed for intermediary 
-#'  degrees of exchangeability. 
+#'  degrees of exchangeability. }
 #'  \item{[text_color]}{A text string setting the color of the exchangeability 
 #'  values printed on the plot. (Default "white")}
 #'  \item{[tile_color]}{A text string setting the color of the edges of the 
