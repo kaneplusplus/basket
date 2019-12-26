@@ -16,6 +16,7 @@ time_taken <- system.time({
     responses = vemu_wide1$responders,
     size = vemu_wide1$evaluable,
     name = vemu_wide1$baskets,
+    cluster_analysis = TRUE,
     p0 = 0.15, 
     mcmc_iter = 100
   )

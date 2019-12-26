@@ -15,6 +15,7 @@ exact_res <- mem_exact(
   responses = vemu_wide1$responders,
   size = vemu_wide1$evaluable,
   name = vemu_wide1$baskets,
+  cluster_analysis = TRUE,
   p0 = 0.25
 )
 #plot_mem(exact_res, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
