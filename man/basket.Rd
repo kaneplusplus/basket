@@ -4,13 +4,26 @@
 \alias{basket}
 \title{Create a Basket Trial Analysis}
 \usage{
-basket(responses, size, name, p0 = 0.15, shape1 = 0.5, shape2 = 0.5,
-  prior = diag(length(responses))/2 + matrix(0.5, nrow =
-  length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", call = NULL,
-  cluster_function = cluster_membership, method = "mcmc",
-  mcmc_iter = 2e+05, mcmc_burnin = 50000, initial_mem = round(prior -
-  0.001), cluster_analysis = FALSE, seed = 1000)
+basket(
+  responses,
+  size,
+  name,
+  p0 = 0.15,
+  shape1 = 0.5,
+  shape2 = 0.5,
+  prior = diag(length(responses))/2 + matrix(0.5, nrow = length(responses), ncol =
+    length(responses)),
+  hpd_alpha = 0.05,
+  alternative = "greater",
+  call = NULL,
+  cluster_function = cluster_membership,
+  method = "mcmc",
+  mcmc_iter = 2e+05,
+  mcmc_burnin = 50000,
+  initial_mem = round(prior - 0.001),
+  cluster_analysis = FALSE,
+  seed = get_seed()
+)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}
@@ -45,7 +58,7 @@ elsewhere.}
 (default "mcmc")}
 
 \item{mcmc_iter}{if the method is "mcmc" then this spcifies the number of 
-MCMC iterations. Otherwise, it is ignored. (default 200000)}
+mcmc iterations. Otherwise, it is ignored. (default 200000)}
 
 \item{mcmc_burnin}{if the method is "mcmc" then this specifies the number of
 burn-in iterations. (default 50000)}
@@ -54,6 +67,10 @@ burn-in iterations. (default 50000)}
 MEM matrix. Otherwise, it is ignored.}
 
 \item{cluster_analysis}{if the cluster analysis is conducted.}
+
+\item{seed}{the random seed for the mcmc calculations. By default this is
+.Random.seed. If this value is not initialized, then it is first initialized
+with Sys.time() and then returned.}
 }
 \description{
 This function creates an analysis modeling the exchangeability

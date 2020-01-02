@@ -4,13 +4,25 @@
 \alias{mem_mcmc}
 \title{Fit the MEM Model using MCMC}
 \usage{
-mem_mcmc(responses, size, name, p0 = 0.15, shape1 = 0.5,
-  shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
-  length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", mcmc_iter = 2e+05, mcmc_burnin = 50000,
-  initial_mem = round(prior - 0.001), seed = 1000,
-  cluster_analysis = FALSE, call = NULL,
-  cluster_function = cluster_membership)
+mem_mcmc(
+  responses,
+  size,
+  name,
+  p0 = 0.15,
+  shape1 = 0.5,
+  shape2 = 0.5,
+  prior = diag(length(responses))/2 + matrix(0.5, nrow = length(responses), ncol =
+    length(responses)),
+  hpd_alpha = 0.05,
+  alternative = "greater",
+  mcmc_iter = 2e+05,
+  mcmc_burnin = 50000,
+  initial_mem = round(prior - 0.001),
+  seed = 1000,
+  cluster_analysis = FALSE,
+  call = NULL,
+  cluster_function = cluster_membership
+)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}

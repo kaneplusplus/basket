@@ -4,11 +4,22 @@
 \alias{mem_exact}
 \title{Fit the Exact MEM Model}
 \usage{
-mem_exact(responses, size, name, p0 = 0.15, shape1 = 0.5,
-  shape2 = 0.5, prior = diag(length(responses))/2 + matrix(0.5, nrow =
-  length(responses), ncol = length(responses)), hpd_alpha = 0.05,
-  alternative = "greater", seed = 1000, cluster_analysis = FALSE,
-  call = NULL, cluster_function = cluster_membership)
+mem_exact(
+  responses,
+  size,
+  name,
+  p0 = 0.15,
+  shape1 = 0.5,
+  shape2 = 0.5,
+  prior = diag(length(responses))/2 + matrix(0.5, nrow = length(responses), ncol =
+    length(responses)),
+  hpd_alpha = 0.05,
+  alternative = "greater",
+  seed = 1000,
+  cluster_analysis = FALSE,
+  call = NULL,
+  cluster_function = cluster_membership
+)
 }
 \arguments{
 \item{responses}{the number of responses in each basket.}

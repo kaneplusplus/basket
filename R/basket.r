@@ -1,4 +1,16 @@
 
+#' @title Get the Current Random Seed
+#' 
+#' @description Get the value of the current random seed. If one has not been
+#' initialized, then initialize it and return the new seed value.
+#' @export
+get_seed <- function() {
+  if (!exists('.Random.seed')) {
+    set.seed(as.integer(Sys.time()))
+  }
+  .Random.seed
+}
+
 #' @title Create a Basket Trial Analysis
 #'
 #' @description This function creates an analysis modeling the exchangeability
@@ -27,12 +39,15 @@
 #' @param method "mcmc" or "exact". See details for an explanation. 
 #' (default "mcmc")
 #' @param mcmc_iter if the method is "mcmc" then this spcifies the number of 
-#' MCMC iterations. Otherwise, it is ignored. (default 200000)
+#' mcmc iterations. Otherwise, it is ignored. (default 200000)
 #' @param mcmc_burnin if the method is "mcmc" then this specifies the number of
 #' burn-in iterations. (default 50000)
 #' @param initial_mem if the method is "mcmc" then this spcifies the initial 
 #' MEM matrix. Otherwise, it is ignored.
 #' @param cluster_analysis if the cluster analysis is conducted.
+#' @param seed the random seed for the mcmc calculations. By default this is
+#' .Random.seed. If this value is not initialized, then it is first initialized
+#' with Sys.time() and then returned.
 #' @details The model may be fit using either an exact calculation or via
 #' mcmc. The former conducts posterior inference through the entire set of 
 #' exchangeability relationships in the sample domain. This approach is 
@@ -81,7 +96,7 @@ basket <- function(responses,
                    mcmc_burnin = 50000,
                    initial_mem = round(prior - 0.001),
                    cluster_analysis = FALSE,
-                   seed = 1000) {
+                   seed = get_seed()) {
 
   if (isTRUE(method %in% c("exact", "mcmc"))) {
     if (method == "exact") {

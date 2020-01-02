@@ -12,7 +12,5 @@ mh1 <- mem_mcmc(responses = vemu_wide$responders,
 
 expect_true(inherits(plot_density(mh1), "ggplot"))
 expect_true(inherits(plot_density(mh1$basket), "ggplot"))
-expect_true(inherits(plot_density(mh1$cluster), "ggplot"))
-expect_true(inherits(plot_density(mh1$cluster), "ggplot"))
 expect_true(inherits(plot_mem(mh1, type = "prior"), "gtable"))
 
