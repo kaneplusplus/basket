@@ -25,10 +25,10 @@ License: LGPL-2
 Maintainer: Michael J. Kane <michael.kane@yale.edu>
 Imports: 
     GenSA,
-    foreach, 
-    ggplot2, 
-    stats, 
-    tibble, 
+    foreach,
+    ggplot2,
+    stats,
+    tibble,
     tidyr,
     dplyr,
     igraph,
@@ -36,7 +36,10 @@ Imports:
     itertools,
     crayon,
     cli,
-    RColorBrewer
+    RColorBrewer,
+    tidygraph,
+    ggraph,
+    rlang
 LazyData: true
 Encoding: UTF-8
 RoxygenNote: 7.0.2

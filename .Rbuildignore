@@ -12,3 +12,5 @@
 ^appveyor\.yml$
 ^codecov\.yml$
 basket.pdf
+^_ignore$
+^.*\.code-workspace$
