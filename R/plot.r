@@ -461,3 +461,84 @@ plot_map.mem <- function(x, ...) {
 plot.exchangeability_model <- function(x, ...) {
   plot_mem(x, ...)
 }
+
+
+#' @title Plot a Network Graph of the PEP Matrix
+#' @param x the exchangeability model.
+#' @param color_by which variable to color by. One of "post_prob",
+#'   "mean_est", "median_est".
+#' @param layout the layout algorithm to use for the graph. One of
+#'   
+#' @param pep_cutoff a value between 0 and 1 indicating the cutoff for
+#'   PEP above which edges of the graph will be drawn.
+#' @examples
+#' \donttest{
+#' # Create an MEM analysis of the Vemurafenib trial data.
+#' data(vemu_wide)
+#'
+#' mem_analysis <- mem_exact(vemu_wide$responders,
+#'                           vemu_wide$evaluable,
+#'                           vemu_wide$baskets)
+#'
+#' plot_pop_graph(mem_analysis)
+#' }
+#' @importFrom tibble tibble
+#' @importFrom tidygraph as_tbl_graph activate left_join filter
+#' @importFrom ggraph ggraph geom_edge_link geom_node_point geom_node_label
+#' @importFrom ggplot2 scale_color_viridis_c
+#' @importFrom rlang .data
+#' @export
+plot_pep_graph <- function(x,
+  color_by = c("post_prob", "mean_est", "median_est"),
+  layout = c("fr", "nicely", "kk", "drl"),
+  pep_cutoff = 0
+) {
+  pep <- x$basket$PEP
+  color_by <- match.arg(color_by)
+  layout <- match.arg(layout)
+
+  node_attrs <- tibble::tibble(
+    name = x$basket$name,
+    post_prob = x$basket$post.prob,
+    responses = x$basket$responses,
+    size = x$basket$size,
+    p0 = x$basket$p0,
+    mean_est = x$basket$mean_est,
+    median_est = x$basket$median_est
+  )
+
+  graph <- tidygraph::as_tbl_graph(pep, directed = FALSE) %>%
+    tidygraph::activate("nodes") %>%
+    tidygraph::left_join(node_attrs, by = "name")
+
+  legend_name <- c(
+    mean_est = "Mean\nResponse\nRate",
+    median_est = "Median\nResponse\nRate",
+    post_prob = "Posterior\nProbability"
+  )
+
+  graph <- graph %>%
+    tidygraph::activate("edges") %>%
+    tidygraph::filter(.data$weight >= !!pep_cutoff)
+
+  # if (igraph::gsize(graph) == 0) {
+  #   message("After filtering for pep >= ", pep_cutoff,
+  #     ", the size of the graph is 0...")
+  #   return(ggplot())
+  # }
+
+  #  plot_pep_graph: no visible binding for global variable ‘nodes’
+  #  plot_pep_graph: no visible binding for global variable ‘edges’
+  #  plot_pep_graph: no visible binding for global variable ‘weight’
+  #  plot_pep_graph: no visible binding for global variable ‘.data’
+  #  plot_pep_graph: no visible binding for global variable ‘name’
+
+  ggraph::ggraph(graph, layout = layout, weights = .data$weight) +
+    ggraph::geom_edge_link(color = "gray", alpha = 0.6, aes(width = .data$weight)) +
+    ggraph::geom_node_point(aes(color = .data[[color_by]]), size = 7) +
+    ggraph::geom_node_label(aes(label = .data$name), nudge_y = 0.15,
+      label.size = NA, hjust = "inward", alpha = 0.6) +
+    ggplot2::scale_color_viridis_c(option = "plasma",
+      name = legend_name[color_by]) +
+    ggraph::scale_edge_width_continuous(name = "PEP")
+}

@@ -15,7 +15,7 @@ mem_mcmc(
     length(responses)),
   hpd_alpha = 0.05,
   alternative = "greater",
-  mcmc_iter = 2e+05,
+  mcmc_iter = 200000,
   mcmc_burnin = 50000,
   initial_mem = round(prior - 0.001),
   seed = 1000,
