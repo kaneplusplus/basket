@@ -480,7 +480,7 @@ plot.exchangeability_model <- function(x, ...) {
 #'                           vemu_wide$evaluable,
 #'                           vemu_wide$baskets)
 #'
-#' plot_pop_graph(mem_analysis)
+#' plot_pep_graph(mem_analysis)
 #' }
 #' @importFrom tibble tibble
 #' @importFrom tidygraph as_tbl_graph activate left_join filter
@@ -526,12 +526,6 @@ plot_pep_graph <- function(x,
   #     ", the size of the graph is 0...")
   #   return(ggplot())
   # }
-
-  #  plot_pep_graph: no visible binding for global variable ‘nodes’
-  #  plot_pep_graph: no visible binding for global variable ‘edges’
-  #  plot_pep_graph: no visible binding for global variable ‘weight’
-  #  plot_pep_graph: no visible binding for global variable ‘.data’
-  #  plot_pep_graph: no visible binding for global variable ‘name’
 
   ggraph::ggraph(graph, layout = layout, weights = .data$weight) +
     ggraph::geom_edge_link(color = "gray", alpha = 0.6, aes(width = .data$weight)) +
