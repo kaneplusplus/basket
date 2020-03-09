@@ -13,8 +13,8 @@ plot_density(x, ...)
 }
 \description{
 The MEM analysis calculates the probability of exchangeability
-of baskets and clusters in a basket trial. This function creates density 
-plots of the response rates of each basket or each cluster under the MEM 
+of baskets and clusters in a basket trial. This function creates density
+plots of the response rates of each basket or each cluster under the MEM
 design taking into account the extent to which power can be borrowed from
 similar trials.
 }
@@ -29,9 +29,11 @@ the type can be specified. In this case, the default is
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
-mem_analysis <- mem_exact(vemu_wide$responders,
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+mem_analysis <- mem_exact(
+  vemu_wide$responders,
+  vemu_wide$evaluable,
+  vemu_wide$baskets
+)
 
 plot_density(mem_analysis)
 }

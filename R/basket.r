@@ -1,11 +1,11 @@
 
 #' @title Get the Current Random Seed
-#' 
+#'
 #' @description Get the value of the current random seed. If one has not been
 #' initialized, then initialize it and return the new seed value.
 #' @export
 get_seed <- function() {
-  if (!exists('.Random.seed')) {
+  if (!exists(".Random.seed")) {
     set.seed(as.integer(Sys.time()))
   }
   .Random.seed
@@ -16,8 +16,8 @@ get_seed <- function() {
 #' @description This function creates an analysis modeling the exchangeability
 #' and distribution characteristics of cohorts in a basket trial, where
 #' a single therapy is given to multiple cohorts. The model is based on the
-#' multi-source exchangeability model. This is a generalization of the 
-#' Bayesian hierarchical model and it accomodates multiple sets of latent 
+#' multi-source exchangeability model. This is a generalization of the
+#' Bayesian hierarchical model and it accomodates multiple sets of latent
 #' factors shared combinations of cohorts.
 #' @param responses the number of responses in each basket.
 #' @param size the size of each basket.
@@ -36,26 +36,26 @@ get_seed <- function() {
 #' @param alternative the alternative case definition (default "greater").
 #' @param call the call of the function. (default NULL)
 #' @param cluster_function a function to cluster baskets.
-#' @param method "mcmc" or "exact". See details for an explanation. 
+#' @param method "mcmc" or "exact". See details for an explanation.
 #' (default "mcmc")
-#' @param mcmc_iter if the method is "mcmc" then this spcifies the number of 
+#' @param mcmc_iter if the method is "mcmc" then this spcifies the number of
 #' mcmc iterations. Otherwise, it is ignored. (default 200000)
 #' @param mcmc_burnin if the method is "mcmc" then this specifies the number of
 #' burn-in iterations. (default 50000)
-#' @param initial_mem if the method is "mcmc" then this spcifies the initial 
+#' @param initial_mem if the method is "mcmc" then this spcifies the initial
 #' MEM matrix. Otherwise, it is ignored.
 #' @param cluster_analysis if the cluster analysis is conducted.
 #' @param seed the random seed for the mcmc calculations. By default this is
 #' .Random.seed. If this value is not initialized, then it is first initialized
 #' with Sys.time() and then returned.
 #' @details The model may be fit using either an exact calculation or via
-#' mcmc. The former conducts posterior inference through the entire set of 
-#' exchangeability relationships in the sample domain. This approach is 
+#' mcmc. The former conducts posterior inference through the entire set of
+#' exchangeability relationships in the sample domain. This approach is
 #' computationally feasible only when the number of cohorts is relatively
 #' small. As a rule of thumb this option should be used with a maximum of
-#' 20 cohorts.  By default, the latter (mcmc) is used and it is based on 
-#' the Metropolis algorithm and it extends the model's implementation to 
-#' larger collections of subpopulations. The algorithm initiates with a 
+#' 20 cohorts.  By default, the latter (mcmc) is used and it is based on
+#' the Metropolis algorithm and it extends the model's implementation to
+#' larger collections of subpopulations. The algorithm initiates with a
 #' burn-in period (see mcmc_burnin), which are discarded from the analysis.
 #' @examples
 #' \donttest{
@@ -77,16 +77,17 @@ get_seed <- function() {
 #' }
 #' @importFrom crayon red
 #' @export
-basket <- function(responses, 
-                   size, 
-                   name, 
-                   p0 = 0.15, 
-                   shape1 = 0.5, 
-                   shape2 = 0.5, 
+basket <- function(responses,
+                   size,
+                   name,
+                   p0 = 0.15,
+                   shape1 = 0.5,
+                   shape2 = 0.5,
                    prior = diag(length(responses)) / 2 +
                      matrix(0.5,
-                            nrow = length(responses),
-                            ncol = length(responses)),
+                       nrow = length(responses),
+                       ncol = length(responses)
+                     ),
                    hpd_alpha = 0.05,
                    alternative = "greater",
                    call = NULL,
@@ -97,23 +98,26 @@ basket <- function(responses,
                    initial_mem = round(prior - 0.001),
                    cluster_analysis = FALSE,
                    seed = get_seed()) {
-
   if (isTRUE(method %in% c("exact", "mcmc"))) {
     if (method == "exact") {
-      mem_exact(responses, size, name, p0 = p0, shape1 = shape1, 
-                shape2 = shape2, prior = prior,
-                hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
-                cluster_analysis = cluster_analysis,
-                call = call, cluster_function = cluster_function)
+      mem_exact(responses, size, name,
+        p0 = p0, shape1 = shape1,
+        shape2 = shape2, prior = prior,
+        hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
+        cluster_analysis = cluster_analysis,
+        call = call, cluster_function = cluster_function
+      )
     } else {
-      mem_mcmc(responses, size, name, p0 = p0, shape1 = shape1, shape2 = shape2,
-               prior = prior, hpd_alpha = hpd_alpha, 
-               alternative = alternative, mcmc_iter = mcmc_iter,
-               mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
-               seed = seed,
-               cluster_analysis = cluster_analysis,
-               call = call,
-               cluster_function = cluster_function)
+      mem_mcmc(responses, size, name,
+        p0 = p0, shape1 = shape1, shape2 = shape2,
+        prior = prior, hpd_alpha = hpd_alpha,
+        alternative = alternative, mcmc_iter = mcmc_iter,
+        mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
+        seed = seed,
+        cluster_analysis = cluster_analysis,
+        call = call,
+        cluster_function = cluster_function
+      )
     }
   } else {
     stop(red("Unsupported method."))
@@ -129,10 +133,10 @@ basket <- function(responses,
 #' \donttest{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
-#' 
+#'
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
-#' 
+#'
 #' # The trials: a column of the number of responses and a column of the
 #' # the size of each trial.
 #' trials <- data.frame(
@@ -150,7 +154,8 @@ sample_posterior <- function(model, num_samples = 10000) {
 sample_posterior.default <- function(model, num_samples = 10000) {
   stop(red(
     "Don't know how to sample posterior from an object of type",
-    paste(class(model), collapse = ", "), "."))
+    paste(class(model), collapse = ", "), "."
+  ))
 }
 
 sample_posterior.mem <- function(model, num_samples = 10000) {
@@ -166,10 +171,10 @@ sample_posterior.mem <- function(model, num_samples = 10000) {
 #' \donttest{
 #' # 3 baskets, each with enrollement size 5
 #' trial_sizes <- rep(5, 3)
-#' 
+#'
 #' # The response rates for the baskets.
 #' resp_rate <- 0.15
-#' 
+#'
 #' # The trials: a column of the number of responses and a column of the
 #' # the size of each trial.
 #' trials <- data.frame(
@@ -177,7 +182,7 @@ sample_posterior.mem <- function(model, num_samples = 10000) {
 #'   size = trial_sizes,
 #'   name = paste("Basket", seq_len(3))
 #' )
-#' 
+#'
 #' basket_name(mem_mcmc(trials$responses, trials$size, trials$basket))
 #' }
 #' @export

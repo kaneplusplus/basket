@@ -30,10 +30,12 @@ Plot a Network Graph of the PEP Matrix
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
-mem_analysis <- mem_exact(vemu_wide$responders,
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+mem_analysis <- mem_exact(
+  vemu_wide$responders,
+  vemu_wide$evaluable,
+  vemu_wide$baskets
+)
 
-plot_pop_graph(mem_analysis)
+plot_pep_graph(mem_analysis)
 }
 }

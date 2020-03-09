@@ -18,7 +18,7 @@ basket(
   call = NULL,
   cluster_function = cluster_membership,
   method = "mcmc",
-  mcmc_iter = 200000,
+  mcmc_iter = 2e+05,
   mcmc_burnin = 50000,
   initial_mem = round(prior - 0.001),
   cluster_analysis = FALSE,
@@ -54,16 +54,16 @@ elsewhere.}
 
 \item{cluster_function}{a function to cluster baskets.}
 
-\item{method}{"mcmc" or "exact". See details for an explanation. 
+\item{method}{"mcmc" or "exact". See details for an explanation.
 (default "mcmc")}
 
-\item{mcmc_iter}{if the method is "mcmc" then this spcifies the number of 
+\item{mcmc_iter}{if the method is "mcmc" then this spcifies the number of
 mcmc iterations. Otherwise, it is ignored. (default 200000)}
 
 \item{mcmc_burnin}{if the method is "mcmc" then this specifies the number of
 burn-in iterations. (default 50000)}
 
-\item{initial_mem}{if the method is "mcmc" then this spcifies the initial 
+\item{initial_mem}{if the method is "mcmc" then this spcifies the initial
 MEM matrix. Otherwise, it is ignored.}
 
 \item{cluster_analysis}{if the cluster analysis is conducted.}
@@ -76,19 +76,19 @@ with Sys.time() and then returned.}
 This function creates an analysis modeling the exchangeability
 and distribution characteristics of cohorts in a basket trial, where
 a single therapy is given to multiple cohorts. The model is based on the
-multi-source exchangeability model. This is a generalization of the 
-Bayesian hierarchical model and it accomodates multiple sets of latent 
+multi-source exchangeability model. This is a generalization of the
+Bayesian hierarchical model and it accomodates multiple sets of latent
 factors shared combinations of cohorts.
 }
 \details{
 The model may be fit using either an exact calculation or via
-mcmc. The former conducts posterior inference through the entire set of 
-exchangeability relationships in the sample domain. This approach is 
+mcmc. The former conducts posterior inference through the entire set of
+exchangeability relationships in the sample domain. This approach is
 computationally feasible only when the number of cohorts is relatively
 small. As a rule of thumb this option should be used with a maximum of
-20 cohorts.  By default, the latter (mcmc) is used and it is based on 
-the Metropolis algorithm and it extends the model's implementation to 
-larger collections of subpopulations. The algorithm initiates with a 
+20 cohorts.  By default, the latter (mcmc) is used and it is based on
+the Metropolis algorithm and it extends the model's implementation to
+larger collections of subpopulations. The algorithm initiates with a
 burn-in period (see mcmc_burnin), which are discarded from the analysis.
 }
 \examples{

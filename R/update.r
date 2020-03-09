@@ -13,9 +13,11 @@
 #' # Create an MEM analysis of the Vemurafenib trial data.
 #' data(vemu_wide)
 #'
-#' mem_analysis <- mem_exact(vemu_wide$responders,
-#'                           vemu_wide$evaluable,
-#'                           vemu_wide$baskets)
+#' mem_analysis <- mem_exact(
+#'   vemu_wide$responders,
+#'   vemu_wide$evaluable,
+#'   vemu_wide$baskets
+#' )
 #'
 #' # Update the null from p0 = 0.15 the default, to p = 0.25.
 #' update_p0(mem_analysis, 0.20)
@@ -68,45 +70,44 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
     ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
   } else {
     stop(
-      red("Argument `res` should be of either type `mem_mcmc` or `mem_exact`."))
+      red("Argument `res` should be of either type `mem_mcmc` or `mem_exact`.")
+    )
   }
 
   # cluster
   # This pattern appears in at least one other place. Should it be a function?
-#  retB <- ret$basket
-#  sampleC <- ret$cluster$samples
-#  numClusters <- length(ret$cluster$name)
-#  p0Test <- unique(retB$p0)
-#  allCDF <- matrix(0, 0, numClusters)
-#  for (kk in seq_along(p0Test)) {
-#    if (retB$alternative == "greater") {
-#      res1 <- unlist(lapply(
-#        seq_len(numClusters),
-#        FUN = function(j, x, t) {
-#          return(sum(x[[j]] > t) / length(x[[j]]))
-#        },
-#        x = sampleC,
-#        t = p0Test[kk]
-#      ))
-#    } else if (retB$alternative == "less") {
-#      res1 <- unlist(lapply(
-#        seq_len(numClusters),
-#        FUN = function(j, x, t) {
-#          return(sum(x[[j]] > t) / length(x[[j]]))
-#        },
-#        x = sampleC,
-#        t = p0Test[kk]
-#      ))
-#    } else {
-#      stop(red("Alternative must be either \"greater\" or \"less\"."))
-#    }
-#    allCDF <- rbind(allCDF, res1)
-#  }
-#  colnames(allCDF) <- ret$cluster$name
-#  rownames(allCDF) <- p0Test
-#  ret$cluster$post.prob <- allCDF
+  #  retB <- ret$basket
+  #  sampleC <- ret$cluster$samples
+  #  numClusters <- length(ret$cluster$name)
+  #  p0Test <- unique(retB$p0)
+  #  allCDF <- matrix(0, 0, numClusters)
+  #  for (kk in seq_along(p0Test)) {
+  #    if (retB$alternative == "greater") {
+  #      res1 <- unlist(lapply(
+  #        seq_len(numClusters),
+  #        FUN = function(j, x, t) {
+  #          return(sum(x[[j]] > t) / length(x[[j]]))
+  #        },
+  #        x = sampleC,
+  #        t = p0Test[kk]
+  #      ))
+  #    } else if (retB$alternative == "less") {
+  #      res1 <- unlist(lapply(
+  #        seq_len(numClusters),
+  #        FUN = function(j, x, t) {
+  #          return(sum(x[[j]] > t) / length(x[[j]]))
+  #        },
+  #        x = sampleC,
+  #        t = p0Test[kk]
+  #      ))
+  #    } else {
+  #      stop(red("Alternative must be either \"greater\" or \"less\"."))
+  #    }
+  #    allCDF <- rbind(allCDF, res1)
+  #  }
+  #  colnames(allCDF) <- ret$cluster$name
+  #  rownames(allCDF) <- p0Test
+  #  ret$cluster$post.prob <- allCDF
 
   return(ret)
 }
-
-

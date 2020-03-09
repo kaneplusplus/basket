@@ -15,20 +15,19 @@ boa.hpd <- function(x, alpha) {
 }
 
 MEM.mat <- function(Indices, mod.mat, H) {
-  #browser()
+  # browser()
   M <- matrix(NA, H, H)
   diag(M) <- rep(1, dim(M)[1])
-  if(H == 2)
-  {
+  if (H == 2) {
     M[1, 2] <- M[2, 1] <- mod.mat[[1]][Indices[1]]
     return(M)
   }
   for (i in seq_len(length(Indices) - 1)) {
-    M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <- 
+    M[(i + 1):dim(M)[2], i] <- M[i, (i + 1):dim(M)[2]] <-
       mod.mat[[i]][Indices[i], ]
   }
-  M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <- 
-    c(0, 1)[ Indices[length(Indices)] ]
+  M[dim(M)[2], i + 1] <- M[i + 1, dim(M)[2]] <-
+    c(0, 1)[Indices[length(Indices)]]
   M
 }
 
@@ -36,13 +35,13 @@ logMarg.Dens <- function(I, mod.mat, xvec, nvec, avec, bvec) {
   M <- MEM.mat(I, mod.mat, length(xvec))
   marg.vec <- rep(NA, dim(M)[1])
   # calculate the product portion of integrated marginal likelihood
-  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec) 
+  prod.vec <- beta(xvec + avec, nvec + bvec - xvec) / beta(avec, bvec)
   for (i in 1:dim(M)[1]) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
-    marg.vec[i] <- (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% 
-      (nvec - xvec)) / beta(avec[i], bvec[i])) * 
+    marg.vec[i] <- (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*%
+      (nvec - xvec)) / beta(avec[i], bvec[i])) *
       p.vec
-  } 
+  }
   sum(log(marg.vec))
 }
 
@@ -55,7 +54,7 @@ ESS <- function(X, N, Omega, a, b) {
 
 mem.Prior <- function(I, mod.mat, pr.Inclus) {
   M <- MEM.mat(I, mod.mat, nrow(pr.Inclus))
-  mem <- M[ upper.tri(M) ]
+  mem <- M[upper.tri(M)]
   source.vec <- pr.Inclus[upper.tri(pr.Inclus)]
   s.in <- source.vec # source inclusion probability
   s.ex <- 1 - source.vec # source exclusion probability
@@ -72,8 +71,10 @@ ij.pep <- function(j, Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR) {
 }
 
 compPEP <- function(i, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
-  vapply((i + 1):J, FUN = ij.pep, FUN.VALUE = NA_real_,
-         Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR)
+  vapply((i + 1):J,
+    FUN = ij.pep, FUN.VALUE = NA_real_,
+    Mod.I, mod.mat, pr.Inclus, i, log.Marg, PRIOR
+  )
 }
 
 mem.j <- function(I, mod.mat, pr.Inclus, j, m) {
@@ -82,17 +83,16 @@ mem.j <- function(I, mod.mat, pr.Inclus, j, m) {
 }
 
 j.weight.1 <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
-  if(length(log.Marg)== 2)
-  {
+  if (length(log.Marg) == 2) {
     I.m <- apply(Mod.I,
-                 MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
-                 c(1, mod.mat[[1]][i])
+      MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+      c(1, mod.mat[[1]][i])
     )
-  }else{
-  I.m <- apply(Mod.I,
-    MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
-    c(1, mod.mat[[1]][i, ])
-  )
+  } else {
+    I.m <- apply(Mod.I,
+      MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+      c(1, mod.mat[[1]][i, ])
+    )
   }
   ((exp(log.Marg) * PRIOR) %*% I.m) / sum(exp(log.Marg) * PRIOR)
 }
@@ -107,36 +107,36 @@ j.weight.j <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
 }
 
 j.weight.J <- function(i, Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR) {
-  if(length(log.Marg)== 2)
-  {
+  if (length(log.Marg) == 2) {
     I.m <- apply(Mod.I,
-                 MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
-                 c(mod.mat[[1]][i], 1))
-  }else{
-  I.m <- apply(Mod.I,
-    MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
-    c(mod.mat[[1]][i, ], 1)
-  )}
+      MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+      c(mod.mat[[1]][i], 1)
+    )
+  } else {
+    I.m <- apply(Mod.I,
+      MARGIN = 1, FUN = mem.j, mod.mat, pr.Inclus, j,
+      c(mod.mat[[1]][i, ], 1)
+    )
+  }
   ((exp(log.Marg) * PRIOR) %*% I.m) / sum(exp(log.Marg) * PRIOR)
 }
 
 post.Weights <- function(j, J, Mod.I, mod.mat, pr.Inclus, log.Marg, PRIOR) {
-  if(length(log.Marg)== 2)
-  {
+  if (length(log.Marg) == 2) {
     if (j == 1) {
       out <- vapply(1:2,
-                    FUN = j.weight.1, FUN.VALUE = NA_real_,
-                    Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
+        FUN = j.weight.1, FUN.VALUE = NA_real_,
+        Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
       )
     } else if (j == J) {
       out <- vapply(1:2,
-                    FUN = j.weight.J, FUN.VALUE = NA_real_,
-                    Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
+        FUN = j.weight.J, FUN.VALUE = NA_real_,
+        Mod.I, mod.mat, pr.Inclus, j, log.Marg, PRIOR
       )
     }
     return(out)
   }
-    
+
   if (j == 1) {
     out <- vapply(seq_len(nrow(mod.mat[[1]])),
       FUN = j.weight.1, FUN.VALUE = NA_real_,
@@ -208,10 +208,10 @@ calc.ESS.from.HPD <- function(fit, alpha) {
 
 flip.MEM <- function(v, MOld, M) {
   out <- MOld
-  if (MOld[ which(M == v)[1] ] == 1) {
-    out[ which(M == v) ] <- 0
+  if (MOld[which(M == v)[1]] == 1) {
+    out[which(M == v)] <- 0
   } else {
-    out[ which(M == v) ] <- 1
+    out[which(M == v)] <- 1
   }
   out
 }
@@ -234,20 +234,23 @@ I.models <- function(hh, models, Samp) {
   } else {
     Ii <- c(hh, 1:(hh - 1), (hh + 1):K)
   }
-  which(apply(models, MARGIN = 1,
-              FUN = function(x, t) {
-                sum(x == t)
-              },
-              t = Samp[hh, Ii]) == K)
+  which(apply(models,
+    MARGIN = 1,
+    FUN = function(x, t) {
+      sum(x == t)
+    },
+    t = Samp[hh, Ii]
+  ) == K)
 }
 
 models.Count <- function(Samp, models) {
   out <- matrix(0, nrow(models), ncol(models))
   u <- vapply(seq_len(ncol(models)),
-              FUN = I.models,
-              FUN.VALUE = NA_integer_,
-              models = models,
-              Samp = Samp)
+    FUN = I.models,
+    FUN.VALUE = NA_integer_,
+    models = models,
+    Samp = Samp
+  )
   for (i in seq_along(u)) {
     out[u[i], i] <- 1
   }
@@ -256,7 +259,6 @@ models.Count <- function(Samp, models) {
 
 #' @importFrom crayon red
 mem.PostProb <- function(model, fit) {
-  
   if (model$alternative == "greater") {
     out <-
       vapply(
@@ -283,7 +285,7 @@ mem.PostProb <- function(model, fit) {
   else {
     stop(red("Alternative must be either \"greater\" or \"less\"."))
   }
-  
+
   names(out) <- model$name
   return(out)
 }
@@ -322,7 +324,7 @@ samp.Post <- function(X, N, Omega, w, a, b) {
 }
 
 
-sample_posterior_model <- function(model, num_samples = 100000){   
+sample_posterior_model <- function(model, num_samples = 100000) {
   ret <- replicate(
     num_samples,
     samp.Post(
@@ -336,21 +338,23 @@ sample_posterior_model <- function(model, num_samples = 100000){
   )
   K <- length(model$responses)
   if (K > 2) {
-    ret <- rbind(ret,
-                 foreach(j = seq_len(K - 1)[-1], .combine = rbind) %do% {
-                   Ii <- c(j, seq_len(j-1), (j + 1):K)
-                   replicate(
-                     num_samples,
-                     samp.Post(
-                       model$responses[Ii],
-                       model$size[Ii],
-                       model$models,
-                       model$pweights[[j]],
-                       model$shape1[j],
-                       model$shape2[j]
-                     )
-                   )
-                 })
+    ret <- rbind(
+      ret,
+      foreach(j = seq_len(K - 1)[-1], .combine = rbind) %do% {
+        Ii <- c(j, seq_len(j - 1), (j + 1):K)
+        replicate(
+          num_samples,
+          samp.Post(
+            model$responses[Ii],
+            model$size[Ii],
+            model$models,
+            model$pweights[[j]],
+            model$shape1[j],
+            model$shape2[j]
+          )
+        )
+      }
+    )
   }
   j <- K
   Ii <- c(j, 1:(j - 1))
@@ -391,16 +395,16 @@ eval_post_one_group <- function(p0, X, N, a, b, alternative = "greater") {
 }
 #' Cluster Baskets Base on the matrix's
 #'
-#' This is the default function used to cluster cohorts in the 
-#' \code{basket}, \code{mem_mcmc}, and \code{mem_exact} functions. 
+#' This is the default function used to cluster cohorts in the
+#' \code{basket}, \code{mem_mcmc}, and \code{mem_exact} functions.
 #' The approach creates a graph where each vertex is a cohort and the
 #' weight between two cohorts is determined by their posterior exchangeability
-#' probability. The graph is then clustered using \pkg{igraph}'s 
+#' probability. The graph is then clustered using \pkg{igraph}'s
 #' \code{louvain} function, which determines the number of clusters and
-#' the cluster memberships, and has been shown to perform well with 
+#' the cluster memberships, and has been shown to perform well with
 #' real clinical data.
 #' @param m the adjacency matrix.
-#' @return A factor variable with cluster memberships for each cohort in 
+#' @return A factor variable with cluster memberships for each cohort in
 #' the study.
 #' @importFrom igraph graph_from_adjacency_matrix E cluster_louvain
 #' @seealso basket mem_mcmc mem_exact
@@ -422,7 +426,7 @@ clusterComp <- function(basketRet, cluster_function) {
   name <- basketRet$name
   p0 <- unique(basketRet$p0)
   allSamp <- basketRet$samples
-  #result <- cluster_function(PEP)
+  # result <- cluster_function(PEP)
   result <- cluster_function(MAP)
   numClusters <- length(levels(result))
 
@@ -436,18 +440,17 @@ clusterComp <- function(basketRet, cluster_function) {
     clusterElement[[k]] <- cBasket
     cName <- c(cName, paste0("Cluster ", k))
 
-    if(nVec == 1)
-    {
+    if (nVec == 1) {
       sampV <- as.vector(allSamp)
-    }else{
+    } else {
       sampV <- as.vector(allSamp[, rank])
     }
-    sampleC[[k]] <- sampV 
+    sampleC[[k]] <- sampV
   }
   names(sampleC) <- cName
 
   ret <- basketRet
-  ret$p0<-unique(ret$p0)
+  ret$p0 <- unique(ret$p0)
   ret$name <- cName
   ret$cluster <- clusterElement
   ret$samples <- sampleC
@@ -512,28 +515,32 @@ update.MH <- function(MOld,
                       Prior.EP,
                       betaV, oldDens, prod.vec) {
   K <- max(M, na.rm = TRUE) + 1
-  v <- sample(seq_len(K-1), 
-    seq_len(K-1)[which(rmultinom(1, 1, 
-      (rev(seq_len(K-1)) ^ 3) / sum(rev(seq_len(K-1)) ^ 3)) == 1)])
-  
+  v <- sample(
+    seq_len(K - 1),
+    seq_len(K - 1)[which(rmultinom(
+      1, 1,
+      (rev(seq_len(K - 1))^3) / sum(rev(seq_len(K - 1))^3)
+    ) == 1)]
+  )
+
   MProp <- flip.MEM(v[1], MOld, M)
   if (length(v) > 1) {
     for (ii in seq_along(v)[-1]) {
       MProp <- flip.MEM(v[ii], MProp, M)
     }
   }
-  
+
   if (is.na(oldDens)) {
-    oldDens <- 
-      logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec)+ 
+    oldDens <-
+      logMarg.DensMCMC(MOld, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) +
       log(mem.Prior.Mat(MOld, mod.mat, Prior.EP))
   }
   newDens <-
-    logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) + 
+    logMarg.DensMCMC(MProp, mod.mat, xvec, nvec, avec, bvec, betaV, prod.vec) +
     log(mem.Prior.Mat(MProp, mod.mat, Prior.EP))
-  
+
   rho <- exp(newDens - oldDens)
-  
+
   # cat(rho, rho1, xvec,nvec, avec, bvec)
   if (rho >= 1) {
     oldDens <- newDens
@@ -549,18 +556,16 @@ update.MH <- function(MOld,
   list(out, oldDens)
 }
 
-logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV, 
+logMarg.DensMCMC <- function(M, mod.mat, xvec, nvec, avec, bvec, betaV,
                              prod.vec) {
-
   marg.vec <- rep(NA, dim(M)[1])
-  
+
   # calculate the product portion of integrated marginal likelihood
   for (i in seq_len(dim(M)[1])) {
     p.vec <- prod(prod.vec^(1 - M[i, ]))
     marg.vec[i] <-
       (beta(avec[i] + M[i, ] %*% xvec, bvec[i] + M[i, ] %*% (nvec - xvec)) /
-         betaV[i]) * p.vec
+        betaV[i]) * p.vec
   }
   sum(log(marg.vec))
 }
-

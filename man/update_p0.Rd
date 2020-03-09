@@ -25,9 +25,11 @@ alternative rerunning relevant test.
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
-mem_analysis <- mem_exact(vemu_wide$responders,
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+mem_analysis <- mem_exact(
+  vemu_wide$responders,
+  vemu_wide$evaluable,
+  vemu_wide$baskets
+)
 
 # Update the null from p0 = 0.15 the default, to p = 0.25.
 update_p0(mem_analysis, 0.20)

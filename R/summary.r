@@ -7,7 +7,7 @@ summary.exchangeability_model <- function(object, ...) {
       basket = summary(object$basket),
       cluster = summary(object$cluster)
     )
-  } else{
+  } else {
     ret <- list(
       call = object$call,
       basket = summary(object$basket),
@@ -67,24 +67,26 @@ print.mem_basket_summary <- function(x, ...) {
   a <- round(rbind(x$null, x$post_prob), 3)
   rownames(a) <- c("Null", "Posterior Prob")
   print(a)
-  
-  
+
+
   # The Mean and Median Response Rates
   cat_line("\nPosterior Mean and Median Response Rates:")
   print(round(x$mm_resp, 3))
-  
+
   # The Highest Posterior Density Interval
-  cat_line("\nHighest Posterior Density Interval with Coverage Probability ",
-           1 - x$hpd_signif,
-           ":")
+  cat_line(
+    "\nHighest Posterior Density Interval with Coverage Probability ",
+    1 - x$hpd_signif,
+    ":"
+  )
   print(round(x$hpd, 3))
-  
+
   # The Effective Sample Size
   cat_line("\nPosterior Effective Sample Size:")
   em <- matrix(x$ess, nrow = 1, dimnames = list("", names(x$ess)))
   print(round(em, 3))
   cat_line("")
-  
+
   invisible(x)
 }
 
@@ -97,11 +99,11 @@ make_cluster_summary <- function(object) {
     mm_resp = mm,
     hpd_signif = object$alpha,
     hpd = object$HPD,
-      ess = object$ESS,
-      alternative = object$alternative,
-      name = object$name,
-      cluster = object$cluster
-    )
+    ess = object$ESS,
+    alternative = object$alternative,
+    name = object$name,
+    cluster = object$cluster
+  )
   class(ret) <- "mem_cluster_summary"
   ret
 }

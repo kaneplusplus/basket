@@ -11,12 +11,12 @@ cluster_baskets(x)
 }
 \value{
 A named list is returned where the name is the cluster name and
-each element of the list is comprise do a character vector of the 
+each element of the list is comprise do a character vector of the
 baskets in each cluster.
 }
 \description{
 Object returned by the `mem_mcmc()` and `mem_exact()` include
-information about the arms in the trials and the cluster 
+information about the arms in the trials and the cluster
 composed of sets of similar arms. This function returns the name
 of each arm in a cluster.
 }
@@ -25,9 +25,11 @@ of each arm in a cluster.
 # Create an MEM analysis of the Vemurafenib trial data.
 data(vemu_wide)
 
-mem_analysis <- mem_exact(vemu_wide$responders, 
-                          vemu_wide$evaluable,
-                          vemu_wide$baskets)
+mem_analysis <- mem_exact(
+  vemu_wide$responders,
+  vemu_wide$evaluable,
+  vemu_wide$baskets
+)
 
 # Get the baskets in the clusters.
 cluster_baskets(mem_analysis)

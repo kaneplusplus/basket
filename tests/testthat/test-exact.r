@@ -18,8 +18,8 @@ exact_res <- mem_exact(
   cluster_analysis = TRUE,
   p0 = 0.25
 )
-#plot_mem(exact_res, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
-#plot_pep(exact_res$basket)
+# plot_mem(exact_res, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
+# plot_pep(exact_res$basket)
 
 #
 expect_true(class(summary(exact_res)) == "mem_summary")
@@ -38,16 +38,18 @@ expect_equal(fb$PEP, fb_reference$basketwise$PEP)
 expect_equal(fb$HPD, fb_reference$basketwise$HPD, tolerance = 5e-2)
 expect_equal(fb$post.prob, fb_reference$basketwise$post.prob)
 expect_equal(fb$ESS, fb_reference$basketwise$ESS, tolerance = 5e-4)
-#summary(exact_res)
-#print(exact_res)
+# summary(exact_res)
+# print(exact_res)
 
 res1 <- update(exact_res, p0 = 0.15)
 expect_true(inherits(res1, "mem_exact"))
 
 expect_equal(basket_name(res1), c("NSCLC", "CRC (vemu)", "CRC (vemu+cetu)"))
 
-expect_true(inherits(exact_res_up <- update_p0(exact_res, alternative = "less"),
-                     "exchangeability_model"))
+expect_true(inherits(
+  exact_res_up <- update_p0(exact_res, alternative = "less"),
+  "exchangeability_model"
+))
 
 time_taken <- system.time({
   exact_res1 <- mem_exact(
