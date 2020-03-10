@@ -10,7 +10,7 @@ mh1 <- mem_mcmc(
   name = vemu_wide$baskets,
   p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15),
   mcmc_iter = 100,
-  mcmc_burning = 100
+  mcmc_burnin = 100
 )
 
 mh2 <- update_p0(mh1, 0.25)
