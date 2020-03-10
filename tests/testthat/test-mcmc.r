@@ -17,6 +17,7 @@ time_taken <- system.time({
     name = vemu_wide1$baskets,
     cluster_analysis = TRUE,
     p0 = 0.15,
+    mcmc_burnin = 1000,
     mcmc_iter = 100
   )
 })
@@ -31,7 +32,8 @@ test_that("Exact corner case models", {
       name = vemu_wide1$baskets,
       cluster_analysis = TRUE,
       p0 = 0.15,
-      mcmc_iter = 100
+      mcmc_iter = 100,
+      mcmc_burnin = 100
     )
 
   mcmc_res2 <- mem_mcmc(
@@ -39,6 +41,7 @@ test_that("Exact corner case models", {
     size = c(10, 3, 0),
     name = letters[1:3],
     cluster_analysis = TRUE,
+    mcmc_burnin = 100,
     p0 = 0.25)
 
   mcmc_res3 <- mem_mcmc(
@@ -46,6 +49,7 @@ test_that("Exact corner case models", {
     size = c(10, 3),
     name = letters[1:2],
     cluster_analysis = TRUE,
+    mcmc_burnin = 100,
     p0 = 0.25)
 
   mcmc_res3 <- mem_mcmc(
@@ -53,6 +57,7 @@ test_that("Exact corner case models", {
     size = c(10, 3),
     name = letters[1:2],
     cluster_analysis = FALSE,
+    mcmc_burnin = 100,
     p0 = 0.25)
 
   expect_equal(mcmc_res1$basket[-10], mcmc_res1_basket$basket[-10], 

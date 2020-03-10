@@ -9,7 +9,8 @@ mh1 <- mem_mcmc(
   name = vemu_wide$baskets,
   cluster_analysis = TRUE,
   p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15),
-  mcmc_iter = 10000
+  mcmc_iter = 500,
+  mcmc_burnin = 100
 )
 
 expect_true(inherits(plot_density(mh1), "ggplot"))
