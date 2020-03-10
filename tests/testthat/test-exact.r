@@ -18,40 +18,45 @@ exact_res <- mem_exact(
   p0 = 0.25
 )
 
-exact_res_basket <- basket(
-  responses = vemu_wide1$responders,
-  size = vemu_wide1$evaluable,
-  name = vemu_wide1$baskets,
-  cluster_analysis = TRUE,
-  p0 = 0.25,
-  method = "exact")
+test_that("Exact corner case models", {
 
-exact_res2 <- mem_exact(
-  responses = c(4, 3, 0),
-  size = c(10, 3, 0),
-  name = letters[1:3],
-  cluster_analysis = TRUE,
-  p0 = 0.25)
+  skip_on_cran()
 
-exact_res3 <- mem_exact(
-  responses = c(4, 3),
-  size = c(10, 3),
-  name = letters[1:2],
-  cluster_analysis = TRUE,
-  p0 = 0.25)
+  exact_res_basket <- basket(
+    responses = vemu_wide1$responders,
+    size = vemu_wide1$evaluable,
+    name = vemu_wide1$baskets,
+    cluster_analysis = TRUE,
+    p0 = 0.25,
+    method = "exact")
 
-exact_res3 <- mem_exact(
-  responses = c(4, 3),
-  size = c(10, 3),
-  name = letters[1:2],
-  cluster_analysis = FALSE,
-  p0 = 0.25)
+  exact_res2 <- mem_exact(
+    responses = c(4, 3, 0),
+    size = c(10, 3, 0),
+    name = letters[1:3],
+    cluster_analysis = TRUE,
+    p0 = 0.25)
 
-# Remove the call and check for equality.
-expect_equal(exact_res$basket[-18], 
-             exact_res_basket$basket[-18], 
-             tolerance = 0.5)
+  exact_res3 <- mem_exact(
+    responses = c(4, 3),
+    size = c(10, 3),
+    name = letters[1:2],
+    cluster_analysis = TRUE,
+    p0 = 0.25)
 
+  exact_res3 <- mem_exact(
+    responses = c(4, 3),
+    size = c(10, 3),
+    name = letters[1:2],
+    cluster_analysis = FALSE,
+    p0 = 0.25)
+
+  # Remove the call and check for equality.
+  expect_equal(exact_res$basket[-18], 
+               exact_res_basket$basket[-18], 
+               tolerance = 0.5)
+
+})
 
 expect_true(class(summary(exact_res)) == "mem_summary")
 expect_true(class(print(summary(exact_res))) == "mem_summary")
@@ -61,7 +66,6 @@ expect_true(class(print(summary(exact_res$basket))) == "mem_basket_summary")
 
 expect_true(class(summary(exact_res$cluster)) == "mem_cluster_summary")
 expect_true(class(print(summary(exact_res$cluster))) == "mem_cluster_summary")
-
 
 fb <- exact_res$basket
 

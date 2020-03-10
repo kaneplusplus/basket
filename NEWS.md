@@ -21,3 +21,7 @@
 
 * Code was restructured to be more readable.
 * Multiple bug fixes.
+
+# basket 0.10.1
+
+* Testing changed to take less time on CRAN.

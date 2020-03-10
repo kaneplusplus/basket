@@ -21,38 +21,44 @@ time_taken <- system.time({
   )
 })
 
-mcmc_res1_basket <- 
-  basket(responses = vemu_wide1$responders,
-    size = vemu_wide1$evaluable,
-    name = vemu_wide1$baskets,
+test_that("Exact corner case models", {
+
+  skip_on_cran()
+
+  mcmc_res1_basket <- 
+    basket(responses = vemu_wide1$responders,
+      size = vemu_wide1$evaluable,
+      name = vemu_wide1$baskets,
+      cluster_analysis = TRUE,
+      p0 = 0.15,
+      mcmc_iter = 100
+    )
+
+  mcmc_res2 <- mem_mcmc(
+    responses = c(4, 3, 0),
+    size = c(10, 3, 0),
+    name = letters[1:3],
     cluster_analysis = TRUE,
-    p0 = 0.15,
-    mcmc_iter = 100
-  )
+    p0 = 0.25)
 
-mcmc_res2 <- mem_mcmc(
-  responses = c(4, 3, 0),
-  size = c(10, 3, 0),
-  name = letters[1:3],
-  cluster_analysis = TRUE,
-  p0 = 0.25)
+  mcmc_res3 <- mem_mcmc(
+    responses = c(4, 3),
+    size = c(10, 3),
+    name = letters[1:2],
+    cluster_analysis = TRUE,
+    p0 = 0.25)
 
-mcmc_res3 <- mem_mcmc(
-  responses = c(4, 3),
-  size = c(10, 3),
-  name = letters[1:2],
-  cluster_analysis = TRUE,
-  p0 = 0.25)
+  mcmc_res3 <- mem_mcmc(
+    responses = c(4, 3),
+    size = c(10, 3),
+    name = letters[1:2],
+    cluster_analysis = FALSE,
+    p0 = 0.25)
 
-mcmc_res3 <- mem_mcmc(
-  responses = c(4, 3),
-  size = c(10, 3),
-  name = letters[1:2],
-  cluster_analysis = FALSE,
-  p0 = 0.25)
+  expect_equal(mcmc_res1$basket[-10], mcmc_res1_basket$basket[-10], 
+               tolerance = 0.5)
 
-expect_equal(mcmc_res1$basket[-10], mcmc_res1_basket$basket[-10], 
-             tolerance = 0.5)
+})
 
 expect_true(is.matrix(cluster_map(mcmc_res1)))
 

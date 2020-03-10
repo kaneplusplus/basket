@@ -9,3 +9,4 @@
 
 * This is a new release.
 * This release fixes bugs and restructures code so that it is more readable.
+* This release runs a subset of tests on CRAN in order to run more quickly.
