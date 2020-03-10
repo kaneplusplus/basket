@@ -71,6 +71,12 @@ summary(vemu_basket)
 # Load the basket library.
 library(basket)
 
+# vemu_basket$basket$samples <- vemu_basket$basket$samples[1:5000]
+# vemu_basket$cluster$samples[[1]] <- vemu_basket$cluster$samples[[1]][1:2000]
+# vemu_basket$cluster$samples[[2]] <- vemu_basket$cluster$samples[[2]][1:4000]
+# pryr::object_size(vemu_basket)
+# saveRDS(vemu_basket, "vemu-basket.rds")
+
 vemu_basket <- readRDS("vemu-basket.rds")
 
 # Show the trial diagnostics.
