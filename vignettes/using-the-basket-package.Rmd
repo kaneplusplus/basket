@@ -71,7 +71,7 @@ summary(vemu_basket)
 # Load the basket library.
 library(basket)
 
-# vemu_basket$basket$samples <- vemu_basket$basket$samples[1:5000]
+# vemu_basket$basket$samples <- vemu_basket$basket$samples[1:5000,]
 # vemu_basket$cluster$samples[[1]] <- vemu_basket$cluster$samples[[1]][1:2000]
 # vemu_basket$cluster$samples[[2]] <- vemu_basket$cluster$samples[[2]][1:4000]
 # pryr::object_size(vemu_basket)
@@ -88,7 +88,7 @@ The output of the `summary` is composed of three parts. The first shows the expr
 The analysis estimates the posterior distribution of the response rate for both the arms and the clusters. Distributions for arms and can be inspected visually via the `plot_density()` with the analysis as the argument. If only the density of the arms should be shown then the `type = "basket"` can be used. The same is true for `type = "cluster"` for the cluster density plot.
 
 ```{r out.width='90%',fig.width= 8, fig.height=5,fig.align= "center"}
-plot_density(vemu_basket)
+plot_density(vemu_basket$basket)
 ```
 
 Along with the densities, the package can show the exchangeability between the individual arms via, what we are terming, an __exchangeogram__. This is similar to a correlogram but, rather than showing correlations among variables, an exchangeogram shows the exchangeability between arms. Exchangeograms for MEM analyses can be created using the `plot_mem()` function. By default the prior exchangeability, MAP exchangeability, and posterior exchangeability are shown in a single plot, and is controlled by the default parameter `type = c("prior", "map", "pep")`. Along with the visualization, the MAP and PEP matrices can retrieved with the `basket_map()` and `basket_pep()` function for baskets and `cluster_map()` and `cluster_pep()` function for clusters.
