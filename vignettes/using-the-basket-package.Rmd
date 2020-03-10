@@ -71,7 +71,7 @@ summary(vemu_basket)
 # Load the basket library.
 library(basket)
 
-vemu_basket <- readRDS("vemu_basket.rds")
+vemu_basket <- readRDS("vemu-basket.rds")
 
 # Show the trial diagnostics.
 summary(vemu_basket)

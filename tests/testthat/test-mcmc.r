@@ -4,7 +4,6 @@ context("Fit MCMC models")
 data(vemu_wide)
 
 baskets <- c(1, 5, 6)
-# baskets <- 1:6
 
 vemu_wide1 <- vemu_wide[baskets, ]
 
@@ -22,10 +21,38 @@ time_taken <- system.time({
   )
 })
 
-# plot_pep(mcmc_res1$basket)
-# plot_mem(mcmc_res1, text_size = 1.75, expand = c(0.5, 0.5), basket_name_hjust = 0.85)
-# cat("Seconds used: ", time_taken[3], "\n")
-# t <- sample_posterior(mcmc_res1$basket)
+mcmc_res1_basket <- 
+  basket(responses = vemu_wide1$responders,
+    size = vemu_wide1$evaluable,
+    name = vemu_wide1$baskets,
+    cluster_analysis = TRUE,
+    p0 = 0.15,
+    mcmc_iter = 100
+  )
+
+mcmc_res2 <- mem_mcmc(
+  responses = c(4, 3, 0),
+  size = c(10, 3, 0),
+  name = letters[1:3],
+  cluster_analysis = TRUE,
+  p0 = 0.25)
+
+mcmc_res3 <- mem_mcmc(
+  responses = c(4, 3),
+  size = c(10, 3),
+  name = letters[1:2],
+  cluster_analysis = TRUE,
+  p0 = 0.25)
+
+mcmc_res3 <- mem_mcmc(
+  responses = c(4, 3),
+  size = c(10, 3),
+  name = letters[1:2],
+  cluster_analysis = FALSE,
+  p0 = 0.25)
+
+expect_equal(mcmc_res1$basket[-10], mcmc_res1_basket$basket[-10], 
+             tolerance = 0.5)
 
 expect_true(is.matrix(cluster_map(mcmc_res1)))
 
@@ -41,12 +68,12 @@ expect_true(inherits(
 expect_true(inherits(plot_pep(mcmc_res1$basket), "ggplot"))
 expect_true(inherits(plot_map(mcmc_res1$basket), "ggplot"))
 
-expect_equivalent(mcmc_res1$basket$PEP, mcmc_ref2$PEP, tolerance = 5e-2)
-expect_equivalent(mcmc_res1$basket$HPD, mcmc_ref2$HPD, tolerance = 5e-2)
-expect_equivalent(mcmc_res1$basket$post.prob, mcmc_ref2$post.prob,
+expect_equivalent(mcmc_res1$basket$pep, mcmc_ref2$PEP, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$hpd, mcmc_ref2$HPD, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$post_prob, mcmc_ref2$post.prob,
   tolerance = 5e-2
 )
-expect_equivalent(mcmc_res1$basket$ESS, mcmc_ref2$ESS, tolerance = 5e-2)
+expect_equivalent(mcmc_res1$basket$ess, mcmc_ref2$ESS, tolerance = 5e-2)
 
 mcmc_lower <- mem_mcmc(
   responses = vemu_wide1$responders,

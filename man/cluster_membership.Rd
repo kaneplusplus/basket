@@ -2,7 +2,7 @@
 % Please edit documentation in R/util.r
 \name{cluster_membership}
 \alias{cluster_membership}
-\title{Cluster Baskets Base on the matrix's}
+\title{Cluster Baskets Based on the Posterior Exchangeabilities}
 \usage{
 cluster_membership(m)
 }

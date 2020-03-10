@@ -17,10 +17,10 @@ The posterior exchangeability of the baskets in a
 MEM analysis can be visualized via an exchangeogram using this function.
 }
 \details{
-The \code{plot_pep} function attempts to place the basket names to the
-left of the main diagonal in a way that makes it easy to read. However,
-for especially long basket names options are provided. Here is a list of all
-options available to ``fine tune''
+The \code{plot_pep} function attempts to place the basket names
+to the left of the main diagonal in a way that makes it easy to read.
+However, for especially long basket names options are provided. Here
+is a list of all options available to ``fine tune''
 the visualizations. These auxiliary options include:
 \itemize{
  \item{[palette] }{A color palette consisting of 3 colors: the first

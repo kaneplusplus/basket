@@ -43,9 +43,9 @@ make_basket_summary <- function(object) {
   mm <- rbind(object$mean_est, object$median_est)
   rownames(mm) <- c("Mean", "Median")
   ret <- list(
-    null = object$p0, post_prob = object$post.prob,
-    mm_resp = mm, hpd_signif = object$alpha, hpd = object$HPD,
-    ess = object$ESS,
+    null = object$p0, post_prob = object$post_prob,
+    mm_resp = mm, hpd_signif = object$alpha, hpd = object$hpd,
+    ess = object$ess,
     alternative = object$alternative
   )
   class(ret) <- "mem_basket_summary"
@@ -95,11 +95,11 @@ make_cluster_summary <- function(object) {
   rownames(mm) <- c("Mean", "Median")
   ret <- list(
     null = object$p0,
-    post_prob = object$post.prob,
+    post_prob = object$post_prob,
     mm_resp = mm,
     hpd_signif = object$alpha,
-    hpd = object$HPD,
-    ess = object$ESS,
+    hpd = object$hpd,
+    ess = object$ess,
     alternative = object$alternative,
     name = object$name,
     cluster = object$cluster
@@ -118,9 +118,6 @@ summary.mem_cluster <- function(object, ...) {
 #' @importFrom cli cat_line cat_print
 #' @export
 print.mem_cluster_summary <- function(x, ...) {
-  # if (is.na(x)){
-  #   return()
-  # }
   cat("\n")
   for (i in seq_along(x$cluster)) {
     cat(x$name[i])

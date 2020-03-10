@@ -38,76 +38,41 @@ update_p0 <- function(res, p0 = 0.15, alternative = "greater") {
     xvec <- res$basket$responses
     nvec <- res$basket$size
     name <- res$basket$name
-    CDF <- rep(NA, length(xvec))
+    cdf <- rep(NA, length(xvec))
     models <- res$basket$models
     pweights <- res$basket$pweights
     shape1 <- res$basket$shape1
     shape2 <- res$basket$shape2
-    names(CDF) <- name
+    names(cdf) <- name
     # This pattern appears in at least one other place. Should it be a function?
-    CDF[1] <- eval.Post(
+    cdf[1] <- eval.Post(
       p0[1], xvec, nvec, models, pweights[[1]],
       shape1[1], shape2[1], alternative
     )
 
-    K <- length(xvec)
-    for (j in 2:(K - 1)) {
-      Ii <- c(j, 1:(j - 1), (j + 1):K)
-      CDF[j] <- eval.Post(
-        p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
+    k <- length(xvec)
+    for (j in 2:(k - 1)) {
+      ii <- c(j, 1:(j - 1), (j + 1):k)
+      cdf[j] <- eval.Post(
+        p0[j], xvec[ii], nvec[ii], models, pweights[[j]],
         shape1[j], shape2[j], alternative
       )
     }
     j <- j + 1
-    Ii <- c(j, 1:(j - 1))
-    CDF[j] <- eval.Post(
-      p0[j], xvec[Ii], nvec[Ii], models, pweights[[j]],
+    ii <- c(j, 1:(j - 1))
+    cdf[j] <- eval.Post(
+      p0[j], xvec[ii], nvec[ii], models, pweights[[j]],
       shape1[j], shape2[j], alternative
     )
-    ret$basket$post.prob <- CDF
+    ret$basket$post_prob <- cdf
   } else if (inherits(res, "mem_mcmc")) {
-    MODEL <- ret$basket
-    ret$basket$post.prob <- mem.PostProb(MODEL, fit = ret$basket)
+    model <- ret$basket
+    ret$basket$post_prob <- mem_post_prob(model, fit = ret$basket)
   } else {
     stop(
       red("Argument `res` should be of either type `mem_mcmc` or `mem_exact`.")
     )
   }
 
-  # cluster
-  # This pattern appears in at least one other place. Should it be a function?
-  #  retB <- ret$basket
-  #  sampleC <- ret$cluster$samples
-  #  numClusters <- length(ret$cluster$name)
-  #  p0Test <- unique(retB$p0)
-  #  allCDF <- matrix(0, 0, numClusters)
-  #  for (kk in seq_along(p0Test)) {
-  #    if (retB$alternative == "greater") {
-  #      res1 <- unlist(lapply(
-  #        seq_len(numClusters),
-  #        FUN = function(j, x, t) {
-  #          return(sum(x[[j]] > t) / length(x[[j]]))
-  #        },
-  #        x = sampleC,
-  #        t = p0Test[kk]
-  #      ))
-  #    } else if (retB$alternative == "less") {
-  #      res1 <- unlist(lapply(
-  #        seq_len(numClusters),
-  #        FUN = function(j, x, t) {
-  #          return(sum(x[[j]] > t) / length(x[[j]]))
-  #        },
-  #        x = sampleC,
-  #        t = p0Test[kk]
-  #      ))
-  #    } else {
-  #      stop(red("Alternative must be either \"greater\" or \"less\"."))
-  #    }
-  #    allCDF <- rbind(allCDF, res1)
-  #  }
-  #  colnames(allCDF) <- ret$cluster$name
-  #  rownames(allCDF) <- p0Test
-  #  ret$cluster$post.prob <- allCDF
-
-  return(ret)
+  ret
 }

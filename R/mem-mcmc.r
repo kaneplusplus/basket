@@ -101,42 +101,41 @@ mem_mcmc <- function(responses,
 
   if (length(size1) == 1) {
     ind <- which(size != 0)
-    nVec <- length(size)
+    n_vec <- length(size)
     prior_inclusion <- prior
-    tM <- matrix(1, nVec, nVec) # diag(nVec)
-    colnames(tM) <- rownames(tM) <- name
-    if (nVec > 1) {
-      tM[, ind] <- 0
-      tM[ind, ] <- 0
-      tM[ind, ind] <- 1
+    pep <- matrix(1, n_vec, n_vec)
+    colnames(pep) <- rownames(pep) <- name
+    if (n_vec > 1) {
+      pep[, ind] <- 0
+      pep[ind, ] <- 0
+      pep[ind, ind] <- 1
     }
-    MAX <- MAP <- PEP <- tM
-    pweights <- rep(0, nVec)
+    maximizer <- map <- pep
+    pweights <- rep(0, n_vec)
     pweights[ind] <- 1
-    HPD <- matrix(NA, 2, nVec)
-    pESS <- post.prob <- rep(NA, nVec)
-    names(pESS) <- names(post.prob) <- name
-    rownames(HPD) <- c("lower", "upper")
-    colnames(HPD) <- name
+    hpd <- matrix(NA, 2, n_vec)
+    p_ess <- post_prob <- rep(NA, n_vec)
+    names(p_ess) <- names(post_prob) <- name
+    rownames(hpd) <- c("lower", "upper")
+    colnames(hpd) <- name
     a <- shape1
     b <- shape2
     samp <- samp_one_group(responses[1], size[1], a[1], b[1])
-    HPD[, 1] <- boa.hpd(samp, alp)
-    pESS[1] <- a[1] + b[1] + size[1]
+    hpd[, 1] <- boa_hpd(samp, alp)
+    p_ess[1] <- a[1] + b[1] + size[1]
     t <-
       eval_post_one_group(p0[1], responses[1], size[1], a[1], b[1], alternative)
-    post.prob[1] <- t
+    post_prob[1] <- t
 
 
-    if (nVec > 1) {
-      for (i in 2:nVec) {
-        sampG <- samp_one_group(responses[i], size[i], a[i], b[i])
-        samp <- cbind(samp, sampG)
-        HPD[, i] <- boa.hpd(sampG, alp)
-        pESS[i] <- a[i] + b[i] + size[i]
-        post.prob[i] <- eval_post_one_group(
-          p0[i], responses[i], size[i],
-          a[i], b[i], alternative
+    if (n_vec > 1) {
+      for (i in 2:n_vec) {
+        group_sample <- samp_one_group(responses[i], size[i], a[i], b[i])
+        samp <- cbind(samp, group_sample)
+        hpd[, i] <- boa_hpd(group_sample, alp)
+        p_ess[i] <- a[i] + b[i] + size[i]
+        post_prob[i] <- eval_post_one_group(p0[i], responses[i], size[i],
+                                            a[i], b[i], alternative
         )
       }
       colnames(samp) <- name
@@ -146,13 +145,13 @@ mem_mcmc <- function(responses,
     }
     ret <-
       list(
-        maximizer = MAX,
-        PRIOR = prior_inclusion,
-        MAP = MAP,
-        PEP = PEP,
-        post.prob = post.prob,
-        # ESS = pESS,
-        HPD = HPD,
+        maximizer = maximizer,
+        prior = prior_inclusion,
+        map = map,
+        pep = pep,
+        post_prob = post_prob,
+        # ESS = p_ess,
+        hpd = hpd,
         responses = responses,
         size = size,
         name = name,
@@ -166,7 +165,7 @@ mem_mcmc <- function(responses,
       )
 
     ret$samples <- samp
-    if (nVec > 1) {
+    if (n_vec > 1) {
       ret$mean_est <- colMeans(ret$samples)
       ret$median_est <- apply(ret$samples, 2, median)
     } else {
@@ -175,17 +174,17 @@ mem_mcmc <- function(responses,
     }
 
 
-    ret$ESS <- pESS
+    ret$ess <- p_ess
 
     class(ret) <- c("mem_basket", "mem")
     if (cluster_analysis) {
-      clusterRet <- clusterComp(ret, cluster_function)
-      class(clusterRet) <- c("mem_cluster", "mem")
+      cluster_ret <- cluster_comp(ret, cluster_function)
+      class(cluster_ret) <- c("mem_cluster", "mem")
       result <-
         list(
           call = call,
           basket = ret,
-          cluster = clusterRet
+          cluster = cluster_ret
         )
     } else {
       result <-
@@ -218,20 +217,20 @@ mem_mcmc <- function(responses,
     stop(red("The main diagonal of the `initial_mem` matrix must be 1's."))
   }
 
-  M.init <- initial_mem
-  MOld <- M.init
+  m_init <- initial_mem
+  m_old <- m_init
 
   ### Create Map for Proposal Distribution ###
-  M <- diag(NA, nrow(MOld))
-  K <- 1
-  for (ii in seq_len(nrow(MOld) - 1)) {
-    for (jj in (ii + 1):ncol(MOld)) {
-      M[ii, jj] <- M[jj, ii] <- K
-      K <- K + 1
+  m <- diag(NA, nrow(m_old))
+  k <- 1
+  for (ii in seq_len(nrow(m_old) - 1)) {
+    for (jj in (ii + 1):ncol(m_old)) {
+      m[ii, jj] <- m[jj, ii] <- k
+      k <- k + 1
     }
   }
   ### Implement Metropolis-Hastings Alg ###
-  n.chg <- 0
+  n_chg <- 0
   mod_mat[[1]] <- as.matrix(mod_mat[[1]])
   models <- cbind(rep(1, dim(mod_mat[[1]])[1]), mod_mat[[1]])
   mweights <- matrix(0, nrow(models), length(responses))
@@ -242,64 +241,64 @@ mem_mcmc <- function(responses,
     name <- as.character(name)
   }
   colnames(mweights) <- name
-  mem.Samp <- list(MOld)
-  mweights <- mweights + models.Count(Samp = mem.Samp[[1]], models = models)
-  MAP.list <- list(mem.Samp[[1]])
-  MAP.count <- c(1)
+  mem_samp <- list(m_old)
+  mweights <- mweights + models_count(samp = mem_samp[[1]], models = models)
+  map_list <- list(mem_samp[[1]])
+  map_count <- c(1)
 
 
-  mapHash <- new.env()
-  mapHash[[toString(MOld)]] <- 1
+  map_hash <- new.env()
+  map_hash[[toString(m_old)]] <- 1
 
-  oldDens <- NA
+  old_dens <- NA
   xvec <- responses
   nvec <- size
-  betaV <- beta(shape1, shape2)
+  beta_vec <- beta(shape1, shape2)
   prod.vec <- beta(xvec + shape1, nvec + shape2 - xvec) / beta(shape1, shape2)
 
 
   for (i in 1:mcmc_burnin) {
-    t <- update.MH(
-      MOld, M, responses, size,
-      shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec
+    t <- update_mh(
+      m_old, m, responses, size,
+      shape1, shape2, mod_mat, prior, beta_vec, old_dens, prod.vec
     )
-    MOld <- t[[1]]
-    oldDens <- t[[2]]
+    m_old <- t[[1]]
+    old_dens <- t[[2]]
   }
 
-  t <- update.MH(
-    MOld, M, responses, size,
-    shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec
+  t <- update_mh(
+    m_old, m, responses, size,
+    shape1, shape2, mod_mat, prior, beta_vec, old_dens, prod.vec
   )
-  mem.Samp[[2]] <- t[[1]]
-  oldDens <- t[[2]]
-  mweights <- mweights + models.Count(Samp = mem.Samp[[2]], models = models)
-  Samp.Sum <- mem.Samp[[1]] + mem.Samp[[2]]
+  mem_samp[[2]] <- t[[1]]
+  old_dens <- t[[2]]
+  mweights <- mweights + models_count(samp = mem_samp[[2]], models = models)
+  samp_sum <- mem_samp[[1]] + mem_samp[[2]]
 
-  if (sum(mem.Samp[[2]] == mem.Samp[[1]]) < length(mem.Samp[[2]])) {
-    n.chg <- n.chg + 1
+  if (sum(mem_samp[[2]] == mem_samp[[1]]) < length(mem_samp[[2]])) {
+    n_chg <- n_chg + 1
   }
 
-  new <- mem.Samp[[2]]
+  new <- mem_samp[[2]]
   key <- toString(new)
-  if (!is.null(mapHash[[key]])) {
-    index <- mapHash[[key]]
-    MAP.count[index] <- MAP.count[index] + 1
+  if (!is.null(map_hash[[key]])) {
+    index <- map_hash[[key]]
+    map_count[index] <- map_count[index] + 1
   } else {
-    MAP.list[[length(MAP.list) + 1]] <-
-      mem.Samp[[2]]
-    MAP.count <- c(MAP.count, 1)
-    mapHash[[key]] <- length(MAP.list)
+    map_list[[length(map_list) + 1]] <-
+      mem_samp[[2]]
+    map_count <- c(map_count, 1)
+    map_hash[[key]] <- length(map_list)
   }
 
 
-  for (KK in seq_len(mcmc_iter)[-(1:2)]) {
-    t <- update.MH(
-      mem.Samp[[KK - 1]], M, responses, size,
-      shape1, shape2, mod_mat, prior, betaV, oldDens, prod.vec
+  for (kk in seq_len(mcmc_iter)[-(1:2)]) {
+    t <- update_mh(
+      mem_samp[[kk - 1]], m, responses, size,
+      shape1, shape2, mod_mat, prior, beta_vec, old_dens, prod.vec
     )
-    mem.Samp[[KK]] <- t[[1]]
-    oldDens <- t[[2]]
+    mem_samp[[kk]] <- t[[1]]
+    old_dens <- t[[2]]
   }
 
   it <- NULL
@@ -310,60 +309,39 @@ mem_mcmc <- function(responses,
     .combine = c
   ) %dopar% {
     foreach(k = it) %do% {
-      models.Count(Samp = mem.Samp[[k]], models = models)
+      models_count(samp = mem_samp[[k]], models = models)
     }
   }
 
-  for (KK in seq_len(mcmc_iter)[-(1:2)]) {
-    mweights <- mweights + models_count[[KK - 2]]
-    Samp.Sum <- Samp.Sum + mem.Samp[[KK]]
-    if (sum(mem.Samp[[KK]] == mem.Samp[[KK - 1]]) <
-      length(mem.Samp[[KK - 1]])) {
-      n.chg <- n.chg + 1
+  for (kk in seq_len(mcmc_iter)[-(1:2)]) {
+    mweights <- mweights + models_count[[kk - 2]]
+    samp_sum <- samp_sum + mem_samp[[kk]]
+    if (sum(mem_samp[[kk]] == mem_samp[[kk - 1]]) <
+      length(mem_samp[[kk - 1]])) {
+      n_chg <- n_chg + 1
     }
 
-    new <- mem.Samp[[KK]]
+    new <- mem_samp[[kk]]
     key <- toString(new)
-    if (!is.null(mapHash[[key]])) {
-      index <- mapHash[[key]]
-      MAP.count[index] <- MAP.count[index] + 1
+    if (!is.null(map_hash[[key]])) {
+      index <- map_hash[[key]]
+      map_count[index] <- map_count[index] + 1
     } else {
-      MAP.list[[length(MAP.list) + 1]] <-
-        mem.Samp[[KK]]
-      MAP.count <- c(MAP.count, 1)
-      mapHash[[key]] <- length(MAP.list)
+      map_list[[length(map_list) + 1]] <-
+        mem_samp[[kk]]
+      map_count <- c(map_count, 1)
+      map_hash[[key]] <- length(map_list)
     }
   }
 
-  ### Compute Posterior Model Weights ###
+  # Compute posterior model weights
   pweights <- list()
-  for (KK in seq_len(ncol(mweights))) {
-    pweights[[KK]] <- mweights[, KK] / mcmc_iter
+  for (kk in seq_len(ncol(mweights))) {
+    pweights[[kk]] <- mweights[, kk] / mcmc_iter
   }
 
-  # pESS <- rep(NA, length(xvec))
-  #
-  # pESS[1] <-
-  #   pweights[[1]] %*% ESS(xvec, nvec, models, shape1[1], shape2[1])
-  #
-  #
-  # K <- length(xvec)
-  # for (j in 2:(K - 1)) {
-  #   Ii <- c(j, 1:(j - 1), (j + 1):K)
-  #   pESS[j] <-
-  #     pweights[[j]] %*% ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
-  #
-  # }
-  # j <- j + 1
-  # Ii <- c(j, 1:(j - 1))
-  #
-  #
-  # pESS[j] <- pweights[[j]] %*%
-  #   ESS(xvec[Ii], nvec[Ii], models, shape1[j], shape2[j])
-
-
-  ### List for post-processing ###
-  MODEL <-
+  # List for post-processing
+  model <-
     list(
       responses = responses,
       size = size,
@@ -378,10 +356,10 @@ mem_mcmc <- function(responses,
     )
 
   ### Compute and output results ###
-  PEP <- Samp.Sum / mcmc_iter
-  rownames(PEP) <- colnames(PEP) <- MODEL$name
-  MAP <- MAP.list[[order(MAP.count, decreasing = TRUE)[1]]]
-  rownames(MAP) <- colnames(MAP) <- MODEL$name
+  pep <- samp_sum / mcmc_iter
+  rownames(pep) <- colnames(pep) <- model$name
+  map <- map_list[[order(map_count, decreasing = TRUE)[1]]]
+  rownames(map) <- colnames(map) <- model$name
 
   if (is.null(call)) {
     call <- match.call()
@@ -397,38 +375,38 @@ mem_mcmc <- function(responses,
       alternative = alternative,
       shape1 = shape1,
       shape2 = shape2,
-      PRIOR = prior,
+      prior = prior,
       call = call
     )
   ret$mod_mat <- mod_mat
-  ret$Inital <- M.init
+  ret$initial <- m_init
 
-  rownames(ret$Inital) <- colnames(ret$Inital) <- MODEL$name
+  rownames(ret$initial) <- colnames(ret$initial) <- model$name
   ret$models <- models
   ret$pweights <- pweights
 
   # Ret doesn't have class information yet so, we'll call
   # sample_posterior.exchangeability_model directly.
-  ret$samples <- sample_posterior_model(MODEL)
-  ret$accept.rate <- (n.chg) / mcmc_iter
+  ret$samples <- sample_posterior_model(model)
+  ret$accept_rate <- (n_chg) / mcmc_iter
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
-  ret$PEP <- PEP
-  ret$MAP <- MAP
-  ret$HPD <- apply(ret$samples, MARGIN = 2, FUN = boa.hpd, alpha = MODEL$alpha)
-  ret$post.prob <- mem.PostProb(MODEL, fit = ret)
-  ret$ESS <- calc.ESS.from.HPD(fit = ret, alpha = MODEL$alpha)
-  names(ret$ESS) <- MODEL$name
+  ret$pep <- pep
+  ret$map <- map
+  ret$hpd <- apply(ret$samples, MARGIN = 2, FUN = boa_hpd, alpha = model$alpha)
+  ret$post_prob <- mem_post_prob(model, fit = ret)
+  ret$ess <- ess_from_hpd(fit = ret, alpha = model$alpha)
+  names(ret$ess) <- model$name
   class(ret) <- c("mem_basket", "mem")
 
   if (cluster_analysis) {
-    clusterRet <- clusterComp(ret, cluster_function)
-    class(clusterRet) <- c("mem_cluster", "mem")
+    cluster_ret <- cluster_comp(ret, cluster_function)
+    class(cluster_ret) <- c("mem_cluster", "mem")
     result <-
       list(
         call = call,
         basket = ret,
-        cluster = clusterRet,
+        cluster = cluster_ret,
         seed = seed
       )
   } else {
@@ -441,9 +419,6 @@ mem_mcmc <- function(responses,
       )
   }
 
-  # clusterRet <- clusterComp(ret, cluster_function)
-  # class(clusterRet) <- c("mem_cluster", "mem")
-  # result <- list(call = call, basket = ret, cluster = clusterRet, seed = seed)
   class(result) <- c("mem_mcmc", "exchangeability_model")
   result
 }

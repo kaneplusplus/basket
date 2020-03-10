@@ -84,7 +84,7 @@ basket_pep.default <- function(x) {
 
 #' @export
 basket_pep.mem_basket <- function(x) {
-  x$PEP
+  x$pep
 }
 
 #' @export
@@ -129,7 +129,7 @@ basket_map.default <- function(x) {
 
 #' @export
 basket_map.mem_basket <- function(x) {
-  x$MAP
+  x$map
 }
 
 #' @export
@@ -175,7 +175,7 @@ cluster_pep.default <- function(x) {
 
 #' @export
 cluster_pep.mem_basket <- function(x) {
-  x$PEP
+  x$pep
 }
 
 #' @export
@@ -221,7 +221,7 @@ cluster_map.default <- function(x) {
 
 #' @export
 cluster_map.mem_basket <- function(x) {
-  x$MAP
+  x$map
 }
 
 #' @export

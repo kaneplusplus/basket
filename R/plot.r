@@ -104,10 +104,10 @@ plot_density.mem <- function(x, ...) {
 #' @param ... other options passed to ggplot2 to alter the visual
 #' characteristics of the plot. See Details for more information.
 #'
-#' @details The \code{plot_pep} function attempts to place the basket names to the
-#' left of the main diagonal in a way that makes it easy to read. However,
-#' for especially long basket names options are provided. Here is a list of all
-#' options available to ``fine tune''
+#' @details The \code{plot_pep} function attempts to place the basket names
+#' to the left of the main diagonal in a way that makes it easy to read.
+#' However, for especially long basket names options are provided. Here
+#' is a list of all options available to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
 #'  \item{[palette] }{A color palette consisting of 3 colors: the first
@@ -210,7 +210,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
     x = seq_len(nrow(mat)) - 1 + basket_name_hoffset,
     y = seq_len(nrow(mat)), label = colnames(mat)
   )
-  tG <- ggplot(mg, aes(V2, V1, fill = value)) +
+  tg <- ggplot(mg, aes(V2, V1, fill = value)) +
     geom_tile(color = tile_color) +
     scale_fill_gradient2(
       low = palette[1], high = palette[3], mid = palette[2],
@@ -239,7 +239,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
     ) +
     labs(x = "", y = "")
   if (draw_legend) {
-    tG <- tG +
+    tg <- tg +
       theme(
         panel.grid.major = element_blank(), panel.border = element_blank(),
         panel.background = element_blank(), axis.ticks = element_blank(),
@@ -250,7 +250,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
         title.position = "top", title.hjust = 0.5
       ))
   } else {
-    tG <- tG +
+    tg <- tg +
       theme(
         panel.grid.major = element_blank(), panel.border = element_blank(),
         panel.background = element_blank(), axis.ticks = element_blank(),
@@ -262,8 +262,7 @@ exchangeogram <- function(mat, palette = brewer.pal(3, "BuGn"),
         title.position = "top", title.hjust = 0.5
       ))
   }
-
-  return(tG)
+  tg
 }
 
 
@@ -294,11 +293,10 @@ plot_mem.exchangeability_model <-
 
 #' @export
 plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
-  # library("gridExtra")
-  numC <- 0
-  allPlot <- list()
+  num_col <- 0
+  all_plot <- list()
   if (any(type == "prior")) {
-    mat <- round(x$PRIOR, 3)
+    mat <- round(x$prior, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
@@ -316,13 +314,13 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
           hjust = 0.35
         )
       ))
-    allPlot <- c(allPlot, list(plot1))
-    numC <- numC + 1
+    all_plot <- c(all_plot, list(plot1))
+    num_col <- num_col + 1
   }
 
 
   if (any(type == "map")) {
-    mat <- round(x$MAP, 3)
+    mat <- round(x$map, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
@@ -340,12 +338,12 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
           hjust = 0.35
         )
       ))
-    allPlot <- c(allPlot, list(plot2))
-    numC <- numC + 1
+    all_plot <- c(all_plot, list(plot2))
+    num_col <- num_col + 1
   }
 
   if (any(type == "pep")) {
-    mat <- round(x$PEP, 3)
+    mat <- round(x$pep, 3)
     if (!is.null(x$name)) {
       dimnames(mat) <- list(x$name, x$name)
     } else {
@@ -362,18 +360,17 @@ plot_mem.mem <- function(x, type = c("prior", "map", "pep"), ...) {
           hjust = 0.35
         )
       )
-    allPlot <- c(allPlot, list(plot3))
-    numC <- numC + 1
+    all_plot <- c(all_plot, list(plot3))
+    num_col <- num_col + 1
   }
 
-  PLOTS <- allPlot
-  # grid.arrange(plot2, ncol = 3, nrow = 1)
-  do.call(grid.arrange, c(PLOTS, ncol = numC))
+  plots <- all_plot
+  do.call(grid.arrange, c(plots, ncol = num_col))
 }
 
 #' @export
 plot_pep.mem <- function(x, ...) {
-  mat <- round(x$PEP, 3)
+  mat <- round(x$pep, 3)
   if (!is.null(x$name)) {
     dimnames(mat) <- list(x$name, x$name)
   } else {
@@ -396,10 +393,10 @@ plot_pep.mem <- function(x, ...) {
 #'
 #' @param x \code{basket} element of the exchangeability model.
 #' @param ... other options passed to ggplot2 to alter the visual
-#' @details The \code{plot_map} function attempts to place the basket names to the
-#' left of the main diagonal in a way that makes it easy to read. However,
-#' for especially long basket names options are provided. Here is a list of all
-#' options available to ``fine tune''
+#' @details The \code{plot_map} function attempts to place the
+#' basket names to the left of the main diagonal in a way that makes it
+#' easy to read. However, for especially long basket names options are
+#' provided. Here is a list of all options available to ``fine tune''
 #' the visualizations. These auxiliary options include:
 #' \itemize{
 #'  \item{[palette]}{A color palette consisting of 3 colors: the first
@@ -453,7 +450,7 @@ plot_map.default <- function(x, ...) {
 #' @importFrom ggplot2 ggtitle element_text theme
 #' @export
 plot_map.mem <- function(x, ...) {
-  mat <- round(x$MAP, 3)
+  mat <- round(x$map, 3)
   mat[lower.tri(mat)] <- NA
   if (!is.null(x$name)) {
     dimnames(mat) <- list(x$name, x$name)
@@ -503,6 +500,7 @@ plot.exchangeability_model <- function(x, ...) {
 #' @importFrom tibble tibble
 #' @importFrom tidygraph as_tbl_graph activate left_join filter
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point geom_node_label
+#' scale_edge_width_continuous
 #' @importFrom ggplot2 scale_color_viridis_c
 #' @importFrom rlang .data
 #' @export
@@ -510,13 +508,13 @@ plot_pep_graph <- function(x,
                            color_by = c("post_prob", "mean_est", "median_est"),
                            layout = c("fr", "nicely", "kk", "drl"),
                            pep_cutoff = 0) {
-  pep <- x$basket$PEP
+  pep <- x$basket$pep
   color_by <- match.arg(color_by)
   layout <- match.arg(layout)
 
   node_attrs <- tibble::tibble(
     name = x$basket$name,
-    post_prob = x$basket$post.prob,
+    post_prob = x$basket$post_prob,
     responses = x$basket$responses,
     size = x$basket$size,
     p0 = x$basket$p0,
@@ -535,25 +533,19 @@ plot_pep_graph <- function(x,
   )
 
   graph <- graph %>%
-    tidygraph::activate("edges") %>%
-    tidygraph::filter(.data$weight >= !!pep_cutoff)
+    activate("edges") %>%
+    filter(.data$weight >= !!pep_cutoff)
 
-  # if (igraph::gsize(graph) == 0) {
-  #   message("After filtering for pep >= ", pep_cutoff,
-  #     ", the size of the graph is 0...")
-  #   return(ggplot())
-  # }
-
-  ggraph::ggraph(graph, layout = layout, weights = .data$weight) +
-    ggraph::geom_edge_link(color = "gray", alpha = 0.6, aes(width = .data$weight)) +
-    ggraph::geom_node_point(aes(color = .data[[color_by]]), size = 7) +
-    ggraph::geom_node_label(aes(label = .data$name),
+  ggraph(graph, layout = layout, weights = .data$weight) +
+    geom_edge_link(color = "gray", alpha = 0.6, aes(width = .data$weight)) +
+    geom_node_point(aes(color = .data[[color_by]]), size = 7) +
+    geom_node_label(aes(label = .data$name),
       nudge_y = 0.15,
       label.size = NA, hjust = "inward", alpha = 0.6
     ) +
-    ggplot2::scale_color_viridis_c(
+    scale_color_viridis_c(
       option = "plasma",
       name = legend_name[color_by]
     ) +
-    ggraph::scale_edge_width_continuous(name = "PEP")
+    scale_edge_width_continuous(name = "PEP")
 }

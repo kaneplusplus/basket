@@ -16,4 +16,3 @@ expect_error(plot_mem(NULL))
 expect_error(plot_map(NULL))
 expect_error(mem_exact(c(1, 2, 3), 1))
 expect_error(mem_mcmc(c(1, 2, 3), 1))
-
