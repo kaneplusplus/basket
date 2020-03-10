@@ -16,3 +16,8 @@
 * Better burnin and mcmc iteration defaults.
 * A plot function was added.
 * Exchangeogram color palette can now be specified by users.
+
+# basket 0.10.0
+
+* Code was restructured to be more readable.
+* Multiple bug fixes.
