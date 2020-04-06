@@ -10,13 +10,13 @@
 #' <https://doi:10.1056/NEJMoa1502309>
 #' @references Bayesian basket trial design with exchangeability monitoring
 #' BP Hobbs, R Landin Statistics in medicine 37 (25), 3557-357.
-#' <https://doi:10.1002/sim.7893>
+#' <https://doi.org/10.1002/sim.7893>
 #' @references Statistical challenges posed by uncontrolled master protocols:
 #' sensitivity analysis of the vemurafenib study BP Hobbs, MJ Kane, DS Hong,
 #' R Landin Annals of Oncology 29 (12), 2296-2301. <doi:10.1093/annonc/mdy457>
 #' @references Bayesian hierarchical modeling based on multisource
 #' exchangeability AM Kaizer, JS Koopmeiners, BP Hobbs Biostatistics 19 (2),
-#' 169-184. <https://doi:10.1093/biostatistics/kxx031>
+#' 169-184. <https://doi.org/10.1093/biostatistics/kxx031>
 #' @description The R basket package provides for the designs and analysis of
 #' basket trials for multi-source exchangeability models (MEM)
 #' (\url{https://doi.org/10.1093/biostatistics/kxx031})
