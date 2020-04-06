@@ -25,3 +25,7 @@
 # basket 0.10.1
 
 * Testing changed to take less time on CRAN.
+
+# basket 0.10.2
+
+* Bug fixes based and accomodation for new tibble package.

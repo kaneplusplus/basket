@@ -60,6 +60,7 @@ plot_density.exchangeability_model <- function(x, ...) {
 
 #' @importFrom ggplot2 ggplot aes geom_density scale_fill_manual facet_grid
 #' xlab ylab theme_minimal xlim geom_vline labeller label_wrap_gen
+#' @importFrom dplyr left_join
 #' @export
 plot_density.mem <- function(x, ...) {
   dots <- list(...)
@@ -68,7 +69,8 @@ plot_density.mem <- function(x, ...) {
     x$p0 <- rep(x$p0, length(x$size))
   }
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
-  d$p0 <- x$p0
+  xp <- tibble(Basket = x$name, p0 = x$p0)
+  d <- left_join(d, xp, by = "Basket")
 
   if ("basket_levels" %in% names(dots)) {
     basket_levels <- dots$basket_levels
@@ -502,17 +504,17 @@ plot.exchangeability_model <- function(x, ...) {
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point geom_node_label
 #' scale_edge_width_continuous
 #' @importFrom ggplot2 scale_color_viridis_c
-#' @importFrom rlang .data
 #' @export
 plot_pep_graph <- function(x,
                            color_by = c("post_prob", "mean_est", "median_est"),
                            layout = c("fr", "nicely", "kk", "drl"),
                            pep_cutoff = 0) {
+  .data <- NULL
   pep <- x$basket$pep
   color_by <- match.arg(color_by)
   layout <- match.arg(layout)
 
-  node_attrs <- tibble::tibble(
+  node_attrs <- tibble(
     name = x$basket$name,
     post_prob = x$basket$post_prob,
     responses = x$basket$responses,
@@ -522,9 +524,9 @@ plot_pep_graph <- function(x,
     median_est = x$basket$median_est
   )
 
-  graph <- tidygraph::as_tbl_graph(pep, directed = FALSE) %>%
-    tidygraph::activate("nodes") %>%
-    tidygraph::left_join(node_attrs, by = "name")
+  graph <- as_tbl_graph(pep, directed = FALSE) %>%
+    activate("nodes") %>%
+    left_join(node_attrs, by = "name")
 
   legend_name <- c(
     mean_est = "Mean\nResponse\nRate",
@@ -534,7 +536,7 @@ plot_pep_graph <- function(x,
 
   graph <- graph %>%
     activate("edges") %>%
-    filter(.data$weight >= !!pep_cutoff)
+    filter(.data$weight >= {{pep_cutoff}})
 
   ggraph(graph, layout = layout, weights = .data$weight) +
     geom_edge_link(color = "gray", alpha = 0.6, aes(width = .data$weight)) +

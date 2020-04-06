@@ -45,11 +45,11 @@ Vemurafenib in multiple nonmelanoma cancers with braf v600
 mutations Hyman DM, Puzanov I, Subbiah V, Faris JE, Chau I, Blay JY,
 Wolf J, Raje NS, Diamond EL, Hollebecque A, et al.
 New England Journal of Medicine 2015; 373(8):726–736.
-<doi:10.1056/NEJMoa1502309>
+<https://doi:10.1056/NEJMoa1502309>
 
 Bayesian basket trial design with exchangeability monitoring
 BP Hobbs, R Landin Statistics in medicine 37 (25), 3557-357.
-<doi:10.1002/sim.7893>
+<https://doi:10.1002/sim.7893>
 
 Statistical challenges posed by uncontrolled master protocols:
 sensitivity analysis of the vemurafenib study BP Hobbs, MJ Kane, DS Hong,
@@ -57,5 +57,5 @@ R Landin Annals of Oncology 29 (12), 2296-2301. <doi:10.1093/annonc/mdy457>
 
 Bayesian hierarchical modeling based on multisource
 exchangeability AM Kaizer, JS Koopmeiners, BP Hobbs Biostatistics 19 (2),
-169-184. <doi:10.1093/biostatistics/kxx031>
+169-184. <https://doi:10.1093/biostatistics/kxx031>
 }

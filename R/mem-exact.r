@@ -244,7 +244,8 @@ mem_exact <- function(responses,
   colnames(maximizer) <- rownames(maximizer) <- name
 
   ## compute prior + posterior MEM probabilities ##
-  prior <- apply(mod_i, MARGIN = 1, FUN = mem_prior, mod_mat, prior_inclusion)
+  prior <- apply(mod_i_mat, MARGIN = 1, FUN = mem_prior, mod_mat, 
+                 prior_inclusion)
   post <- (exp(log_marg) * prior) / sum(exp(log_marg) * prior)
   map_i <- order(post, decreasing = TRUE)[1]
 
