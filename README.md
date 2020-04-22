@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-“[![](https://www.r-pkg.org/badges/version/basket?color=blue)](https://cran.r-project.org/package=basket)”
+[![](https://www.r-pkg.org/badges/version/basket?color=blue)](https://cran.r-project.org/package=basket)
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Travis build
 status](https://travis-ci.org/kaneplusplus/basket.svg?branch=master)](https://travis-ci.org/kaneplusplus/basket)
