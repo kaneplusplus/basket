@@ -112,7 +112,7 @@ ATC, ECD or LCH, and NSCLC do respond.
 ``` r
 data(vemu_wide)
 vm <- basket(vemu_wide$responders, vemu_wide$evaluable,
-vemu_wide$baskets, p0 = 0.25)
+             vemu_wide$baskets, p0 = 0.25)
 plot_density(vm, type = "basket")
 ```
 
