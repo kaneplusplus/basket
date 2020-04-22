@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+“[![](https://www.r-pkg.org/badges/version/basket?color=blue)](https://cran.r-project.org/package=basket)”
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Travis build
 status](https://travis-ci.org/kaneplusplus/basket.svg?branch=master)](https://travis-ci.org/kaneplusplus/basket)
@@ -112,7 +113,7 @@ ATC, ECD or LCH, and NSCLC do respond.
 ``` r
 data(vemu_wide)
 vm <- basket(vemu_wide$responders, vemu_wide$evaluable,
-             vemu_wide$baskets, p0 = 0.25)
+vemu_wide$baskets, p0 = 0.25)
 plot_density(vm, type = "basket")
 ```
 
