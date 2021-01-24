@@ -26,6 +26,10 @@
 
 * Testing changed to take less time on CRAN.
 
-# basket 0.10.2
+# basket 0.10.3
 
 * Bug fixes based and accomodation for new tibble package.
+
+# basket 0.10.4
+
+* Bug fix for creating cluster densities.
