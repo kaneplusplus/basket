@@ -66,7 +66,7 @@ plot_density.mem <- function(x, ...) {
   dots <- list(...)
   Basket <- Density <- p0 <- NULL
   if (length(x$p0) == 1 && length(x$size) > 1) {
-    x$p0 <- rep(x$p0, length(x$size))
+    x$p0 <- rep(x$p0, length(x$name))
   }
   d <- gather(as_tibble(x$samples), key = Basket, value = Density)
   xp <- tibble(Basket = x$name, p0 = x$p0)
