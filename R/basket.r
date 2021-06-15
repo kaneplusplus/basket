@@ -92,33 +92,33 @@ basket <- function(responses,
                    alternative = "greater",
                    call = NULL,
                    cluster_function = cluster_membership,
-                   method = "mcmc",
+                   method = c("mcmc", "lmem", "exact"),
                    mcmc_iter = 200000,
                    mcmc_burnin = 50000,
                    initial_mem = round(prior - 0.001),
                    cluster_analysis = FALSE,
                    seed = get_seed()) {
-  if (isTRUE(method %in% c("exact", "mcmc"))) {
-    if (method == "exact") {
-      mem_exact(responses, size, name,
-        p0 = p0, shape1 = shape1,
-        shape2 = shape2, prior = prior,
-        hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
-        cluster_analysis = cluster_analysis,
-        call = call, cluster_function = cluster_function
-      )
-    } else {
-      mem_mcmc(responses, size, name,
-        p0 = p0, shape1 = shape1, shape2 = shape2,
-        prior = prior, hpd_alpha = hpd_alpha,
-        alternative = alternative, mcmc_iter = mcmc_iter,
-        mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
-        seed = seed,
-        cluster_analysis = cluster_analysis,
-        call = call,
-        cluster_function = cluster_function
-      )
-    }
+  if (method[1] == "exact") {
+    mem_exact(responses, size, name,
+      p0 = p0, shape1 = shape1,
+      shape2 = shape2, prior = prior,
+      hpd_alpha = hpd_alpha, alternative = alternative, seed = seed,
+      cluster_analysis = cluster_analysis,
+      call = call, cluster_function = cluster_function
+    )
+  } else if(method[1] == "mcmc") {
+    mem_mcmc(responses, size, name,
+      p0 = p0, shape1 = shape1, shape2 = shape2,
+      prior = prior, hpd_alpha = hpd_alpha,
+      alternative = alternative, mcmc_iter = mcmc_iter,
+      mcmc_burnin = mcmc_burnin, initial_mem = initial_mem,
+      seed = seed,
+      cluster_analysis = cluster_analysis,
+      call = call,
+      cluster_function = cluster_function
+    )
+  } else if (method[1] == "lmem") {
+    # Wei's code here.
   } else {
     stop(red("Unsupported method."))
   }

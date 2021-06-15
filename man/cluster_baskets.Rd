@@ -28,7 +28,8 @@ data(vemu_wide)
 mem_analysis <- mem_exact(
   vemu_wide$responders,
   vemu_wide$evaluable,
-  vemu_wide$baskets
+  vemu_wide$baskets,
+  cluster_analysis = TRUE
 )
 
 # Get the baskets in the clusters.

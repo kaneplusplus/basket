@@ -17,7 +17,8 @@
 #' mem_analysis <- mem_exact(
 #'   vemu_wide$responders,
 #'   vemu_wide$evaluable,
-#'   vemu_wide$baskets
+#'   vemu_wide$baskets,
+#'   cluster_analysis = TRUE
 #' )
 #'
 #' # Get the baskets in the clusters.
@@ -31,13 +32,17 @@ cluster_baskets <- function(x) {
 #' @export
 cluster_baskets.default <- function(x) {
   stop(red(
-    "Don't know how to arms from an object of type",
+    "Don't know how to show clusters for an object of type",
     paste(class(x), collapse = ", "), "."
   ))
 }
 
 #' @export
 cluster_baskets.mem_cluster <- function(x) {
+  if (any(is.na(x$cluster))) {
+    stop(
+      red("No cluster information. Rerun MEM with `cluster_analysis = TRUE`."))
+  }
   x$cluster
 }
 

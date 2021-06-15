@@ -17,7 +17,7 @@ basket(
   alternative = "greater",
   call = NULL,
   cluster_function = cluster_membership,
-  method = "mcmc",
+  method = c("mcmc", "lmem", "exact"),
   mcmc_iter = 2e+05,
   mcmc_burnin = 50000,
   initial_mem = round(prior - 0.001),
