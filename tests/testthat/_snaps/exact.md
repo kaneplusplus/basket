@@ -25,8 +25,8 @@
       upper 0.628      0.105           0.109
       
       Posterior Effective Sample Size:
-        [,1]   [,2]   [,3]
-       19.93 55.647 50.867
+       NSCLC CRC (vemu) CRC (vemu+cetu)
+       19.93     55.647          50.867
       
       
       $cluster
@@ -88,8 +88,8 @@
       upper 0.625      0.107           0.105
       
       Posterior Effective Sample Size:
-         [,1]   [,2]   [,3]
-       20.933 52.153 55.786
+        NSCLC CRC (vemu) CRC (vemu+cetu)
+       20.933     52.153          55.786
       
       -- The Cluster Summary ---------------------------------------------------------
       
@@ -147,7 +147,7 @@
       upper 0.693 1.000 1.000
       
       Posterior Effective Sample Size:
-         [,1]  [,2]  [,3]
+            a     b     c
        11.073 5.199 2.187
       
       -- The Cluster Summary ---------------------------------------------------------
@@ -208,7 +208,7 @@
       upper 0.699 1.000
       
       Posterior Effective Sample Size:
-         [,1]  [,2]
+            a     b
        10.816 5.251
       
       -- The Cluster Summary ---------------------------------------------------------

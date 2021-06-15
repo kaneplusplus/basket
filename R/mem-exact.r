@@ -175,6 +175,7 @@ mem_exact <- function(responses,
 
 
     ret$ess <- p_ess
+    names(ret$ess) <- model$name
 
     class(ret) <- c("mem_basket", "mem")
 
@@ -434,6 +435,7 @@ mem_exact <- function(responses,
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
   ret$ess <- ess_from_hpd(fit = ret, alpha = hpd_alpha)
+  names(ret$ess) <- colnames(ret$hpd)
   class(ret) <- c("mem_basket", "mem")
 
   if (cluster_analysis) {
