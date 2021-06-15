@@ -10,11 +10,11 @@ test_that("Plotting works.",
       name = vemu_wide$baskets,
       cluster_analysis = TRUE,
       p0 = c(0.15, 0.15, 0.15, 0.2, 0.15, 0.15),
-      mcmc_iter = 100,
-      mcmc_burnin = 100
+      mcmc_iter = 1000,
+      mcmc_burnin = 10
     )
 
-    expect_snapshot(mh1)
+    expect_snapshot(summary(mh1))
     pd <- plot_density(mh1)
     expect_true(inherits(pd, "ggplot"))
     pdb <- plot_density(mh1$basket)

@@ -64,10 +64,15 @@ summary.mem_basket <- function(object, ...) {
 print.mem_basket_summary <- function(x, ...) {
   # Posterior Probability Response is Greater than the Null
   cat_line("\nThe Null Response Rates (alternative is ", x$alternative, "):")
-  a <- round(rbind(x$null, x$post_prob), 3)
-  rownames(a) <- c("Null", "Posterior Prob")
-  print(a)
-
+  if (is.matrix(x$post_prob)) {
+    a <- round(x$post_prob, 3)
+    rownames(a) <- paste("Posterior for null of", rownames(a))
+    print(a)
+  } else {
+    a <- round(rbind(x$null, x$post_prob), 3)
+    rownames(a) <- c("Null", "Posterior Prob")
+    print(a)
+  }
 
   # The Mean and Median Response Rates
   cat_line("\nPosterior Mean and Median Response Rates:")

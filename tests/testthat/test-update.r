@@ -16,6 +16,6 @@ test_that("Update works.",
 
 
     set.seed(123)
-    expect_snapshot(update_p0(mh1, 0.25))
+    expect_snapshot(summary(update_p0(mh1, 0.25)))
   }
 )

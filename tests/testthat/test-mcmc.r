@@ -27,8 +27,8 @@ test_that("MCMC can be calculated correctly.",
 
     pd <- plot_density(mcmc_res1$basket)
     expect_true(inherits(pd, "ggplot"))
-    pm <- plot_mem(mcmc_res1$basket, type = c("pep", "map"))
-    expect_true(inherits(pm, "gtable"))
+#    pm <- plot_mem(mcmc_res1$basket, type = c("pep", "map"))
+#    expect_true(inherits(pm, "gtable"))
     expect_true(inherits(plot_pep(mcmc_res1$basket), "ggplot"))
     expect_true(inherits(plot_map(mcmc_res1$basket), "ggplot"))
   }
@@ -63,7 +63,7 @@ test_that("Exact corner case models", {
 
   set.seed(123)
   expect_snapshot(
-    mem_mcmc(
+    summary(mem_mcmc(
       responses = c(4, 3, 0),
       size = c(10, 3, 0),
       name = letters[1:3],
@@ -71,12 +71,12 @@ test_that("Exact corner case models", {
       mcmc_iter = 100,
       mcmc_burnin = 100,
       p0 = 0.25
-    )
+    ))
   )
 
   set.seed(123)
   expect_snapshot(
-    mem_mcmc(
+    summary(mem_mcmc(
       responses = c(4, 3),
       size = c(10, 3),
       name = letters[1:2],
@@ -84,18 +84,19 @@ test_that("Exact corner case models", {
       mcmc_iter = 100,
       mcmc_burnin = 100,
       p0 = 0.25)
+    )
   )
 
   set.seed(123)
   expect_snapshot(
-    mem_mcmc(
+    summary(mem_mcmc(
       responses = c(4, 3),
       size = c(10, 3),
       name = letters[1:2],
       cluster_analysis = FALSE,
       mcmc_iter = 100,
       mcmc_burnin = 100,
-      p0 = 0.25)
+      p0 = 0.25))
   )
 
   expect_equal(mcmc_res1$basket[-10], mcmc_res1_basket$basket[-10], 

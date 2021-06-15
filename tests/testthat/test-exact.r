@@ -65,37 +65,37 @@ test_that("Exact corner case models", {
 
   set.seed(123)
   expect_snapshot(
-    basket(
+    summary(basket(
       responses = vemu_wide1$responders,
       size = vemu_wide1$evaluable,
       name = vemu_wide1$baskets,
       cluster_analysis = TRUE,
       p0 = 0.25,
       method = "exact"
-    )
+    ))
   )
 
   
   set.seed(123)
   expect_snapshot(
-    mem_exact(
+    summary(mem_exact(
       responses = c(4, 3, 0),
       size = c(10, 3, 0),
       name = letters[1:3],
       cluster_analysis = TRUE,
       p0 = 0.25
-    )
+    ))
   )
 
   set.seed(123)
   expect_snapshot(
-    mem_exact(
+    summary(mem_exact(
       responses = c(4, 3),
       size = c(10, 3),
       name = letters[1:2],
       cluster_analysis = TRUE,
       p0 = 0.25
-    )
+    ))
   )
 
   # Remove the call and check for equality.
