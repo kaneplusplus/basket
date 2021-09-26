@@ -54,7 +54,8 @@ elsewhere.}
 
 \item{cluster_function}{a function to cluster baskets.}
 
-\item{method}{"mcmc" or "exact". See details for an explanation.
+\item{method}{"mcmc", "lmem" (local MEM),  or "exact". See details for an 
+explanation.
 (default "mcmc")}
 
 \item{mcmc_iter}{if the method is "mcmc" then this spcifies the number of
@@ -81,15 +82,19 @@ Bayesian hierarchical model and it accomodates multiple sets of latent
 factors shared combinations of cohorts.
 }
 \details{
-The model may be fit using either an exact calculation or via
-mcmc. The former conducts posterior inference through the entire set of
+The model may be fit using an exact calculation via
+mcmc, or a local version of MEM. The first conducts posterior inference 
+through the entire set of
 exchangeability relationships in the sample domain. This approach is
 computationally feasible only when the number of cohorts is relatively
 small. As a rule of thumb this option should be used with a maximum of
-20 cohorts.  By default, the latter (mcmc) is used and it is based on
+20 cohorts.  By default, the second(mcmc) is used and it is based on
 the Metropolis algorithm and it extends the model's implementation to
 larger collections of subpopulations. The algorithm initiates with a
 burn-in period (see mcmc_burnin), which are discarded from the analysis.
+The third is based on a recent paper by Wei et al. The calculation
+is computationally efficient and tends to borrow to a lesser extent
+than other implemented methods.
 }
 \examples{
 \donttest{

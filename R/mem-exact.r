@@ -175,7 +175,7 @@ mem_exact <- function(responses,
 
 
     ret$ess <- p_ess
-    names(ret$ess) <- model$name
+    names(ret$ess) <- ret$name
 
     class(ret) <- c("mem_basket", "mem")
 
