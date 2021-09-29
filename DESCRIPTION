@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.10.6
+Version: 0.10.8
 Authors@R: c(
   person(given = "Nan", 
          family = "Chen",

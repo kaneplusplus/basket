@@ -8,4 +8,5 @@
 0 errors | 0 warnings | 0 note
 
 * This release fixes various bugs and removes the defunct link to CRAN.
-* It also removes the README.html file.
+* It removes the README.html file.
+* It provides an updated lifecycle badge.
