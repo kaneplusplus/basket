@@ -123,7 +123,52 @@ basket <- function(responses,
       cluster_function = cluster_function
     )
   } else if (method[1] == "lmem") {
-    # Wei's code here.
+    if (is.null(call)) {
+      call <- match.call()
+    }
+    partitions = basket_part(responses, size, shape1, shape2)
+    clusters = basket_cluster(partitions, shape1, shape2, responses, size)
+    post_summary = summary_basket(clusters, 
+                                  q = 1 - hpd_alpha, 
+                                  p0 = p0, 
+                                  basket_name = name,
+                                  basket_member = clusters$member)
+
+    post_prob = partitions[which.max(partitions$pp_grp), 1:(ncol(partitions)-1)]
+    names(post_prob) = name
+    mean_est = as.vector(clusters$alpha / (clusters$alpha + clusters$beta))
+    names(mean_est) = name
+    median_est = post_summary[,'Median']
+    names(median_est) = name
+    hpd = t(post_summary[,c(3, 4)])
+    rownames(hpd) = c("Lower Bound", "Upper Bound")
+    colnames(hpd) = name
+    ess = clusters$alpha + clusters$beta
+    names(ess) = name
+    list(
+      call = call,
+      basket = list(
+        responses = responses,
+        size = size,
+        name = name,
+        p0 = p0,
+        alternative = alternative,
+        shape1 = shape1,
+        shape2 = shape2,
+        prior = prior,
+        hpd_alpha = hpd_alpha,
+        initial = prior,
+        post_prob  = post_prob,
+        median_est = median_est,
+        pep = matrix(clusters$Smat, 
+                     nrow = nrow(clusters$Smat), 
+                     ncol = ncol(clusters$Smat), 
+                     dimnames = list(name, name)),
+        hpd = hpd,
+        ess = ess
+      ),
+      cluster = clusters$member
+    )
   } else {
     stop(red("Unsupported method."))
   }
