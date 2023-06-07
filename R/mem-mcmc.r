@@ -395,7 +395,8 @@ mem_mcmc <- function(responses,
   ret$map <- map
   ret$hpd <- apply(ret$samples, MARGIN = 2, FUN = boa_hpd, alpha = model$alpha)
   ret$post_prob <- mem_post_prob(model, fit = ret)
-  ret$ess <- ess_from_hpd(fit = ret, alpha = model$alpha)
+  #ret$ess <- ess_from_hpd(fit = ret, alpha = model$alpha)
+  ret$ess <- ess_from_qnt(fit = ret)
   names(ret$ess) <- model$name
   class(ret) <- c("mem_basket", "mem")
 

@@ -195,10 +195,50 @@ ess_from_hpd_i <- function(jj, fit, alpha) {
 
 #' @importFrom foreach %dopar%
 ess_from_hpd <- function(fit, alpha) {
-  ## fit is list with median vec and HPD vec ##
+  ## fit is list with mean vec and HPD vec ##
   i <- NULL
   foreach(i = seq_along(fit$mean_est), .combine = c) %dopar% {
     ess_from_hpd_i(i, fit, alpha)
+  }
+}
+
+#' @importFrom stats qbeta
+dist_beta_qnt <- function(ess, fit, alpha, jj) {
+  al <- fit$mean_est[jj] * ess
+  al <- max(1e-2, al)
+  be <- ess - al
+  be <- max(1e-2, be)
+  euc_dist(fit$qnt[, jj], qbeta(
+    c(alpha / 2, 1 - alpha / 2),
+    al, be
+  ))
+}
+
+#' @importFrom GenSA GenSA
+ess_from_qnt_i <- function(jj, fit, alpha) {
+  opt <-
+    GenSA(
+      par = 1,
+      fn = dist_beta_qnt,
+      lower = 0,
+      upper = 10000000,
+      fit = fit,
+      alpha = alpha,
+      jj = jj
+    )
+  opt$par
+}
+
+#' @importFrom foreach %dopar%
+ess_from_qnt <- function(fit, alpha=0.005) {
+  fit$qnt <- fit$hpd
+  for(ii in 1:length(fit$mean_est)){
+   fit$qnt[,ii] <- quantile(fit$samples[,ii],probs=c(alpha / 2, 1 - alpha / 2))
+  }
+  ## fit is list with mean vec and HPD vec ##
+  i <- NULL
+  foreach(i = seq_along(fit$mean_est), .combine = c) %dopar% {
+    ess_from_qnt_i(i, fit, alpha)
   }
 }
 
@@ -490,7 +530,8 @@ cluster_comp <- function(basket, cluster_function) {
   ), nrow = 2, byrow = FALSE)
   colnames(ret$hpd) <- cluster_name
   row.names(ret$hpd) <- c("Lower Bound", "Upper Bound")
-  ret$ess <- ess_from_hpd(fit = ret, alpha = ret$alpha)
+  #ret$ess <- ess_from_hpd(fit = ret, alpha = ret$alpha)
+  ret$ess <- ess_from_qnt(fit = ret, alpha = ret$alpha)
   names(ret$ess) <- cluster_name
   class(ret) <- c("mem_exact", "exchangeability_model")
   ret

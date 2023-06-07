@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.11.0
+Version: 0.12.0
 Authors@R: c(
   person(given = "Nan", 
          family = "Chen",
@@ -12,7 +12,7 @@ Authors@R: c(
          role = c("ctb")),
   person(given = "Brian", 
          family = "Hobbs",
-         email = "HobbsB@ccf.org",
+         email = "bphobbs@gmail.com",
          role = c("aut")),
   person(given = "Alex", 
          family = "Kaizer",

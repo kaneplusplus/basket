@@ -434,7 +434,8 @@ mem_exact <- function(responses,
   ret$samples <- sample_posterior_model(ret)
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
-  ret$ess <- ess_from_hpd(fit = ret, alpha = hpd_alpha)
+  #ret$ess <- ess_from_hpd(fit = ret, alpha = hpd_alpha)
+  ret$ess <- ess_from_qnt(fit = ret)
   names(ret$ess) <- colnames(ret$hpd)
   class(ret) <- c("mem_basket", "mem")
 
