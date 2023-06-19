@@ -104,7 +104,7 @@ basket <- function(responses,
                    mcmc_burnin = 50000,
                    initial_mem = round(prior - 0.001),
                    cluster_analysis = FALSE,
-                   parallelRun = TRUE,
+                   parallelRun = FALSE,
                    seed = get_seed()) {
   if (method[1] == "exact") {
     mem_exact(responses, size, name,
