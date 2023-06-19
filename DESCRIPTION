@@ -1,6 +1,6 @@
 Package: basket
 Title: Basket Trial Analysis 
-Version: 0.12.0
+Version: 0.12.1
 Authors@R: c(
   person(given = "Nan", 
          family = "Chen",
@@ -46,6 +46,8 @@ Imports:
     cli,
     RColorBrewer,
     tidygraph,
+    parallel, 
+    doParallel,
     ggraph,
     partitions,
     pscl

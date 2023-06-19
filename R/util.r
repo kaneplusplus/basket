@@ -1,7 +1,7 @@
 
 #' @importFrom foreach getDoParWorkers
 num_workers <- function(factor = 1) {
-  getDoParWorkers() * factor
+  foreach::getDoParWorkers() * factor
 }
 
 boa_hpd <- function(x, alpha) {
@@ -229,6 +229,7 @@ ess_from_qnt_i <- function(jj, fit, alpha) {
   opt$par
 }
 
+#' @importFrom stats quantile
 #' @importFrom foreach %dopar%
 ess_from_qnt <- function(fit, alpha=0.005) {
   fit$qnt <- fit$hpd

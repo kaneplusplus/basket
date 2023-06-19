@@ -18,10 +18,11 @@ basket(
   call = NULL,
   cluster_function = cluster_membership,
   method = c("mcmc", "lmem", "exact"),
-  mcmc_iter = 2e+05,
+  mcmc_iter = 250000,
   mcmc_burnin = 50000,
   initial_mem = round(prior - 0.001),
   cluster_analysis = FALSE,
+  parallelRun = TRUE,
   seed = get_seed()
 )
 }
@@ -68,6 +69,8 @@ burn-in iterations. (default 50000)}
 MEM matrix. Otherwise, it is ignored.}
 
 \item{cluster_analysis}{if the cluster analysis is conducted.}
+
+\item{parallelRun}{if the computation is conduected in parallel mode}
 
 \item{seed}{the random seed for the mcmc calculations. By default this is
 .Random.seed. If this value is not initialized, then it is first initialized

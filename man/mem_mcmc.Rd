@@ -15,13 +15,14 @@ mem_mcmc(
     length(responses)),
   hpd_alpha = 0.05,
   alternative = "greater",
-  mcmc_iter = 2e+05,
+  mcmc_iter = 250000,
   mcmc_burnin = 50000,
   initial_mem = round(prior - 0.001),
   seed = 1000,
   cluster_analysis = FALSE,
   call = NULL,
-  cluster_function = cluster_membership
+  cluster_function = cluster_membership,
+  parallelRun = FALSE
 )
 }
 \arguments{
@@ -48,7 +49,7 @@ elsewhere.}
 
 \item{alternative}{the alternative case definition (default greater)}
 
-\item{mcmc_iter}{the number of MCMC iterations.}
+\item{mcmc_iter}{the number of total MCMC iterations (includes the number of MCMC burn_in iterations).}
 
 \item{mcmc_burnin}{the number of MCMC Burn_in iterations.}
 
@@ -61,6 +62,8 @@ elsewhere.}
 \item{call}{the call of the function.}
 
 \item{cluster_function}{a function to cluster baskets}
+
+\item{parallelRun}{if the computation is conduected in parallel mode}
 }
 \description{
 Fit the MEM model using Bayesian Metropolis-Hasting MCMC

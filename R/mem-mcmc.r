@@ -17,13 +17,14 @@
 #' elsewhere.
 #' @param hpd_alpha the highest posterior density trial significance.
 #' @param alternative the alternative case definition (default greater)
-#' @param mcmc_iter the number of MCMC iterations.
+#' @param mcmc_iter the number of total MCMC iterations (includes the number of MCMC burn_in iterations).
 #' @param mcmc_burnin the number of MCMC Burn_in iterations.
 #' @param initial_mem the initial MEM matrix.
 #' @param seed the random number seed.
 #' @param cluster_analysis if the cluster analysis is conducted.
 #' @param call the call of the function.
 #' @param cluster_function a function to cluster baskets
+#' @param parallelRun if the computation is conduected in parallel mode
 #' @importFrom stats rbinom
 #' @examples
 #' \donttest{
@@ -45,6 +46,9 @@
 #' @importFrom stats median
 #' @importFrom crayon red
 #' @importFrom itertools isplitVector
+#' @importFrom parallel makeCluster detectCores stopCluster
+#' @importFrom doParallel registerDoParallel
+#' @importFrom foreach %dopar% registerDoSEQ
 #' @export
 mem_mcmc <- function(responses,
                      size,
@@ -59,18 +63,42 @@ mem_mcmc <- function(responses,
                        ),
                      hpd_alpha = 0.05,
                      alternative = "greater",
-                     mcmc_iter = 200000,
+                     mcmc_iter = 250000,
                      mcmc_burnin = 50000,
                      initial_mem = round(prior - 0.001),
                      seed = 1000,
                      cluster_analysis = FALSE,
                      call = NULL,
-                     cluster_function = cluster_membership) {
+                     cluster_function = cluster_membership,
+                     parallelRun = FALSE
+                     ) {
   set.seed(seed)
+  mcmc_iter <- mcmc_iter - mcmc_burnin    # We change the real iteration number definition to be consistent with other softwrae
   k <- NULL
-  if (is.null(getDoParName())) {
-    registerDoSEQ()
+  
+  
+  # Parallel cluster setup
+  if (parallelRun)
+  {
+      #library(parallel)
+      #library(doParallel)
+      numCores <- parallel::detectCores() - 1
+      mcCluster <- parallel::makeCluster(numCores)
+      doParallel::registerDoParallel(mcCluster)
+      
+  }else
+  {
+      #library(parallel)
+      #library(doParallel)
+      numCores <- 1
+      mcCluster <- parallel::makeCluster(numCores)
+      doParallel::registerDoParallel(mcCluster)
   }
+  
+  # if (is.null(foreach::getDoParName())) {
+  #   foreach::registerDoSEQ()
+  # }
+  
   if (length(responses) != length(size)) {
     stop(red(
       "The length of the responses and size parameters",
@@ -202,7 +230,7 @@ mem_mcmc <- function(responses,
     stop(red("Elements on the main diagonal of `prior` must be 1."))
   }
   ### Produce sample space of MEM ###
-  mod_mat <- foreach(k = rev(seq_len(length(responses) - 1))) %do% {
+  mod_mat <- foreach::foreach(k = rev(seq_len(length(responses) - 1))) %do% {
     mem_sample_space <- as.matrix(expand.grid(rep(list(c(
       0, 1
     )), k)))
@@ -291,7 +319,7 @@ mem_mcmc <- function(responses,
     map_hash[[key]] <- length(map_list)
   }
 
-
+  
   for (kk in seq_len(mcmc_iter)[-(1:2)]) {
     t <- update_mh(
       mem_samp[[kk - 1]], m, responses, size,
@@ -302,13 +330,13 @@ mem_mcmc <- function(responses,
   }
 
   it <- NULL
-  models_count <- foreach(
-    it = isplitVector(seq_len(mcmc_iter)[-(1:2)],
+  models_count <- foreach::foreach(
+    it = itertools::isplitVector(seq_len(mcmc_iter)[-(1:2)],
       chunks = num_workers()
     ),
     .combine = c
   ) %dopar% {
-    foreach(k = it) %do% {
+    foreach::foreach(k = it) %do% {
       models_count(samp = mem_samp[[k]], models = models)
     }
   }
@@ -387,7 +415,8 @@ mem_mcmc <- function(responses,
 
   # Ret doesn't have class information yet so, we'll call
   # sample_posterior.exchangeability_model directly.
-  ret$samples <- sample_posterior_model(model)
+  
+  ret$samples <- sample_posterior_model(model, num_samples = mcmc_iter) # The number of iterations is consistent with the main loop MCMC iteration
   ret$accept_rate <- (n_chg) / mcmc_iter
   ret$mean_est <- colMeans(ret$samples)
   ret$median_est <- apply(ret$samples, 2, median)
@@ -419,6 +448,8 @@ mem_mcmc <- function(responses,
         seed = seed
       )
   }
+
+  parallel::stopCluster(mcCluster)
 
   class(result) <- c("mem_mcmc", "exchangeability_model")
   result

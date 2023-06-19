@@ -46,6 +46,7 @@ get_seed <- function() {
 #' @param initial_mem if the method is "mcmc" then this spcifies the initial
 #' MEM matrix. Otherwise, it is ignored.
 #' @param cluster_analysis if the cluster analysis is conducted.
+#' @param parallelRun if the computation is conduected in parallel mode
 #' @param seed the random seed for the mcmc calculations. By default this is
 #' .Random.seed. If this value is not initialized, then it is first initialized
 #' with Sys.time() and then returned.
@@ -98,10 +99,11 @@ basket <- function(responses,
                    call = NULL,
                    cluster_function = cluster_membership,
                    method = c("mcmc", "lmem", "exact"),
-                   mcmc_iter = 200000,
+                   mcmc_iter = 250000,
                    mcmc_burnin = 50000,
                    initial_mem = round(prior - 0.001),
                    cluster_analysis = FALSE,
+                   parallelRun = TRUE,
                    seed = get_seed()) {
   if (method[1] == "exact") {
     mem_exact(responses, size, name,
@@ -120,7 +122,8 @@ basket <- function(responses,
       seed = seed,
       cluster_analysis = cluster_analysis,
       call = call,
-      cluster_function = cluster_function
+      cluster_function = cluster_function,
+      parallelRun
     )
   } else if (method[1] == "lmem") {
     if (is.null(call)) {
