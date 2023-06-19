@@ -115,6 +115,7 @@ trials <- data.frame(
   name = letters[1:3]
 )
 
-summary(basket(trials$responses, trials$size, trials$name))
+b = basket(trials$responses, trials$size, trials$name)
+summary(b)
 }
 }

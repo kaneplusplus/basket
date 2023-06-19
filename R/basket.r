@@ -79,7 +79,8 @@ get_seed <- function() {
 #'   name = letters[1:3]
 #' )
 #'
-#' summary(basket(trials$responses, trials$size, trials$name))
+#' b = basket(trials$responses, trials$size, trials$name)
+#' summary(b)
 #' }
 #' @importFrom crayon red
 #' @export
@@ -123,7 +124,7 @@ basket <- function(responses,
       cluster_analysis = cluster_analysis,
       call = call,
       cluster_function = cluster_function,
-      parallelRun
+      parallelRun = parallelRun
     )
   } else if (method[1] == "lmem") {
     if (is.null(call)) {

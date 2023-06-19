@@ -78,21 +78,16 @@ mem_mcmc <- function(responses,
   
   
   # Parallel cluster setup
-  if (parallelRun)
-  {
+  if (parallelRun) {
       #library(parallel)
       #library(doParallel)
-      numCores <- parallel::detectCores() - 1
-      mcCluster <- parallel::makeCluster(numCores)
-      doParallel::registerDoParallel(mcCluster)
+      numCores <- detectCores() - 1
+      mcCluster <- makeCluster(numCores)
+      registerDoParallel(mcCluster)
       
-  }else
-  {
-      #library(parallel)
-      #library(doParallel)
-      numCores <- 1
-      mcCluster <- parallel::makeCluster(numCores)
-      doParallel::registerDoParallel(mcCluster)
+  } else {
+      mcCluster = NULL
+      registerDoSEQ()
   }
   
   # if (is.null(foreach::getDoParName())) {
@@ -449,7 +444,9 @@ mem_mcmc <- function(responses,
       )
   }
 
-  parallel::stopCluster(mcCluster)
+  if (!is.null(mcCluster)) {
+    stopCluster(mcCluster)
+  }
 
   class(result) <- c("mem_mcmc", "exchangeability_model")
   result
