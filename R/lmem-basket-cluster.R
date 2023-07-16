@@ -51,8 +51,8 @@ basket_cluster <- function(partitions, a0=1, b0=1, x, n, bf_thres=3.2){
     #borrowing locally helps to control alpha, such
     #that a lonely basket without signal won't become rich
     #by excessive borrowing 
-    avec <- a0 + loc_s %*% x
-    bvec <- b0 + loc_s %*% (n-x)
+    avec <- a0 + as.vector(loc_s %*% x)
+    bvec <- b0 + as.vector(loc_s %*% (n-x))
   }
   else {
     avec <- a0 + x
