@@ -10,7 +10,7 @@
 summary_basket <- function(test, q=0.95, p0,  
                           basket_name, basket_member = NULL){
   tab <- NULL
-  for(i in seq_along(length(basket_name))) {
+  for(i in seq_along(basket_name)) {
     med <- qbeta(p = 0.5, test$alpha[i], test$beta[i])
     alpha_hpd = test$alpha[i]+0.0001
     beta_hpd = test$beta[i]
